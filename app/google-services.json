@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "439260548722",
+    "firebase_url": "https://pabs-fa777.firebaseio.com",
+    "project_id": "pabs-fa777",
+    "storage_bucket": "pabs-fa777.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:439260548722:android:486bda50854bcb70b13ceb",
+        "android_client_info": {
+          "package_name": "com.example.pabs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "439260548722-d2p77nggn4jv7c85p1s53v7md6dm2242.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pabs",
+            "certificate_hash": "3358a1689e73c9734dd7bc770208104d80c54cc3"
+          }
+        },
+        {
+          "client_id": "439260548722-qlkibgqfe99ujalrf7ek3rfb4lcnhaqr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPTph5FgD3ohySuEpFOftmt2sin1cdA1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "439260548722-qlkibgqfe99ujalrf7ek3rfb4lcnhaqr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
