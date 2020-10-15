@@ -50,8 +50,7 @@
                     <EditText
                         android:id="@+id/l_username"
                         android:maxLines="1"
-                        android:imeOptions="actionNext"
-                        android:nextFocusDown="@+id/l_login_button"
+                        android:imeOptions="actionUnspecified"
                         android:inputType="text"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
@@ -59,8 +58,7 @@
                         android:fontFamily="sans-serif-light"
                         android:paddingLeft="15dp"
                         android:paddingRight="15dp"
-                        android:textSize="15sp"
-                        android:singleLine="true"/>
+                        android:textSize="15sp" />
                 </LinearLayout>
 
                 <!--Password-->
@@ -83,8 +81,7 @@
                     <EditText
                         android:id="@+id/l_password"
                         android:maxLines="1"
-                        android:imeOptions="actionNext"
-                        android:nextFocusDown="@+id/l_login_button"
+                        android:imeOptions="actionUnspecified"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:layout_marginTop="5dp"
@@ -92,8 +89,7 @@
                         android:inputType="textPassword"
                         android:paddingLeft="15dp"
                         android:paddingRight="15dp"
-                        android:textSize="15sp"
-                        android:singleLine="true"/>
+                        android:textSize="15sp" />
                 </LinearLayout>
             </LinearLayout>
 
