@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:visibility="visible"
+    tools:context=".LoginActivity">
+
+    <!--Screen-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp">
+
+        <!--Text+Username+Password+Button-->
+        <RelativeLayout
+            android:id="@+id/r_rellay1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+
+            <!--Name+Password+Email-->
+            <LinearLayout
+                android:id="@+id/r_linlay1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <!--E-mail-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:text="E-mail adress"
+                        android:textAllCaps="false"
+                        android:textColor="@color/grey"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                  <EditText
+                        android:id="@+id/r_email"
+                        android:maxLines="1"
+                        android:hint="@string/email"
+                        android:imeOptions="actionNext"
+                        android:nextFocusDown="@+id/l_login_button"
+                        android:inputType="text"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="5dp"
+                        android:fontFamily="sans-serif-light"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="15dp"
+                        android:textSize="15sp"
+                        android:singleLine="true"/>
+                </LinearLayout>
+
+                <!--Username-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:text="Username"
+                        android:textAllCaps="false"
+                        android:textColor="@color/grey"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/r_username"
+                        android:maxLines="1"
+                        android:imeOptions="actionNext"
+                        android:hint="@string/username"
+                        android:nextFocusDown="@+id/l_login_button"
+                        android:inputType="text"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="5dp"
+                        android:fontFamily="sans-serif-light"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="15dp"
+                        android:textSize="15sp"
+                        android:singleLine="true"/>
+                </LinearLayout>
+
+                <!--Password-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:text="Password"
+                        android:textAllCaps="false"
+                        android:textColor="@color/grey"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/r_password"
+                        android:maxLines="1"
+                        android:imeOptions="actionNext"
+                        android:text="Password"
+                        android:nextFocusDown="@+id/r_signup_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="5dp"
+                        android:fontFamily="sans-serif-light"
+                        android:inputType="textPassword"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:textSize="15sp"
+                        android:singleLine="true"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--Forgot password button
+            <Button
+                android:id="@+id/l_forgot_password"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+
+                android:layout_marginTop="30dp"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="sans-serif-light"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:background="@color/transparent"
+                android:text="Did you forget your password?"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="16sp" /> -->
+
+            <!--Sign Up button-->
+            <Button
+                android:id="@+id/r_signup_button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_below="@id/r_linlay1"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:fontFamily="sans-serif-medium"
+                android:paddingLeft="70dp"
+                android:paddingRight="70dp"
+                android:text="Sign Up"
+                android:textAllCaps="false"
+                android:background="@color/black"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <!--You already have an account-->
+            <Button
+                android:id="@+id/r_existing_account"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_below="@id/r_signup_button"
+                android:layout_marginTop="30dp"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="sans-serif-light"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:background="@color/transparent"
+                android:text="You already have an account?"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>

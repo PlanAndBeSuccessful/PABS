@@ -1,0 +1,355 @@
+Index: .idea/codeStyles/Project.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><component name=\"ProjectCodeStyleConfiguration\">\r\n  <code_scheme name=\"Project\" version=\"173\">\r\n    <JetCodeStyleSettings>\r\n      <option name=\"PACKAGES_TO_USE_STAR_IMPORTS\">\r\n        <value>\r\n          <package name=\"java.util\" alias=\"false\" withSubpackages=\"false\" />\r\n          <package name=\"kotlinx.android.synthetic\" alias=\"false\" withSubpackages=\"true\" />\r\n          <package name=\"io.ktor\" alias=\"false\" withSubpackages=\"true\" />\r\n        </value>\r\n      </option>\r\n      <option name=\"PACKAGES_IMPORT_LAYOUT\">\r\n        <value>\r\n          <package name=\"\" alias=\"false\" withSubpackages=\"true\" />\r\n          <package name=\"java\" alias=\"false\" withSubpackages=\"true\" />\r\n          <package name=\"javax\" alias=\"false\" withSubpackages=\"true\" />\r\n          <package name=\"kotlin\" alias=\"false\" withSubpackages=\"true\" />\r\n          <package name=\"\" alias=\"true\" withSubpackages=\"true\" />\r\n        </value>\r\n      </option>\r\n    </JetCodeStyleSettings>\r\n    <codeStyleSettings language=\"XML\">\r\n      <indentOptions>\r\n        <option name=\"CONTINUATION_INDENT_SIZE\" value=\"4\" />\r\n      </indentOptions>\r\n      <arrangement>\r\n        <rules>\r\n          <section>\r\n            <rule>\r\n              <match>\r\n                <AND>\r\n                  <NAME>xmlns:android</NAME>\r\n                  <XML_ATTRIBUTE />\r\n                  <XML_NAMESPACE>^$</XML_NAMESPACE>\r\n                </AND>\r\n              </match>\r\n            </rule>\r\n          </section>\r\n          <section>\r\n            <rule>\r\n              <match>\r\n                <AND>\r\n                  <NAME>xmlns:.*</NAME>\r\n                  <XML_ATTRIBUTE />\r\n                  <XML_NAMESPACE>^$</XML_NAMESPACE>\r\n                </AND>\r\n              </match>\r\n              <order>BY_NAME</order>\r\n            </rule>\r\n          </section>\r\n          <section>\r\n            <rule>\r\n              <match>\r\n                <AND>\r\n                  <NAME>.*:id</NAME>\r\n                  <XML_ATTRIBUTE />\r\n                  <XML_NAMESPACE>http://schemas.android.com/apk/res/android</XML_NAMESPACE>\r\n                </AND>\r\n              </match>\r\n            </rule>\r\n          </section>\r\n          <section>\r\n            <rule>\r\n              <match>\r\n                <AND>\r\n                  <NAME>.*:name</NAME>\r\n                  <XML_ATTRIBUTE />\r\n                  <XML_NAMESPACE>http://schemas.android.com/apk/res/android</XML_NAMESPACE>\r\n                </AND>\r\n              </match>\r\n            </rule>\r\n          </section>\r\n          <section>\r\n            <rule>\r\n              <match>\r\n                <AND>\r\n                  <NAME>name</NAME>\r\n                  <XML_ATTRIBUTE />\r\n                  <XML_NAMESPACE>^$</XML_NAMESPACE>\r\n                </AND>\r\n              </match>\r\n            </rule>\r\n          </section>\r\n          <section>\r\n            <rule>\r\n              <match>\r\n                <AND>\r\n                  <NAME>style</NAME>\r\n                  <XML_ATTRIBUTE />\r\n                  <XML_NAMESPACE>^$</XML_NAMESPACE>\r\n                </AND>\r\n              </match>\r\n            </rule>\r\n          </section>\r\n          <section>\r\n            <rule>\r\n              <match>\r\n                <AND>\r\n                  <NAME>.*</NAME>\r\n                  <XML_ATTRIBUTE />\r\n                  <XML_NAMESPACE>^$</XML_NAMESPACE>\r\n                </AND>\r\n              </match>\r\n              <order>BY_NAME</order>\r\n            </rule>\r\n          </section>\r\n          <section>\r\n            <rule>\r\n              <match>\r\n                <AND>\r\n                  <NAME>.*</NAME>\r\n                  <XML_ATTRIBUTE />\r\n                  <XML_NAMESPACE>http://schemas.android.com/apk/res/android</XML_NAMESPACE>\r\n                </AND>\r\n              </match>\r\n              <order>ANDROID_ATTRIBUTE_ORDER</order>\r\n            </rule>\r\n          </section>\r\n          <section>\r\n            <rule>\r\n              <match>\r\n                <AND>\r\n                  <NAME>.*</NAME>\r\n                  <XML_ATTRIBUTE />\r\n                  <XML_NAMESPACE>.*</XML_NAMESPACE>\r\n                </AND>\r\n              </match>\r\n              <order>BY_NAME</order>\r\n            </rule>\r\n          </section>\r\n        </rules>\r\n      </arrangement>\r\n    </codeStyleSettings>\r\n  </code_scheme>\r\n</component>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/codeStyles/Project.xml	(revision 016778f008088c52856d15ad5d8a385bfd4f4286)
++++ .idea/codeStyles/Project.xml	(date 1602705814923)
+@@ -3,18 +3,9 @@
+     <JetCodeStyleSettings>
+       <option name="PACKAGES_TO_USE_STAR_IMPORTS">
+         <value>
+-          <package name="java.util" alias="false" withSubpackages="false" />
+-          <package name="kotlinx.android.synthetic" alias="false" withSubpackages="true" />
+-          <package name="io.ktor" alias="false" withSubpackages="true" />
+-        </value>
+-      </option>
+-      <option name="PACKAGES_IMPORT_LAYOUT">
+-        <value>
+-          <package name="" alias="false" withSubpackages="true" />
+-          <package name="java" alias="false" withSubpackages="true" />
+-          <package name="javax" alias="false" withSubpackages="true" />
+-          <package name="kotlin" alias="false" withSubpackages="true" />
+-          <package name="" alias="true" withSubpackages="true" />
++          <package name="java.util" withSubpackages="false" static="false" />
++          <package name="kotlinx.android.synthetic" withSubpackages="true" static="false" />
++          <package name="io.ktor" withSubpackages="true" static="false" />
+         </value>
+       </option>
+     </JetCodeStyleSettings>
+Index: app/src/main/res/layout/activity_register.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_register.xml	(date 1602781585443)
++++ app/src/main/res/layout/activity_register.xml	(date 1602781585443)
+@@ -0,0 +1,190 @@
++<?xml version="1.0" encoding="utf-8"?>
++<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:animateLayoutChanges="true"
++    android:visibility="visible"
++    tools:context=".LoginActivity">
++
++    <!--Screen-->
++    <RelativeLayout
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_centerInParent="true"
++        android:layout_marginLeft="40dp"
++        android:layout_marginRight="40dp">
++
++        <!--Text+Username+Password+Button-->
++        <RelativeLayout
++            android:id="@+id/r_rellay1"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:visibility="visible">
++
++            <!--Name+Password+Email-->
++            <LinearLayout
++                android:id="@+id/r_linlay1"
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:layout_marginTop="20dp"
++                android:orientation="vertical">
++
++                <!--E-mail-->
++                <LinearLayout
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:orientation="vertical">
++
++                    <TextView
++                        android:layout_width="wrap_content"
++                        android:layout_height="wrap_content"
++                        android:fontFamily="sans-serif-light"
++                        android:text="E-mail adress"
++                        android:textAllCaps="false"
++                        android:textColor="@color/grey"
++                        android:textSize="15sp"
++                        android:textStyle="bold" />
++
++                    <EditText
++                        android:id="@+id/r_email"
++                        android:maxLines="1"
++                        android:hint="@string/email"
++                        android:imeOptions="actionNext"
++                        android:nextFocusDown="@+id/l_login_button"
++                        android:inputType="text"
++                        android:layout_width="match_parent"
++                        android:layout_height="40dp"
++                        android:layout_marginTop="5dp"
++                        android:fontFamily="sans-serif-light"
++                        android:paddingLeft="10dp"
++                        android:paddingRight="15dp"
++                        android:textSize="15sp"
++                        android:singleLine="true"/>
++                </LinearLayout>
++
++                <!--Username-->
++                <LinearLayout
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_marginTop="20dp"
++                    android:orientation="vertical">
++
++                    <TextView
++                        android:layout_width="wrap_content"
++                        android:layout_height="wrap_content"
++                        android:fontFamily="sans-serif-light"
++                        android:text="Username"
++                        android:textAllCaps="false"
++                        android:textColor="@color/grey"
++                        android:textSize="15sp"
++                        android:textStyle="bold" />
++
++                    <EditText
++                        android:id="@+id/r_username"
++                        android:maxLines="1"
++                        android:imeOptions="actionNext"
++                        android:hint="@string/username"
++                        android:nextFocusDown="@+id/l_login_button"
++                        android:inputType="text"
++                        android:layout_width="match_parent"
++                        android:layout_height="40dp"
++                        android:layout_marginTop="5dp"
++                        android:fontFamily="sans-serif-light"
++                        android:paddingLeft="10dp"
++                        android:paddingRight="15dp"
++                        android:textSize="15sp"
++                        android:singleLine="true"/>
++                </LinearLayout>
++
++                <!--Password-->
++                <LinearLayout
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_marginTop="20dp"
++                    android:orientation="vertical">
++
++                    <TextView
++                        android:layout_width="wrap_content"
++                        android:layout_height="wrap_content"
++                        android:fontFamily="sans-serif-light"
++                        android:text="Password"
++                        android:textAllCaps="false"
++                        android:textColor="@color/grey"
++                        android:textSize="15sp"
++                        android:textStyle="bold" />
++
++                    <EditText
++                        android:id="@+id/r_password"
++                        android:maxLines="1"
++                        android:imeOptions="actionNext"
++                        android:text="Password"
++                        android:nextFocusDown="@+id/r_signup_button"
++                        android:layout_width="match_parent"
++                        android:layout_height="40dp"
++                        android:layout_marginTop="5dp"
++                        android:fontFamily="sans-serif-light"
++                        android:inputType="textPassword"
++                        android:paddingLeft="15dp"
++                        android:paddingRight="15dp"
++                        android:textSize="15sp"
++                        android:singleLine="true"/>
++
++                </LinearLayout>
++            </LinearLayout>
++
++            <!--Forgot password button
++            <Button
++                android:id="@+id/l_forgot_password"
++                android:layout_width="wrap_content"
++                android:layout_height="20dp"
++
++                android:layout_marginTop="30dp"
++                android:layout_centerHorizontal="true"
++                android:fontFamily="sans-serif-light"
++                android:paddingLeft="20dp"
++                android:paddingRight="20dp"
++                android:background="@color/transparent"
++                android:text="Did you forget your password?"
++                android:textAllCaps="false"
++                android:textColor="@color/black"
++                android:textSize="16sp" /> -->
++
++            <!--Sign Up button-->
++            <Button
++                android:id="@+id/r_signup_button"
++                android:layout_width="wrap_content"
++                android:layout_height="40dp"
++                android:layout_below="@id/r_linlay1"
++                android:layout_centerHorizontal="true"
++                android:layout_marginTop="20dp"
++                android:fontFamily="sans-serif-medium"
++                android:paddingLeft="70dp"
++                android:paddingRight="70dp"
++                android:text="Sign Up"
++                android:textAllCaps="false"
++                android:background="@color/black"
++                android:textColor="@color/white"
++                android:textSize="16sp" />
++
++            <!--You already have an account-->
++            <Button
++                android:id="@+id/r_existing_account"
++                android:layout_width="wrap_content"
++                android:layout_height="20dp"
++                android:layout_below="@id/r_signup_button"
++                android:layout_marginTop="30dp"
++                android:layout_centerHorizontal="true"
++                android:fontFamily="sans-serif-light"
++                android:paddingLeft="20dp"
++                android:paddingRight="20dp"
++                android:background="@color/transparent"
++                android:text="You already have an account?"
++                android:textAllCaps="false"
++                android:textColor="@color/black"
++                android:textSize="16sp" />
++
++        </RelativeLayout>
++    </RelativeLayout>
++</RelativeLayout>
+\ No newline at end of file
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    package=\"com.example.pabs\">\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/AppTheme.NoActionBar\">\r\n        <activity android:name=\".LoginActivity\">/\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision 016778f008088c52856d15ad5d8a385bfd4f4286)
++++ app/src/main/AndroidManifest.xml	(date 1602870657382)
+@@ -9,7 +9,9 @@
+         android:roundIcon="@mipmap/ic_launcher_round"
+         android:supportsRtl="true"
+         android:theme="@style/AppTheme.NoActionBar">
+-        <activity android:name=".LoginActivity">/
++        <activity android:name=".RegisterActivity"></activity>
++        <activity android:name=".LoginActivity">
++            /
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+ 
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\r\n    <string name=\"app_name\">PABS</string>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/strings.xml	(revision 016778f008088c52856d15ad5d8a385bfd4f4286)
++++ app/src/main/res/values/strings.xml	(date 1602781101185)
+@@ -1,3 +1,5 @@
+ <resources>
+     <string name="app_name">PABS</string>
++    <string name="email">name@example.com</string>
++    <string name="username">John</string>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/java/com/example/pabs/LoginActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pabs;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.pabs.Models.User;\r\nimport com.google.firebase.FirebaseApp;\r\nimport com.google.firebase.database.ChildEventListener;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\npublic class LoginActivity extends AppCompatActivity {\r\n\r\n    //UI\r\n    private EditText name_et = null, password_et = null;\r\n    private Button forgot_password_btn = null, login_btn = null, register_btn = null;\r\n\r\n    //firebase\r\n    DatabaseReference reference;\r\n\r\n    /**\r\n     * on create\r\n     */\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_login);\r\n\r\n        //edittext\r\n        name_et = findViewById(R.id.l_username);\r\n        password_et = findViewById(R.id.l_password);\r\n\r\n        //button\r\n        forgot_password_btn = findViewById(R.id.l_forgot_password);\r\n        login_btn = findViewById(R.id.l_login_button);\r\n        register_btn = findViewById(R.id.l_register_button);\r\n\r\n        //open forgotPasswordFragment\r\n        forgot_password_btn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                openForgotPasswordFragment();\r\n            }\r\n        });\r\n\r\n        //open RegisterActivity\r\n        register_btn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                openRegisterActivity();\r\n            }\r\n        });\r\n\r\n        //open NextActivity\r\n        login_btn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                openNextActivity();\r\n            }\r\n        });\r\n\r\n        //firebase database -> get reference to USER table\r\n        reference = FirebaseDatabase.getInstance().getReference().child(\"USER\");\r\n\r\n        //login click listener\r\n        login_btn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                final String name = name_et.getText().toString();\r\n                final String password = password_et.getText().toString();\r\n\r\n                //reference to all the ID's of USER\r\n                reference.addListenerForSingleValueEvent(new ValueEventListener() {\r\n                    @Override\r\n                    public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                        boolean login_successful = false;\r\n                        //iterate through ID elements of USER\r\n                        for (DataSnapshot child : snapshot.getChildren()) {\r\n                            //examine if user credentials are correct\r\n                            if((child.child(\"user_name\").getValue().toString().equals(name)) && (child.child(\"password\").getValue().toString().equals(password))){\r\n                                login_successful = true;\r\n                            }\r\n                        }\r\n\r\n                        if(login_successful){\r\n                            //if login was successful\r\n                            LoginSuccessful();\r\n                        }\r\n                        else\r\n                        {\r\n                            //if login failed\r\n                            Toast.makeText(LoginActivity.this, \"Login failed!\", Toast.LENGTH_SHORT).show();\r\n                        }\r\n                    }\r\n                    @Override\r\n                    public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                    }\r\n                });\r\n            }\r\n        });\r\n    }\r\n\r\n    /**\r\n     * login successful\r\n     */\r\n    private void LoginSuccessful(){\r\n        Toast.makeText(LoginActivity.this, \"Login Successful!\", Toast.LENGTH_SHORT).show();\r\n        openNextActivity();\r\n    }\r\n\r\n    /**\r\n     * open forgot password fragment\r\n     */\r\n    protected void openForgotPasswordFragment(){\r\n\r\n    }\r\n\r\n    /**\r\n     * open register activity\r\n     */\r\n    protected void openRegisterActivity(){\r\n\r\n    }\r\n\r\n    /**\r\n     * open next activity\r\n     */\r\n    protected void openNextActivity(){\r\n\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/LoginActivity.java	(revision 016778f008088c52856d15ad5d8a385bfd4f4286)
++++ app/src/main/java/com/example/pabs/LoginActivity.java	(date 1602874556937)
+@@ -4,6 +4,7 @@
+ import androidx.annotation.Nullable;
+ import androidx.appcompat.app.AppCompatActivity;
+ 
++import android.content.Intent;
+ import android.os.Bundle;
+ import android.util.Log;
+ import android.view.View;
+@@ -131,7 +132,9 @@
+      * open register activity
+      */
+     protected void openRegisterActivity(){
+-
++        Intent intent = new Intent(this, RegisterActivity.class);
++        startActivity(intent);
++        finish();
+     }
+ 
+     /**
+Index: app/src/main/java/com/example/pabs/RegisterActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/RegisterActivity.java	(date 1602875676576)
++++ app/src/main/java/com/example/pabs/RegisterActivity.java	(date 1602875676576)
+@@ -0,0 +1,52 @@
++package com.example.pabs;
++
++import androidx.appcompat.app.AppCompatActivity;
++
++import android.os.Bundle;
++import android.view.View;
++import android.widget.Button;
++import android.widget.EditText;
++
++import com.google.firebase.database.DatabaseReference;
++import com.google.firebase.database.FirebaseDatabase;
++
++import static com.example.pabs.R.layout.activity_register;
++
++public class RegisterActivity extends AppCompatActivity {
++
++    //UI
++    private EditText name_et = null, password_et = null, email_et = null;
++    private Button register_btn = null;
++
++    //firebase
++    DatabaseReference reference;
++
++    @Override
++    protected void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        setContentView(activity_register);
++
++            //edittext
++            name_et = findViewById(R.id.r_username);
++            password_et = findViewById(R.id.r_password);
++            email_et = findViewById(R.id.r_email);
++
++            //button
++            register_btn = findViewById(R.id.r_signup_button);
++
++            //open NextActivity
++            register_btn.setOnClickListener(new View.OnClickListener() {
++                @Override
++                public void onClick(View view) {
++                    openNextActivity();
++                }
++            });
++
++            //firebase database -> get reference to USER table
++            reference = FirebaseDatabase.getInstance().getReference().child("USER");
++    }
++
++    private void openNextActivity(){
++
++    }
++}
+\ No newline at end of file

@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -31,8 +32,6 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
     //UI
     private EditText name_et = null, password_et = null;
     private Button forgot_password_btn = null, login_btn = null, register_btn = null;
-    private String nickname = null;
-   // private Object currentUser = null;
 
     //firebase
     DatabaseReference reference;
@@ -108,19 +107,16 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
      * Check internet connection
      */
     private boolean isInternetConnectionActivated() {
-        boolean connected = false;
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             //we are connected to a network
-            connected = true;
+            return true;
         }
         else{
             //we are not connected to a network
-            connected = false;
+            return false;
         }
-
-        return connected;
     }
 
     /**
@@ -176,7 +172,6 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
      */
     @Override
     public void applyNickname(String nickname) {
-        this.nickname = nickname;
         reference.child(currentUser).child("nickname").setValue(nickname);
         loginSuccessful();
     }
@@ -208,6 +203,8 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
      * open register activity
      */
     private void openRegisterActivity(){
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivity(intent);
 
     }
 
