@@ -41,7 +41,6 @@ public class NicknameDialogFragment extends AppCompatDialogFragment {
                 .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
                     }
                 })
                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {
@@ -57,6 +56,8 @@ public class NicknameDialogFragment extends AppCompatDialogFragment {
 
         return builder.create();
     }
+
+
 
     /**
      * when the NicknameDialogListener is implemented in another class

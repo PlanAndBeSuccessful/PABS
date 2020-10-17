@@ -1,29 +1,39 @@
 package com.example.pabs.Models;
 
 public class User {
-    private String toast;
+    private String token;
     private String e_mail;
     private String nickname;
     private String password;
     private String user_name;
+    private String online;
 
     public User(){
     }
 
-    public User(String toast, String e_mail, String nickname, String password, String user_name) {
-        this.toast = toast;
+    public User(String token, String e_mail, String nickname, String password, String user_name, String online) {
+        this.token = token;
         this.e_mail = e_mail;
         this.nickname = nickname;
         this.password = password;
         this.user_name = user_name;
+        this.online = online;
     }
 
-    public String getUserID() {
-        return toast;
+    public String getOnline() {
+        return online;
     }
 
-    public void setUserID(String userID) {
-        this.toast = userID;
+    public void setOnline(String online) {
+        this.online = online;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getE_mail() {
