@@ -41,14 +41,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-light"
-                        android:text="Name"
+                        android:text="E-mail"
                         android:textAllCaps="false"
                         android:textColor="@color/grey"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/l_username"
+                        android:id="@+id/l_email"
                         android:maxLines="1"
                         android:imeOptions="actionUnspecified"
                         android:inputType="text"

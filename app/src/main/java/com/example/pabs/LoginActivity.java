@@ -19,7 +19,12 @@ import android.widget.Toast;
 
 import com.example.pabs.Fragments.NicknameDialogFragment;
 import com.example.pabs.Models.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,13 +34,18 @@ import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity implements NicknameDialogFragment.NicknameDialogListener {
 
+    //DEBUG
+    private static final String TAG = "LoginActivity";
+
     //UI
-    private EditText name_et = null, password_et = null;
+    private EditText email_et = null, password_et = null;
     private Button forgot_password_btn = null, login_btn = null, register_btn = null;
 
     //firebase
-    DatabaseReference reference;
-    String currentUser;
+    private DatabaseReference reference;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+
     /**
      * on create
      */
@@ -45,7 +55,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
         setContentView(R.layout.activity_login);
 
         //edittext
-        name_et = findViewById(R.id.l_username);
+        email_et = findViewById(R.id.l_email);
         password_et = findViewById(R.id.l_password);
 
         //button
@@ -77,9 +87,6 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
             }
         });
 
-        //firebase database -> get reference to USER table
-        reference = FirebaseDatabase.getInstance().getReference().child("USER");
-
         //login click listener
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +94,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                 //check internet connection
                 if(isInternetConnectionActivated()){
                     //internet is active
-                    proceedLogin();
+                    Login();
                 }
                 else{
                     //internet is not active
@@ -101,6 +108,12 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                 }
             }
         });
+
+        //firebase database -> get reference to USER table
+        reference = FirebaseDatabase.getInstance().getReference().child("USER");
+
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
     }
 
     /**
@@ -120,51 +133,57 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
     }
 
     /**
-     * proceedLogin
+     * Login
      */
-    private void proceedLogin(){
-        final String name = name_et.getText().toString();
-        final String password = password_et.getText().toString();
+    private void Login(){
+        mAuth.signOut();
+        user = mAuth.getCurrentUser();
+        if (user != null) {
+            // User is signed in
+            Log.d(TAG, "User is already signed in!");
+        } else {
+            // User is not signed in
+            final String email = email_et.getText().toString();
+            final String password = password_et.getText().toString();
 
-        //reference to all the ID's of USER
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                boolean login_successful = false;
-                boolean user_has_nickname = true;
-                //iterate through ID elements of USER
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    //examine if user credentials are correct
-                    if((child.child("user_name").getValue().toString().equals(name)) && (child.child("password").getValue().toString().equals(password))){
-                        login_successful = true;
-                        currentUser = child.getKey().toString();
+            //Sign in using auth(email, pass)
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success
+                                user = mAuth.getCurrentUser();
 
-                        if(child.child("nickname").getValue().equals("")){
-                            user_has_nickname = false;
+                                //Verify if user has nickname
+                                reference.child(user.getUid()).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if(snapshot.child("nickname").getValue().equals("")){
+                                            //set nickname
+                                            openNicknameDialogFragment();
+                                        }
+                                        else{
+                                            //proceed to next activity
+                                            loginSuccessful();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        //database error
+                                    }
+                                });
+
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                }
+                    });
 
-                if(login_successful){
-                    //if login was successful
-                    if(user_has_nickname){
-                        loginSuccessful();
-                    }
-                    else {
-                        openNicknameDialogFragment();
-                    }
-                }
-                else
-                {
-                    //if login failed
-                    Toast.makeText(LoginActivity.this, "Wrong name or password!", Toast.LENGTH_SHORT).show();
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+        }
 
-            }
-        });
     }
 
     /**
@@ -172,7 +191,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
      */
     @Override
     public void applyNickname(String nickname) {
-        reference.child(currentUser).child("nickname").setValue(nickname);
+        reference.child(user.getUid()).child("nickname").setValue(nickname);
         loginSuccessful();
     }
 
@@ -204,8 +223,8 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
      */
     private void openRegisterActivity(){
         Intent intent = new Intent(this, RegisterActivity.class);
+        mAuth.signOut();
         startActivity(intent);
-
     }
 
     /**
