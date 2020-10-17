@@ -1,7 +1,7 @@
 package com.example.pabs.Models;
 
 public class User {
-    private String userID;
+    private String toast;
     private String e_mail;
     private String nickname;
     private String password;
@@ -10,8 +10,8 @@ public class User {
     public User(){
     }
 
-    public User(String userID, String e_mail, String nickname, String password, String user_name) {
-        this.userID = userID;
+    public User(String toast, String e_mail, String nickname, String password, String user_name) {
+        this.toast = toast;
         this.e_mail = e_mail;
         this.nickname = nickname;
         this.password = password;
@@ -19,11 +19,11 @@ public class User {
     }
 
     public String getUserID() {
-        return userID;
+        return toast;
     }
 
     public void setUserID(String userID) {
-        this.userID = userID;
+        this.toast = userID;
     }
 
     public String getE_mail() {

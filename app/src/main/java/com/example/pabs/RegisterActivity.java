@@ -1,13 +1,19 @@
 package com.example.pabs;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.pabs.Models.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -18,6 +24,7 @@ public class RegisterActivity extends AppCompatActivity {
     //UI
     private EditText name_et = null, password_et = null, email_et = null;
     private Button register_btn = null;
+    private FirebaseAuth currAuth;
 
     //firebase
     DatabaseReference reference;
@@ -51,6 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     register();
+
                 }
             });
 
@@ -58,19 +66,36 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void register(){
+
         //getting user credentials
         String name = name_et.getText().toString();
         String email = email_et.getText().toString();
-        String password = password_et.getText().toString();
-        //creating a user type object
-        User user = new User("04",email,"",password,name);
-        //creating a new element in the database
-        //reference.child(user.getUserID()).child(user.).setValue(user.getE_mail());
-        /*reference.child(user.getUserID()).setValue(user);
-        reference.child(user.getUserID()).child("userID").removeValue();*/
-        String key_id = reference.push().getKey();
-        reference.child(key_id).setValue(user);
+        final String password = password_et.getText().toString();
 
+        //creating a user type object
+        final User user = new User("04",email,"",password,name);
+
+        //getting an instance of firebase authentication token
+        currAuth = FirebaseAuth.getInstance();
+        currAuth.createUserWithEmailAndPassword(email,password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            reference.child(currAuth.getUid()).setValue(user);
+                            finish();
+                        }
+                        else{
+                            if( password.length() < 6){
+                                Toast.makeText(RegisterActivity.this, "The given password is too short \nIt needs to be at least 6 characters!", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                Toast.makeText(RegisterActivity.this, "The given E-mail may contain errors!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+        currAuth.signOut();
     }
 
     private void openNextActivity(){
