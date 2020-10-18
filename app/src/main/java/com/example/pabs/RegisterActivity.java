@@ -2,8 +2,6 @@ package com.example.pabs;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -23,14 +21,18 @@ import static com.example.pabs.R.layout.activity_register;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    private String TAG = "RegisterActivity";
+
+    private String token = "";
+
     //UI
     private EditText name_et = null, password_et = null, email_et = null;
     private Button register_btn = null, back_to_login = null;
     private FirebaseAuth currAuth;
-    private ProgressDialog mDialog = null;
 
     //firebase
     DatabaseReference reference;
+    FirebaseDatabase FbDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,18 +57,22 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             });
 
+            //open NextActivity
+            register_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    openNextActivity();
+                }
+            });
+
             //firebase database -> get reference to USER table
             reference = FirebaseDatabase.getInstance().getReference().child("USER");
 
             register_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //dialog on loading
-                    mDialog = new ProgressDialog(RegisterActivity.this);
-
-                    mDialog.setMessage("Please wait...");
-                    mDialog.show();
                     register();
+
                 }
             });
     }
@@ -95,20 +101,12 @@ public class RegisterActivity extends AppCompatActivity {
 
                                 reference.child(currAuth.getUid()).setValue(user);
                                 FirebaseAuth.getInstance().signOut();
-                                mDialog.dismiss();
-                                Toast.makeText(RegisterActivity.this, "Succesfully registered!", Toast.LENGTH_SHORT).show();
                                 finish();
-                            }
-                            else
-                            {
+                            } else {
                                 if (password.length() < 6) {
                                     Toast.makeText(RegisterActivity.this, "The given password is too short \nIt needs to be at least 6 characters!", Toast.LENGTH_SHORT).show();
-                                    mDialog.dismiss();
-                                }
-                                else
-                                {
+                                } else {
                                     Toast.makeText(RegisterActivity.this, "The given E-mail may contain errors!", Toast.LENGTH_SHORT).show();
-                                    mDialog.dismiss();
                                 }
                             }
                         }
@@ -116,9 +114,12 @@ public class RegisterActivity extends AppCompatActivity {
         }
         else
             {
-            Toast.makeText(RegisterActivity.this, "Fields are empty!.", Toast.LENGTH_SHORT).show();
-            mDialog.dismiss();
+            Toast.makeText(RegisterActivity.this, "Register failed.", Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    private void openNextActivity(){
 
     }
 
