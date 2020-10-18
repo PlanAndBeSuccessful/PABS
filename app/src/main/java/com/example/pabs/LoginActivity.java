@@ -1,8 +1,6 @@
 package com.example.pabs;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -14,6 +12,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.pabs.Fragments.NicknameDialogFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -35,6 +38,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
     //UI
     private EditText email_et = null, password_et = null;
     private Button forgot_password_btn = null, login_btn = null, register_btn = null;
+    private ProgressDialog mDialog = null;
 
     //firebase
     private DatabaseReference reference = null;
@@ -75,22 +79,21 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
             }
         });
 
-        //open NextActivity
-        login_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openNextActivity();
-            }
-        });
-
         //login click listener
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //dialog on loading
+                mDialog = new ProgressDialog(LoginActivity.this);
+
+                mDialog.setMessage("Please wait...");
+                mDialog.show();
+
+                login_btn.setClickable(false);
                 //check internet connection
                 if(isInternetConnectionActivated()){
                     //internet is active
-                    Login();
+                    login();
                 }
                 else{
                     //internet is not active
@@ -101,6 +104,8 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                             .setPositiveButton("Okay", null)
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .show();
+                    login_btn.setClickable(true);
+                    mDialog.dismiss();
                 }
             }
         });
@@ -138,9 +143,9 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
     /**
      * Login
      */
-    private void Login(){
+    private void login(){
 
-        // check if filed are empty
+        // check if fields are empty
         if (!TextUtils.isEmpty(email_et.getText().toString()) && !TextUtils.isEmpty(password_et.getText().toString()) ) {
 
             //get information from the edit text fields
@@ -161,7 +166,6 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                             token = task.getResult();
                             //we have to use a setter else we lose the information inside onComplete
                             setToken(token);
-                            Log.d("VICCES", "onComplete: "+token);
                         }
                     });
 
@@ -184,18 +188,27 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                                             if (snapshot.child("nickname").getValue().equals("")) {
                                                 //set nickname
                                                 openNicknameDialogFragment();
+                                                login_btn.setClickable(true);
+                                                mDialog.dismiss();
                                             } else {
                                                 //proceed to next activity
                                                 loginSuccessful();
+                                                mDialog.dismiss();
                                             }
                                         }
                                         else{
-                                            Log.d(TAG, "User is online!");
+                                            Log.d(TAG, "User is already online!");
+                                            Toast.makeText(LoginActivity.this, "User is already online!", Toast.LENGTH_SHORT).show();
+                                            login_btn.setClickable(true);
+                                            mDialog.dismiss();
                                         }
                                     }
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
                                         //database error
+                                        login_btn.setClickable(true);
+                                        mDialog.dismiss();
+                                        Log.w(TAG, "On cancelled: " + error);
                                     }
                                 });
                             }
@@ -203,14 +216,20 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                             {
                                 // If sign in fails, display a message to the user.
                                 Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                login_btn.setClickable(true);
+                                mDialog.dismiss();
                             }
                         }
                     });
         }
         else
         {
-            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+            // If sign in fails, display a message to the user.
+            Toast.makeText(LoginActivity.this, "Wrong E-mail or Password!", Toast.LENGTH_SHORT).show();
+            login_btn.setClickable(true);
+            mDialog.dismiss();
         }
+
     }
 
 
@@ -268,4 +287,12 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
         startActivity(intent);
     }
 
+    /**
+     *
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        login_btn.setClickable(true);
+    }
 }
