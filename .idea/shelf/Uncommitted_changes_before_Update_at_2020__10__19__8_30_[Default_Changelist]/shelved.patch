@@ -1,0 +1,136 @@
+Index: app/src/main/res/layout/activity_login.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<RelativeLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:animateLayoutChanges=\"true\"\r\n    android:visibility=\"visible\"\r\n    tools:context=\".LoginActivity\">\r\n\r\n    <!--Screen-->\r\n    <RelativeLayout\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_centerInParent=\"true\"\r\n        android:layout_marginLeft=\"40dp\"\r\n        android:layout_marginRight=\"40dp\">\r\n\r\n        <!--Text+Username+Password+Button-->\r\n        <RelativeLayout\r\n            android:id=\"@+id/l_rellay1\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:visibility=\"visible\">\r\n\r\n            <!--Name+Password-->\r\n            <LinearLayout\r\n                android:id=\"@+id/l_linlay1\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginTop=\"20dp\"\r\n                android:orientation=\"vertical\">\r\n\r\n                <!--Name-->\r\n                <LinearLayout\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:orientation=\"vertical\">\r\n\r\n                    <TextView\r\n                        android:layout_width=\"wrap_content\"\r\n                        android:layout_height=\"wrap_content\"\r\n                        android:fontFamily=\"sans-serif-light\"\r\n                        android:text=\"E-mail\"\r\n                        android:textAllCaps=\"false\"\r\n                        android:textColor=\"@color/grey\"\r\n                        android:textSize=\"15sp\"\r\n                        android:textStyle=\"bold\" />\r\n\r\n                    <EditText\r\n                        android:id=\"@+id/l_email\"\r\n                        android:maxLines=\"1\"\r\n                        android:imeOptions=\"actionUnspecified\"\r\n                        android:inputType=\"text\"\r\n                        android:layout_width=\"match_parent\"\r\n                        android:layout_height=\"40dp\"\r\n                        android:layout_marginTop=\"5dp\"\r\n                        android:fontFamily=\"sans-serif-light\"\r\n                        android:paddingLeft=\"15dp\"\r\n                        android:paddingRight=\"15dp\"\r\n                        android:textSize=\"15sp\" />\r\n                </LinearLayout>\r\n\r\n                <!--Password-->\r\n                <LinearLayout\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"20dp\"\r\n                    android:orientation=\"vertical\">\r\n\r\n                    <TextView\r\n                        android:layout_width=\"wrap_content\"\r\n                        android:layout_height=\"wrap_content\"\r\n                        android:fontFamily=\"sans-serif-light\"\r\n                        android:text=\"Password\"\r\n                        android:textAllCaps=\"false\"\r\n                        android:textColor=\"@color/grey\"\r\n                        android:textSize=\"15sp\"\r\n                        android:textStyle=\"bold\" />\r\n\r\n                    <EditText\r\n                        android:id=\"@+id/l_password\"\r\n                        android:maxLines=\"1\"\r\n                        android:imeOptions=\"actionUnspecified\"\r\n                        android:layout_width=\"match_parent\"\r\n                        android:layout_height=\"40dp\"\r\n                        android:layout_marginTop=\"5dp\"\r\n                        android:fontFamily=\"sans-serif-light\"\r\n                        android:inputType=\"textPassword\"\r\n                        android:paddingLeft=\"15dp\"\r\n                        android:paddingRight=\"15dp\"\r\n                        android:textSize=\"15sp\" />\r\n                </LinearLayout>\r\n            </LinearLayout>\r\n\r\n            <!--Forgot password button-->\r\n            <Button\r\n                android:id=\"@+id/l_forgot_password\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"20dp\"\r\n                android:layout_below=\"@id/l_linlay1\"\r\n                android:layout_marginTop=\"30dp\"\r\n                android:layout_centerHorizontal=\"true\"\r\n                android:fontFamily=\"sans-serif-light\"\r\n                android:paddingLeft=\"20dp\"\r\n                android:paddingRight=\"20dp\"\r\n                android:background=\"@color/transparent\"\r\n                android:text=\"Did you forget your password?\"\r\n                android:textAllCaps=\"false\"\r\n                android:textColor=\"@color/black\"\r\n                android:textSize=\"16sp\" />\r\n\r\n            <!--Login button-->\r\n            <Button\r\n                android:id=\"@+id/l_login_button\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"40dp\"\r\n                android:layout_below=\"@+id/l_forgot_password\"\r\n                android:layout_centerHorizontal=\"true\"\r\n                android:layout_marginTop=\"20dp\"\r\n                android:fontFamily=\"sans-serif-medium\"\r\n                android:paddingLeft=\"70dp\"\r\n                android:paddingRight=\"70dp\"\r\n                android:text=\"Login\"\r\n                android:textAllCaps=\"false\"\r\n                android:background=\"@color/black\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"16sp\" />\r\n\r\n            <!--Register button-->\r\n            <Button\r\n                android:id=\"@+id/l_register_button\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"40dp\"\r\n                android:layout_below=\"@+id/l_login_button\"\r\n                android:layout_centerHorizontal=\"true\"\r\n                android:layout_marginTop=\"20dp\"\r\n                android:fontFamily=\"sans-serif-medium\"\r\n                android:paddingLeft=\"20dp\"\r\n                android:paddingRight=\"20dp\"\r\n                android:background=\"@color/black\"\r\n                android:text=\"Register\"\r\n                android:textAllCaps=\"false\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"16sp\" />\r\n\r\n        </RelativeLayout>\r\n    </RelativeLayout>\r\n</RelativeLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_login.xml	(revision 16be5b829dbc3d1e9f1cbc0cc229d64054af14eb)
++++ app/src/main/res/layout/activity_login.xml	(date 1603028973198)
+@@ -5,14 +5,17 @@
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     android:animateLayoutChanges="true"
++    android:background="@drawable/login_background"
+     android:visibility="visible"
+     tools:context=".LoginActivity">
+ 
++
+     <!--Screen-->
+     <RelativeLayout
+-        android:layout_width="wrap_content"
++        android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+-        android:layout_centerInParent="true"
++        android:layout_alignParentBottom="true"
++        android:layout_marginBottom="40dp"
+         android:layout_marginLeft="40dp"
+         android:layout_marginRight="40dp">
+ 
+@@ -37,28 +40,33 @@
+                     android:layout_height="wrap_content"
+                     android:orientation="vertical">
+ 
+-                    <TextView
+-                        android:layout_width="wrap_content"
+-                        android:layout_height="wrap_content"
+-                        android:fontFamily="sans-serif-light"
+-                        android:text="E-mail"
+-                        android:textAllCaps="false"
+-                        android:textColor="@color/grey"
+-                        android:textSize="15sp"
+-                        android:textStyle="bold" />
++
+ 
+                     <EditText
+                         android:id="@+id/l_email"
+-                        android:maxLines="1"
+-                        android:imeOptions="actionUnspecified"
+-                        android:inputType="text"
++                        android:background="@color/transparent"
+                         android:layout_width="match_parent"
+                         android:layout_height="40dp"
+                         android:layout_marginTop="5dp"
+                         android:fontFamily="sans-serif-light"
++                        android:imeOptions="actionUnspecified"
++                        android:inputType="text"
++                        android:maxLines="1"
+                         android:paddingLeft="15dp"
+                         android:paddingRight="15dp"
+-                        android:textSize="15sp" />
++                        android:textSize="15sp" >
++                        <TextView
++                            android:layout_width="wrap_content"
++                            android:layout_height="wrap_content"
++                            android:fontFamily="sans-serif-light"
++                            android:text="E-mail"
++                            android:textAllCaps="false"
++                            android:textColor="@color/white"
++                            android:textSize="15sp"
++                            android:textStyle="bold" />
++                    </EditText>
++
++
+                 </LinearLayout>
+ 
+                 <!--Password-->
+@@ -80,13 +88,14 @@
+ 
+                     <EditText
+                         android:id="@+id/l_password"
+-                        android:maxLines="1"
+-                        android:imeOptions="actionUnspecified"
++                        android:background="@drawable/email_bg"
+                         android:layout_width="match_parent"
+                         android:layout_height="40dp"
+                         android:layout_marginTop="5dp"
+                         android:fontFamily="sans-serif-light"
++                        android:imeOptions="actionUnspecified"
+                         android:inputType="textPassword"
++                        android:maxLines="1"
+                         android:paddingLeft="15dp"
+                         android:paddingRight="15dp"
+                         android:textSize="15sp" />
+@@ -99,12 +108,12 @@
+                 android:layout_width="wrap_content"
+                 android:layout_height="20dp"
+                 android:layout_below="@id/l_linlay1"
++                android:layout_centerHorizontal="true"
+                 android:layout_marginTop="30dp"
+-                android:layout_centerHorizontal="true"
++                android:background="@color/transparent"
+                 android:fontFamily="sans-serif-light"
+                 android:paddingLeft="20dp"
+                 android:paddingRight="20dp"
+-                android:background="@color/transparent"
+                 android:text="Did you forget your password?"
+                 android:textAllCaps="false"
+                 android:textColor="@color/black"
+@@ -118,12 +127,12 @@
+                 android:layout_below="@+id/l_forgot_password"
+                 android:layout_centerHorizontal="true"
+                 android:layout_marginTop="20dp"
++                android:background="@color/black"
+                 android:fontFamily="sans-serif-medium"
+                 android:paddingLeft="70dp"
+                 android:paddingRight="70dp"
+                 android:text="Login"
+                 android:textAllCaps="false"
+-                android:background="@color/black"
+                 android:textColor="@color/white"
+                 android:textSize="16sp" />
+ 
+@@ -135,10 +144,10 @@
+                 android:layout_below="@+id/l_login_button"
+                 android:layout_centerHorizontal="true"
+                 android:layout_marginTop="20dp"
++                android:background="@color/black"
+                 android:fontFamily="sans-serif-medium"
+                 android:paddingLeft="20dp"
+                 android:paddingRight="20dp"
+-                android:background="@color/black"
+                 android:text="Register"
+                 android:textAllCaps="false"
+                 android:textColor="@color/white"
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_10_16_2020_10_19_PM__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_10_16_2020_10_19_PM__Default_Changelist_.xml
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_10_17_2020_3_10_PM__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_10_17_2020_3_10_PM__Default_Changelist_.xml
