@@ -265,6 +265,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
         //settings for user
         reference.child(user.getUid()).child("online").setValue("true");
         reference.child(user.getUid()).child("token").setValue(token);
+
         openEventActivity();
     }
 

@@ -4,16 +4,21 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.Fragment;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.pabs.R;
 
@@ -26,38 +31,49 @@ public class NicknameDialogFragment extends AppCompatDialogFragment {
     //edittext
     private EditText nickname_et = null;
     private NicknameDialogListener nicknameDialogListener;
+    //
+    private Dialog dialog;
+    //
+    private Button continue_bt;
 
     /**
      * When the dialog is created
      */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
         //setting view
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_dialog_nickname, null);
 
-        //building the custom dialog fragment
-        builder.setView(view)
-                .setTitle("Nickname")
-                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                    }
-                })
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String nickname = nickname_et.getText().toString();
-                        //calling interface to set the nickname
-                        nicknameDialogListener.applyNickname(nickname);
-                    }
-                });
+        dialog = new Dialog(getActivity(), R.style.MyDialogTheme);
 
         nickname_et = view.findViewById(R.id.d_n_nickname);
 
-        return builder.create();
+        continue_bt = (Button) view.findViewById(R.id.d_n_continue);
+
+        continue_bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!TextUtils.isEmpty(nickname_et.getText().toString())) {
+                    String nickname = nickname_et.getText().toString();
+                    //calling interface to set the nickname
+                    nicknameDialogListener.applyNickname(nickname);
+                    dialog.dismiss();
+                }
+                else{
+                    Toast.makeText(getActivity(), "Please type in you nickname!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        dialog.setContentView(view);
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+
+
+
+        return dialog;
     }
 
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--Container for nickname-->
+<!--Container for nickname fragment-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,19 +10,43 @@
     tools:context=".Fragments.NicknameDialogFragment"
     android:padding="16dp">
 
-    <!--Nickname edit text-->
-    <EditText
-        android:id="@+id/d_n_nickname"
-        android:layout_width="325dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/email_bg"
-        android:ems="10"
-        android:fontFamily="@font/roboto_thin"
-        android:hint="nickname"
-        android:inputType="text"
-        android:maxLines="1"
-        android:padding="15dp"
-        android:textColorHint="#000000" />
+    <!--Container for nickname and button-->
+    <RelativeLayout
+        android:layout_centerInParent="true"
+        android:background="@drawable/login_button"
+        android:backgroundTint="@color/chinese_silver"
+        android:layout_height="125dp"
+        android:layout_width="match_parent">
+
+        <!--Nickname edit text-->
+        <EditText
+            android:id="@+id/d_n_nickname"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/email_bg"
+            android:ems="10"
+            android:fontFamily="@font/roboto_thin"
+            android:hint="nickname"
+            android:inputType="text"
+            android:maxLines="1"
+            android:padding="15dp"
+            android:textColorHint="#000000"/>
+
+        <!--Continue button-->
+        <Button
+            android:id="@+id/d_n_continue"
+            android:layout_width="150dp"
+            android:layout_height="35dp"
+            android:layout_below="@id/d_n_nickname"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/login_button"
+            android:text="Continue"
+            android:clickable="true"/>
+    </RelativeLayout>
+
 
 </RelativeLayout>

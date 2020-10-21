@@ -9,4 +9,6 @@
     <color name="transparent"> #00000000</color>
     <color name="half_transparent"> #99676767</color>
     <color name="example"> #00d2ff</color>
+    <color name="chinese_silver"> #cccccc</color>
+
 </resources>
