@@ -27,21 +27,21 @@
 
         <!--E-mail+Password+Buttons-->
         <RelativeLayout
-            android:id="@+id/r_rellay1"
+            android:id="@+id/l_rellay1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible">
 
             <!--E-mail+Password-->
             <LinearLayout
-                android:id="@+id/r_linlay1"
+                android:id="@+id/l_linlay1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <!--E-mail-->
                 <EditText
-                    android:id="@+id/r_email"
+                    android:id="@+id/l_email"
                     android:maxLines="1"
                     android:imeOptions="actionNext"
                     android:nextFocusDown="@+id/l_login_button"
@@ -61,10 +61,10 @@
 
                 <!--Password-->
                 <EditText
-                    android:id="@+id/r_password"
+                    android:id="@+id/l_password"
                     android:maxLines="1"
                     android:imeOptions="actionNext"
-                    android:nextFocusDown="@+id/r_signup_button"
+                    android:nextFocusDown="@+id/l_signup_button"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:background="@drawable/email_bg"
@@ -88,7 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:layout_marginTop="10dp"
-                android:layout_below="@id/r_linlay1"
+                android:layout_below="@id/l_linlay1"
                 android:background="@color/transparent"
                 android:text="Forgot your password?"
                 android:textAllCaps="false"
@@ -100,7 +100,7 @@
                 android:id="@+id/l_login_button"
                 android:layout_width="160dp"
                 android:layout_height="50dp"
-                android:layout_below="@id/r_linlay1"
+                android:layout_below="@id/l_linlay1"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="60dp"
                 android:fontFamily="sans-serif-medium"
