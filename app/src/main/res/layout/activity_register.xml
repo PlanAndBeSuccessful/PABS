@@ -7,7 +7,7 @@
     android:animateLayoutChanges="true"
     android:background="@drawable/register_bg">
     android:visibility="visible"
-    tools:context=".LoginActivity">
+    tools:context=".RegisterActivity">
 
     <!--Screen-->
     <RelativeLayout
@@ -119,6 +119,8 @@
 
                 </LinearLayout>
             </LinearLayout>
+
+
 
 
 

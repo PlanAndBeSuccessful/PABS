@@ -17,6 +17,9 @@ import android.widget.EditText;
 
 import com.example.pabs.R;
 
+/**
+ * Sets Nickname for new Users
+ */
 
 public class NicknameDialogFragment extends AppCompatDialogFragment {
 

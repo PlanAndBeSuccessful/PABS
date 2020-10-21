@@ -21,6 +21,10 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import static com.example.pabs.R.layout.activity_register;
 
+/**
+ * Handles Register for users
+ */
+
 public class RegisterActivity extends AppCompatActivity {
 
     //UI
@@ -65,7 +69,9 @@ public class RegisterActivity extends AppCompatActivity {
                     mDialog = new ProgressDialog(RegisterActivity.this);
 
                     mDialog.setMessage("Please wait...");
+                    mDialog.setCancelable(false);
                     mDialog.show();
+
                     register();
                 }
             });

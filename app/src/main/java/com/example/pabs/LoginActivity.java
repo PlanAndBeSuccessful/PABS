@@ -30,6 +30,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+/**
+ * Handles login for users
+ */
+
 public class LoginActivity extends AppCompatActivity implements NicknameDialogFragment.NicknameDialogListener {
 
     //DEBUG
@@ -87,7 +91,9 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                 mDialog = new ProgressDialog(LoginActivity.this);
 
                 mDialog.setMessage("Please wait...");
+                mDialog.setCancelable(false);
                 mDialog.show();
+
 
                 login_btn.setClickable(false);
                 //check internet connection
@@ -188,17 +194,20 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                                             if (snapshot.child("nickname").getValue().equals("")) {
                                                 //set nickname
                                                 openNicknameDialogFragment();
+                                                //settings
                                                 login_btn.setClickable(true);
                                                 mDialog.dismiss();
                                             } else {
                                                 //proceed to next activity
                                                 loginSuccessful();
+                                                //settings
                                                 mDialog.dismiss();
                                             }
                                         }
                                         else{
                                             Log.d(TAG, "User is already online!");
                                             Toast.makeText(LoginActivity.this, "User is already online!", Toast.LENGTH_SHORT).show();
+                                            //settings
                                             login_btn.setClickable(true);
                                             mDialog.dismiss();
                                         }
@@ -207,6 +216,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                                     public void onCancelled(@NonNull DatabaseError error) {
                                         //database error
                                         login_btn.setClickable(true);
+                                        //settings
                                         mDialog.dismiss();
                                         Log.w(TAG, "On cancelled: " + error);
                                     }
@@ -216,6 +226,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                             {
                                 // If sign in fails, display a message to the user.
                                 Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                //settings
                                 login_btn.setClickable(true);
                                 mDialog.dismiss();
                             }
@@ -226,6 +237,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
         {
             // If sign in fails, display a message to the user.
             Toast.makeText(LoginActivity.this, "Wrong E-mail or Password!", Toast.LENGTH_SHORT).show();
+            //settings
             login_btn.setClickable(true);
             mDialog.dismiss();
         }
@@ -252,7 +264,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
         //settings for user
         reference.child(user.getUid()).child("online").setValue("true");
         reference.child(user.getUid()).child("token").setValue(token);
-        openNextActivity();
+        openEventActivity();
     }
 
     /**
@@ -279,10 +291,10 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
     }
 
     /**
-     * open next activity
+     * open event activity
      */
-    protected void openNextActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
+    protected void openEventActivity() {
+        Intent intent = new Intent(this, EventActivity.class);
         intent.putExtra("USER", user.getUid());
         startActivity(intent);
     }

@@ -2,4 +2,6 @@
     <string name="app_name">PABS</string>
     <string name="username">Username</string>
     <string name="email">E-mail addres</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>
