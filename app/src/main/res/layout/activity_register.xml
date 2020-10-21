@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
+    android:background="@drawable/register_bg">
     android:visibility="visible"
     tools:context=".LoginActivity">
 
@@ -37,30 +38,25 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="E-mail address"
-                        android:textAllCaps="false"
-                        android:textColor="@color/grey"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
 
                   <EditText
-                        android:id="@+id/r_email"
-                        android:maxLines="1"
-                        android:imeOptions="actionNext"
-                        android:nextFocusDown="@+id/l_login_button"
-                        android:inputType="text"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="5dp"
-                        android:fontFamily="sans-serif-light"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="15dp"
-                        android:textSize="15sp"
-                        android:singleLine="true"/>
+                            android:id="@+id/r_email"
+                            android:maxLines="1"
+                            android:imeOptions="actionNext"
+                            android:nextFocusDown="@+id/l_login_button"
+                            android:inputType="text"
+                            android:layout_width="325dp"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@drawable/email_bg"
+                            android:drawableLeft="@drawable/emailbox_ic"
+                            android:drawablePadding="10dip"
+                            android:ems="10"
+                            android:fontFamily="@font/roboto_thin"
+                            android:hint="e-mail"
+                            android:padding="15dp"
+                            android:textColorHint="#000000"
+                            android:singleLine="true"/>
                 </LinearLayout>
 
                 <!--Username-->
@@ -70,15 +66,7 @@
                     android:layout_marginTop="20dp"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="Username"
-                        android:textAllCaps="false"
-                        android:textColor="@color/grey"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+
 
                     <EditText
                         android:id="@+id/r_username"
@@ -86,13 +74,17 @@
                         android:imeOptions="actionNext"
                         android:nextFocusDown="@+id/l_login_button"
                         android:inputType="text"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_width="325dp"
+                        android:layout_height="50dp"
                         android:layout_marginTop="5dp"
-                        android:fontFamily="sans-serif-light"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="15dp"
-                        android:textSize="15sp"
+                        android:background="@drawable/email_bg"
+                        android:drawableLeft="@drawable/member_ic"
+                        android:drawablePadding="10dip"
+                        android:ems="10"
+                        android:fontFamily="@font/roboto_thin"
+                        android:hint="usrname"
+                        android:padding="15dp"
+                        android:textColorHint="#000000"
                         android:singleLine="true"/>
                 </LinearLayout>
 
@@ -103,67 +95,48 @@
                     android:layout_marginTop="20dp"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="Password"
-                        android:textAllCaps="false"
-                        android:textColor="@color/grey"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+
 
                     <EditText
                         android:id="@+id/r_password"
                         android:maxLines="1"
                         android:imeOptions="actionNext"
                         android:nextFocusDown="@+id/r_signup_button"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_width="325dp"
+                        android:layout_height="50dp"
                         android:layout_marginTop="5dp"
-                        android:fontFamily="sans-serif-light"
+                        android:background="@drawable/email_bg"
+                        android:drawableLeft="@drawable/lock_ic"
+                        android:drawablePadding="10dip"
+                        android:ems="10"
+                        android:fontFamily="@font/roboto_thin"
+                        android:hint="password"
                         android:inputType="textPassword"
-                        android:paddingLeft="15dp"
-                        android:paddingRight="15dp"
-                        android:textSize="15sp"
+                        android:padding="15dp"
+                        android:textColorHint="#000000"
+                        android:textSize="18sp"
                         android:singleLine="true"/>
 
                 </LinearLayout>
             </LinearLayout>
 
-            <!--Forgot password button
-            <Button
-                android:id="@+id/l_forgot_password"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
 
-                android:layout_marginTop="30dp"
-                android:layout_centerHorizontal="true"
-                android:fontFamily="sans-serif-light"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:background="@color/transparent"
-                android:text="Did you forget your password?"
-                android:textAllCaps="false"
-                android:textColor="@color/black"
-                android:textSize="16sp" /> -->
 
             <!--Sign Up button-->
             <Button
                 android:id="@+id/r_signup_button"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_width="160dp"
+                android:layout_height="50dp"
                 android:layout_below="@id/r_linlay1"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="60dp"
                 android:fontFamily="sans-serif-medium"
-                android:paddingLeft="70dp"
-                android:paddingRight="70dp"
+                android:background="@drawable/login_button"
+                android:radius="60dp"
                 android:text="Sign Up"
                 android:textAllCaps="false"
-                android:background="@color/black"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:textColor="#92129D"
+                android:textSize="24sp" />
 
             <!--You already have an account-->
             <Button
@@ -171,15 +144,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:layout_below="@id/r_signup_button"
-                android:layout_marginTop="30dp"
                 android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:background="@color/transparent"
                 android:fontFamily="sans-serif-light"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:background="@color/transparent"
                 android:text="You already have an account?"
                 android:textAllCaps="false"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="16sp" />
 
         </RelativeLayout>
