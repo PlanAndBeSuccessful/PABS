@@ -1,5 +1,9 @@
 package com.example.pabs.Models;
 
+/**
+ * User from database
+ */
+
 public class User {
     private String token;
     private String e_mail;

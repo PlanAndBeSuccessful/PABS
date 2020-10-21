@@ -131,23 +131,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!--Forgot password button
-            <Button
-                android:id="@+id/l_forgot_password"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-
-                android:layout_marginTop="30dp"
-                android:layout_centerHorizontal="true"
-                android:fontFamily="sans-serif-light"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:background="@color/transparent"
-                android:text="Did you forget your password?"
-                android:textAllCaps="false"
-                android:textColor="@color/black"
-                android:textSize="16sp" /> -->
-
             <!--Sign Up button-->
             <Button
                 android:id="@+id/r_signup_button"

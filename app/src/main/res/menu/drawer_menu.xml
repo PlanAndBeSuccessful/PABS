@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Menu part of the Navigation Drawer-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <!--Here we have a group of different items
+     to open different activities/fragments-->
+    <group android:checkableBehavior="single">
+        <!--events-->
+        <item
+            android:id="@+id/nav_events"
+            android:icon="@drawable/member_ic"
+            android:title="Events" />
+        <!--Calendar-->
+        <item
+            android:id="@+id/nav_calendar"
+            android:icon="@drawable/member_ic"
+            android:title="Calendar" />
+        <!--groups-->
+        <item
+            android:id="@+id/nav_groups"
+            android:icon="@drawable/member_ic"
+            android:title="Groups" />
+        <!--profile-->
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/member_ic"
+            android:title="Profile" />
+        <!--settings-->
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/member_ic"
+            android:title="Settings" />
+
+    </group>
+
+    <!--Group of items only for one execution-->
+    <item android:title="Logout">
+        <menu>
+            <!--logout-->
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/lock_ic"
+                android:title="Logout" />
+        </menu>
+    </item>
+
+
+
+</menu>
