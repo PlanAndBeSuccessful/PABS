@@ -87,7 +87,7 @@ public class RegisterActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(email_et.getText().toString()) && !TextUtils.isEmpty(password_et.getText().toString()) && !TextUtils.isEmpty(name_et.getText().toString())) {
 
             //creating a user type object
-            final User user = new User("", email, "", password, name, "false");
+            final User user = new User("", email, "", name, "false");
 
             //getting an instance of firebase authentication token
             currAuth = FirebaseAuth.getInstance();

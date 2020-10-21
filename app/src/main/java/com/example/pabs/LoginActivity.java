@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.pabs.Fragments.NicknameDialogFragment;
+import com.example.pabs.Fragments.PasswordRecoveryFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -71,7 +72,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
         forgot_password_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openForgotPasswordFragment();
+                openPasswordRecoveryFragment();
             }
         });
 
@@ -278,8 +279,12 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
     /**
      * open forgot password fragment
      */
-    private void openForgotPasswordFragment(){
-
+    private void openPasswordRecoveryFragment(){
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new PasswordRecoveryFragment())
+                .addToBackStack("PasswordRecoveryFragment")
+                .commit();
     }
 
     /**
