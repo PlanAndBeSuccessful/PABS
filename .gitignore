@@ -12,3 +12,11 @@
 /captures
 .externalNativeBuild
 .cxx
+# Windows thumbnail db
+Thumbs.db
+# files for the dex VM
+*.dex
+#built application files
+*.apk
+*.ap_
+*.aab
