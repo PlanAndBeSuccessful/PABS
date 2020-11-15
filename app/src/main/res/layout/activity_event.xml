@@ -8,6 +8,7 @@ to work correctly, we also store a layout for other UI elements-->
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/register_bg"
     tools:context=".EventActivity">
 
     <!--Here we store the other elements of the UI-->
@@ -19,15 +20,14 @@ to work correctly, we also store a layout for other UI elements-->
         <!--Search bar-->
         <AutoCompleteTextView
             android:id="@+id/e_search_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="400dp"
+            android:layout_height="50dp"
+            android:background="@drawable/email_bg"
+            android:fontFamily="@font/roboto_thin"
+            android:hint="Search events..."
+            android:inputType="textAutoComplete|textAutoCorrect"
             android:padding="10dp"
-            android:hint="Search for events..."
-            android:background="@drawable/et_bg"
-            android:fontFamily="sans-serif-light"
-            android:textSize="15sp"
-            android:inputType="textAutoComplete|textAutoCorrect">
-        </AutoCompleteTextView>
+            android:textSize="18sp"></AutoCompleteTextView>
 
         <!--Recycler view, this displays all the events-->
         <androidx.recyclerview.widget.RecyclerView
@@ -62,7 +62,7 @@ to work correctly, we also store a layout for other UI elements-->
                 android:layout_alignParentLeft="true"
                 android:maxWidth="60dp"
                 android:maxHeight="60dp"
-                app:srcCompat="@drawable/circle"
+                app:srcCompat="@drawable/groupeventsbutton"
                 android:layout_centerVertical="true"/>
 
             <!--Second image-->
@@ -80,7 +80,7 @@ to work correctly, we also store a layout for other UI elements-->
                 android:adjustViewBounds="true"
                 android:maxWidth="100dp"
                 android:maxHeight="100dp"
-                app:srcCompat="@drawable/circle" />
+                app:srcCompat="@drawable/createeventsbutton" />
 
             <!--Third image-->
             <ImageView
@@ -98,7 +98,7 @@ to work correctly, we also store a layout for other UI elements-->
                 android:layout_centerVertical="true"
                 android:maxWidth="60dp"
                 android:maxHeight="60dp"
-                app:srcCompat="@drawable/circle" />
+                app:srcCompat="@drawable/myeventsbutton" />
 
         </RelativeLayout>
 

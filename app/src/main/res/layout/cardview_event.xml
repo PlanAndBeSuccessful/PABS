@@ -16,6 +16,7 @@ This will represent the default view of a event-->
     <FrameLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
+
         android:layout_height="match_parent">
 
         <!--Image-->
@@ -23,7 +24,7 @@ This will represent the default view of a event-->
             android:id="@+id/c_e_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/asd" />
+            android:background="@drawable/events" />
 
         <!--Text in image(currently the visibility is set to gone)-->
         <TextView
