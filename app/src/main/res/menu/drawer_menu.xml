@@ -9,28 +9,28 @@
     <group android:checkableBehavior="single">
         <!--events-->
         <item
-            android:id="@+id/nav_events"
+            android:id="@+id/nav_profile"
             android:icon="@drawable/member_ic"
-            android:title="Events" />
+            android:title="Profile" />
         <!--Calendar-->
         <item
             android:id="@+id/nav_calendar"
-            android:icon="@drawable/member_ic"
+            android:icon="@drawable/calendar_ic"
             android:title="Calendar" />
         <!--groups-->
         <item
             android:id="@+id/nav_groups"
-            android:icon="@drawable/member_ic"
+            android:icon="@drawable/group_ic"
             android:title="Groups" />
-        <!--profile-->
+        <!--MyToDo-->
         <item
-            android:id="@+id/nav_profile"
-            android:icon="@drawable/member_ic"
-            android:title="Profile" />
+            android:id="@+id/nav_events"
+            android:icon="@drawable/todo_ic"
+            android:title="MyToDo" />
         <!--settings-->
         <item
             android:id="@+id/nav_settings"
-            android:icon="@drawable/member_ic"
+            android:icon="@drawable/settings_ic"
             android:title="Settings" />
 
     </group>
@@ -41,7 +41,7 @@
             <!--logout-->
             <item
                 android:id="@+id/nav_logout"
-                android:icon="@drawable/lock_ic"
+                android:icon="@drawable/logout_ic"
                 android:title="Logout" />
         </menu>
     </item>
