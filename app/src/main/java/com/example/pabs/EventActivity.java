@@ -3,25 +3,29 @@ package com.example.pabs;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.pabs.Adapters.EventRecyclerViewAdapter;
+import com.example.pabs.Fragments.CreateEventFragment;
+import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.Models.Event;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +37,17 @@ import java.util.List;
 
 public class EventActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
+    //UI
+    private ImageView create_event_img_btn;
+
     //firebase
     private DatabaseReference reference;
     private String uID;
 
     //events
     List<Event> lstEvent;
+
+    List<DatabaseEvent> lstDatabaseEvent;
 
     //drawer
     private DrawerLayout drawer = null;
@@ -61,33 +70,30 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         //set data for events example
         lstEvent = new ArrayList<>();
 
-        lstEvent.add(new Event("Balette Eloadas", R.drawable.balette_eloadas));
-        lstEvent.add(new Event("Football", R.drawable.football));
-        lstEvent.add(new Event("Halloween Party", R.drawable.halloween_party));
-        lstEvent.add(new Event("Hiking", R.drawable.hiking));
-        lstEvent.add(new Event("Party at OFE", R.drawable.party_at_ofe));
-        lstEvent.add(new Event("Wedding", R.drawable.wedding));
-        lstEvent.add(new Event("Balette Eloadas", R.drawable.balette_eloadas));
-        lstEvent.add(new Event("Football", R.drawable.football));
-        lstEvent.add(new Event("Halloween Party", R.drawable.halloween_party));
-        lstEvent.add(new Event("Hiking", R.drawable.hiking));
-        lstEvent.add(new Event("Party at OFE", R.drawable.party_at_ofe));
-        lstEvent.add(new Event("Wedding", R.drawable.wedding));
-        lstEvent.add(new Event("Balette Eloadas", R.drawable.balette_eloadas));
-        lstEvent.add(new Event("Football", R.drawable.football));
-        lstEvent.add(new Event("Halloween Party", R.drawable.halloween_party));
-        lstEvent.add(new Event("Hiking", R.drawable.hiking));
-        lstEvent.add(new Event("Party at OFE", R.drawable.party_at_ofe));
-        lstEvent.add(new Event("Wedding", R.drawable.wedding));
+        //Getting events from database and setting them to recyclerview
+        DatabaseReference databaseEvents;
+        databaseEvents = FirebaseDatabase.getInstance().getReference().child("EVENT");
 
-        //create and set RecyclerView
-        RecyclerView myRv = (RecyclerView) findViewById(R.id.e_recycler_view);
-        //create Adapter with lstEvent in this context
-        EventRecyclerViewAdapter myAdapter = new EventRecyclerViewAdapter(this, lstEvent);
-        //separate the Recyclerview to 3 columns
-        myRv.setLayoutManager(new GridLayoutManager(this, 3));
-        //set adapter for RecyclerView
-        myRv.setAdapter(myAdapter);
+        databaseEvents.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                clearEvents();
+                for (DataSnapshot event : snapshot.getChildren()) {
+                    //Loop 1 to go through all child nodes of users
+                    String temp= event.child("event_name").getValue().toString();
+
+                    Event tempEv = new Event(temp, R.drawable.balette_eloadas);
+
+                    addToEventsArray(tempEv);
+                }
+                setEvents();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         //nav view and drawer
         navigationView = findViewById(R.id.nav_view);
@@ -115,8 +121,40 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         //sync toggle
         toggle.syncState();
 
-        // Write a string when this client loses connection
+        // Write a string to database when this client loses connection
         reference.child(uID).child("online").onDisconnect().setValue("false");
+
+        //create event button
+        create_event_img_btn = findViewById(R.id.a_e_create_event_button);
+        create_event_img_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    openCreateEventFragment();
+                }
+                return false;
+            }
+        });
+
+    }
+
+    public void addToEventsArray(Event tempEv){
+        lstEvent.add(tempEv);
+    }
+
+    public void clearEvents(){
+        lstEvent.clear();
+    }
+
+    public void setEvents(){
+        //create and set RecyclerView
+        RecyclerView myRv = (RecyclerView) findViewById(R.id.e_recycler_view);
+        //create Adapter with lstEvent in this context
+        EventRecyclerViewAdapter myAdapter = new EventRecyclerViewAdapter(this, lstEvent, getSupportFragmentManager());
+        //separate the Recyclerview to 3 columns
+        myRv.setLayoutManager(new GridLayoutManager(this, 3));
+        //set adapter for RecyclerView
+        myRv.setAdapter(myAdapter);
     }
 
     /**
@@ -159,5 +197,37 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         //close drawer on item clicked
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+    /**
+     * open create event fragment
+     */
+    private void openCreateEventFragment(){
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_event_container, new CreateEventFragment())
+                .addToBackStack("CreateEventFragment")
+                .commit();
+    }
+
+    /**
+     * Called when the activity is exiting
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        lstEvent.clear();
+        reference.child(uID).child("online").setValue("false");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        lstEvent.clear();
+        FragmentManager fm = getSupportFragmentManager();
+        for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+            fm.popBackStack();
+        }
     }
 }
