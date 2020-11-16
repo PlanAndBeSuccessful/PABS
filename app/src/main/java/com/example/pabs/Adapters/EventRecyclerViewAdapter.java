@@ -1,5 +1,6 @@
 package com.example.pabs.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +11,23 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.pabs.Fragments.CreateEventFragment;
+import com.example.pabs.Fragments.EventFragment;
+import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.Models.Event;
 import com.example.pabs.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,13 +38,15 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
 
     private Context mContext;
     private List<Event> mData;
+    private FragmentManager mFragment;
 
     /**
      * Constructor of EventRecyclerViewAdapter
      */
-    public EventRecyclerViewAdapter(Context mContext, List<Event> mData) {
+    public EventRecyclerViewAdapter(Context mContext, List<Event> mData, FragmentManager fragment) {
         this.mContext = mContext;
         this.mData = mData;
+        this.mFragment = fragment;
     }
 
     /**
@@ -40,7 +55,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
+        //Init view and set view of viewHolder
         View view;
         LayoutInflater mInflater = LayoutInflater.from(mContext);
         view = mInflater.inflate(R.layout.cardview_event, parent, false);
@@ -62,9 +77,78 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
             @Override
             public void onClick(View view) {
                 Toast.makeText(mContext, mData.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+
+                //Getting events from database and setting them to recyclerview
+                DatabaseReference databaseEvents;
+                databaseEvents = FirebaseDatabase.getInstance().getReference().child("EVENT");
+
+                databaseEvents.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot event : snapshot.getChildren()) {
+                            //Loop to go through all child nodes of event
+
+                            //temp for storing data from database
+                            DatabaseEvent temp = new DatabaseEvent();
+                            //setting data to temp from database
+                            temp.setOwner_id(event.getKey());
+                            temp.setEvent_name(event.child("event_name").getValue().toString());
+                            temp.setLocation_name(event.child("location_name").getValue().toString());
+                            String tempx = event.child("location_x").getValue().toString();
+                            temp.setLocation_x(Double.parseDouble(tempx));
+                            String tempy = event.child("location_y").getValue().toString();
+                            temp.setLocation_y(Double.parseDouble(tempy));
+                            temp.setStart_date(event.child("start_date").getValue().toString());
+                            temp.setEnd_date(event.child("end_date").getValue().toString());
+                            temp.setPriv_pub(event.child("priv_pub").getValue().toString());
+
+                            final List<String> staff_members =  new ArrayList<>();
+                            event.getRef().child("staff_members").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                    for (DataSnapshot staff : snapshot.getChildren()) {
+                                        //Loop 1 to go through all child nodes of staff members
+                                        staff_members.add(staff.getValue().toString());
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+                            temp.setStaff_members(staff_members);
+
+                            //open Event which matches with the title from the Database Event
+                            if(mData.get(position).getTitle() == temp.getEvent_name()){
+                                openEvent(temp);
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
             }
         });
 
+    }
+
+    /**
+     * Open Event Fragment with data
+     */
+    public void openEvent(DatabaseEvent databaseEvent){
+        mFragment
+                .beginTransaction()
+                .replace( R.id.fragment_event_container , new EventFragment(databaseEvent))
+                .addToBackStack("EventFragment")
+                .commit();
     }
 
     /**
