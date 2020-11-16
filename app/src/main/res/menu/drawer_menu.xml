@@ -9,6 +9,11 @@
     <group android:checkableBehavior="single">
         <!--events-->
         <item
+            android:id="@+id/nav_events"
+            android:icon="@drawable/event_ic"
+            android:title="Events" />
+        <!--profile-->
+        <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/member_ic"
             android:title="Profile" />
@@ -24,7 +29,7 @@
             android:title="Groups" />
         <!--MyToDo-->
         <item
-            android:id="@+id/nav_events"
+            android:id="@+id/nav_todo"
             android:icon="@drawable/todo_ic"
             android:title="MyToDo" />
         <!--settings-->
