@@ -62,8 +62,8 @@
 
                 <!--Password-->
                 <EditText
-                    android:id="@+id/l_password"
                     android:text="123456"
+                    android:id="@+id/l_password"
                     android:maxLines="1"
                     android:imeOptions="actionNext"
                     android:nextFocusDown="@+id/l_signup_button"
