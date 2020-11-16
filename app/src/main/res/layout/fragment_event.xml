@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Event skeleton-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.EventFragment"
+    android:id="@+id/fragment_event_container"
+    android:background="@color/white"
+    android:clickable="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--Image-->
+        <ImageView
+            android:id="@+id/fe_event_image"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/event_header_example"/>
+
+        <!--Container-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="15dp"
+            android:layout_below="@+id/fe_event_image">
+
+            <!--Event name-->
+            <TextView
+                android:id="@+id/fe_event_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Event Name"
+                android:textSize="22sp"/>
+
+            <!--Date Start-->
+            <TextView
+                android:id="@+id/fe_event_date_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fe_event_name"
+                android:layout_marginTop="30dp"
+                android:text="10/26/2020"
+                android:textSize="16sp"/>
+
+            <!--Date End-->
+            <TextView
+                android:id="@+id/fe_event_date_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fe_event_name"
+                android:layout_alignLeft="@+id/fe_event_date_start"
+                android:layout_marginLeft="125dp"
+                android:layout_marginTop="30dp"
+                android:text="13/27/2021"
+                android:textSize="16sp" />
+
+            <!--Description-->
+            <TextView
+                android:id="@+id/fe_event_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fe_event_date_start"
+                android:layout_toLeftOf="@+id/fe_map_layout"
+                android:paddingRight="5dp"
+                android:layout_marginTop="30dp"
+                android:text="Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello"
+                android:textSize="22sp"/>
+
+            <!--Map Container-->
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_alignParentRight="true"
+                android:id="@+id/fe_map_layout">
+
+                <!--Map View-->
+                <com.google.android.gms.maps.MapView android:id="@+id/fe_map"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+
+            <!--Map location-->
+            <TextView
+                android:id="@+id/fe_location_text"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fe_map_layout"
+                android:layout_alignParentRight="true"
+                android:text="Location name"
+                android:textSize="12sp"/>
+
+            <!--(+) button-->
+            <Button
+                android:id="@+id/fe_plus_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:text="+"/>
+
+            <!--back button-->
+            <Button
+                android:id="@+id/fe_back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:text="Back"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>
