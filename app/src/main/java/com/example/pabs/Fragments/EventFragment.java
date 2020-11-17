@@ -22,6 +22,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Handle an event
@@ -31,6 +37,7 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
 
     //UI
     private Button back_button;
+    private Button delete_button;
     private View containerView;
 
     private MapView mapView;
@@ -94,13 +101,33 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
             public void onClick(View view) {
                 //getActivity().getSupportFragmentManager().popBackStack("EventFragment", 1);
                 //clear all backstack
-                if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 1) {
-                    getActivity().getSupportFragmentManager().popBackStack("EventFragment", 1);
-                } else {
-                    for(int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); ++i) {
-                        getActivity().getSupportFragmentManager().popBackStack();
+                clearBackstack();
+            }
+        });
+
+        //delete button
+        delete_button = view.findViewById(R.id.fe_plus_button);
+
+        delete_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                Query applesQuery = ref.child("EVENT").orderByChild("event_name").equalTo(databaseEvent.getEvent_name());
+
+                applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                            appleSnapshot.getRef().removeValue();
+                            clearBackstack();
+                        }
                     }
-                }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e("EventFragment", "onCancelled", databaseError.toException());
+                    }
+                });
             }
         });
 
@@ -112,6 +139,17 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
         mapView.getMapAsync(this);
 
         return view;
+    }
+
+    public void clearBackstack(){
+        //clear all backstack
+        if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            getActivity().getSupportFragmentManager().popBackStack("EventFragment", 1);
+        } else {
+            for(int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); ++i) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        }
     }
 
     /**
