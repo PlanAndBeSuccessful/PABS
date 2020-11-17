@@ -44,7 +44,7 @@
                 android:layout_below="@+id/fe_event_name"
                 android:layout_marginTop="30dp"
                 android:text="10/26/2020"
-                android:textSize="16sp"/>
+                android:textSize="12sp"/>
 
             <!--Date End-->
             <TextView
@@ -54,9 +54,10 @@
                 android:layout_below="@+id/fe_event_name"
                 android:layout_alignLeft="@+id/fe_event_date_start"
                 android:layout_marginLeft="125dp"
+                android:layout_toLeftOf="@+id/fe_map_layout"
                 android:layout_marginTop="30dp"
                 android:text="13/27/2021"
-                android:textSize="16sp" />
+                android:textSize="12sp" />
 
             <!--Description-->
             <TextView
