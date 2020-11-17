@@ -94,9 +94,12 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
             public void onClick(View view) {
                 //getActivity().getSupportFragmentManager().popBackStack("EventFragment", 1);
                 //clear all backstack
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
-                    fm.popBackStack();
+                if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 1) {
+                    getActivity().getSupportFragmentManager().popBackStack("EventFragment", 1);
+                } else {
+                    for(int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); ++i) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
                 }
             }
         });

@@ -129,42 +129,47 @@ public class CreateEventFragment extends Fragment {
                     //getting lat and lng from location
                     LatLng latLng = getLocationFromAddress(getActivity(), location_et.getText().toString());
 
-                    //arraylist of Strings which will contain staff members
-                    ArrayList<String> arrayList = new ArrayList<String>();
+                    if (latLng != null) {
 
-                    arrayList.add("asd");
-                    arrayList.add("pepe");
-                    arrayList.add("asdasdad");
+                        //arraylist of Strings which will contain staff members
+                        ArrayList<String> arrayList = new ArrayList<String>();
 
-                    //getting user logged in
-                    FirebaseUser fireBaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                        arrayList.add("asd");
+                        arrayList.add("pepe");
+                        arrayList.add("asdasdad");
 
-                    //check for empty fields
-                    if (!TextUtils.isEmpty(name_et.getText().toString()) && !TextUtils.isEmpty(start_date_et.getText().toString()) && !TextUtils.isEmpty(end_date_et.getText().toString())) {
-                        //new Database created from field contents written in by user
-                        DatabaseEvent databaseEvent = new DatabaseEvent();
-                        databaseEvent.setLocation_x(latLng.latitude);
-                        databaseEvent.setLocation_y(latLng.longitude);
-                        databaseEvent.setEvent_name(name_et.getText().toString());
-                        databaseEvent.setLocation_name(location_et.getText().toString());
-                        databaseEvent.setStart_date(start_date_et.getText().toString());
-                        databaseEvent.setEnd_date(end_date_et.getText().toString());
-                        databaseEvent.setPriv_pub(dropdown.getSelectedItem().toString());
-                        databaseEvent.setStaff_members(arrayList);
-                        databaseEvent.setOwner_id(fireBaseUser.getUid());
+                        //getting user logged in
+                        FirebaseUser fireBaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-                        //pushing databaseEvent to database
-                        reference.push().setValue(databaseEvent);
+                        //check for empty fields
+                        if (!TextUtils.isEmpty(name_et.getText().toString()) && !TextUtils.isEmpty(start_date_et.getText().toString()) && !TextUtils.isEmpty(end_date_et.getText().toString())) {
+                            //new Database created from field contents written in by user
+                            DatabaseEvent databaseEvent = new DatabaseEvent();
+                            databaseEvent.setLocation_x(latLng.latitude);
+                            databaseEvent.setLocation_y(latLng.longitude);
+                            databaseEvent.setEvent_name(name_et.getText().toString());
+                            databaseEvent.setLocation_name(location_et.getText().toString());
+                            databaseEvent.setStart_date(start_date_et.getText().toString());
+                            databaseEvent.setEnd_date(end_date_et.getText().toString());
+                            databaseEvent.setPriv_pub(dropdown.getSelectedItem().toString());
+                            databaseEvent.setStaff_members(arrayList);
+                            databaseEvent.setOwner_id(fireBaseUser.getUid());
 
-                        //open event
-                        openEvent(databaseEvent);
-                    }
+                            //pushing databaseEvent to database
+                            reference.push().setValue(databaseEvent);
 
-                    Log.d(TAG, "onClick: " + latLng);
-                    if(latLng != null){
+                            //open event
+                            openEvent(databaseEvent);
+                        }
+
+                        Log.d(TAG, "onClick: " + latLng);
+
                         getAddress(latLng.latitude, latLng.longitude);
-                    }
 
+
+                    } else {
+                        Toast.makeText(getActivity(), "Wrong location!", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else{
                     Toast.makeText(getActivity(), "Empty Fields!", Toast.LENGTH_SHORT).show();
@@ -236,7 +241,7 @@ public class CreateEventFragment extends Fragment {
             if(address.size() < 1)
             {
                 //if location not found
-                Toast.makeText(context, "Invalid Location", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "Invalid Location", Toast.LENGTH_SHORT).show();
             }
             else
             {
@@ -263,6 +268,7 @@ public class CreateEventFragment extends Fragment {
         super.onStart();
         //Hiding the activity layout
         containerView.setVisibility(View.GONE);
+        Log.d(TAG, "onStart: "+getActivity().getSupportFragmentManager().getBackStackEntryCount());
     }
 
     /**

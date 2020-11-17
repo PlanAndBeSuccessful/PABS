@@ -2,6 +2,7 @@ package com.example.pabs.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +83,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                 DatabaseReference databaseEvents;
                 databaseEvents = FirebaseDatabase.getInstance().getReference().child("EVENT");
 
-                databaseEvents.addValueEventListener(new ValueEventListener() {
+                databaseEvents.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot event : snapshot.getChildren()) {
@@ -122,7 +123,9 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                             temp.setStaff_members(staff_members);
 
                             //open Event which matches with the title from the Database Event
+                            Log.d("ASDASDASD", "Event Name: "+temp.getEvent_name());
                             if(mData.get(position).getTitle() == temp.getEvent_name()){
+                                Log.d("ASDASDASD", "onDataChange: "+ temp.getEvent_name());
                                 openEvent(temp);
 
                             }
