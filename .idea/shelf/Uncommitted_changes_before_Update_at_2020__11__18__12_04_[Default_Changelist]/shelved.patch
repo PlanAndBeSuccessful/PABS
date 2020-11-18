@@ -1,0 +1,108 @@
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    package=\"com.example.pabs\">\r\n\r\n    <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\" />\r\n    <uses-permission android:name=\"android.permission.INTERNET\" />\r\n    \r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/AppTheme.NoActionBar\">\r\n\r\n        <activity android:name=\".RegisterActivity\" />\r\n        <activity  android:name=\".EventActivity\"/>\r\n\r\n        <activity android:name=\".LoginActivity\" >\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n\r\n        <service\r\n            android:name=\".Fcm.MyFirebaseMessagingService\">\r\n            <intent-filter>\r\n                <action android:name=\"com.google.firebase.MESSAGING_EVENT\" />\r\n            </intent-filter>\r\n        </service>\r\n\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision c32a7afad370e7f0218f168a53c9f838e5207170)
++++ app/src/main/AndroidManifest.xml	(date 1605471146502)
+@@ -29,6 +29,9 @@
+                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
+             </intent-filter>
+         </service>
++        <meta-data
++            android:name="preloaded_fonts"
++            android:resource="@array/preloaded_fonts" />
+ 
+     </application>
+ 
+Index: app/src/main/java/com/example/pabs/EventActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pabs;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.ActionBarDrawerToggle;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.appcompat.widget.Toolbar;\r\nimport androidx.core.view.GravityCompat;\r\nimport androidx.drawerlayout.widget.DrawerLayout;\r\nimport androidx.recyclerview.widget.GridLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.Menu;\r\nimport android.view.MenuInflater;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.pabs.Adapters.EventRecyclerViewAdapter;\r\nimport com.example.pabs.Models.Event;\r\nimport com.google.android.material.navigation.NavigationView;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\n\r\n/**\r\n * Main screen, handles more fragments, events, groups\r\n */\r\n\r\npublic class EventActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{\r\n\r\n    //firebase\r\n    private DatabaseReference reference;\r\n    private String uID;\r\n\r\n    //events\r\n    List<Event> lstEvent;\r\n\r\n    //drawer\r\n    private DrawerLayout drawer = null;\r\n    private NavigationView navigationView = null;\r\n\r\n    /**\r\n     * On create\r\n     */\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_event);\r\n\r\n        //get uid of logged in user\r\n        uID = getIntent().getStringExtra(\"USER\");\r\n\r\n        //firebase database -> get reference to USER table\r\n        reference = FirebaseDatabase.getInstance().getReference().child(\"USER\");\r\n\r\n        //set data for events example\r\n        lstEvent = new ArrayList<>();\r\n\r\n        lstEvent.add(new Event(\"Balette Eloadas\", R.drawable.balette_eloadas));\r\n        lstEvent.add(new Event(\"Football\", R.drawable.football));\r\n        lstEvent.add(new Event(\"Halloween Party\", R.drawable.halloween_party));\r\n        lstEvent.add(new Event(\"Hiking\", R.drawable.hiking));\r\n        lstEvent.add(new Event(\"Party at OFE\", R.drawable.party_at_ofe));\r\n        lstEvent.add(new Event(\"Wedding\", R.drawable.wedding));\r\n        lstEvent.add(new Event(\"Balette Eloadas\", R.drawable.balette_eloadas));\r\n        lstEvent.add(new Event(\"Football\", R.drawable.football));\r\n        lstEvent.add(new Event(\"Halloween Party\", R.drawable.halloween_party));\r\n        lstEvent.add(new Event(\"Hiking\", R.drawable.hiking));\r\n        lstEvent.add(new Event(\"Party at OFE\", R.drawable.party_at_ofe));\r\n        lstEvent.add(new Event(\"Wedding\", R.drawable.wedding));\r\n        lstEvent.add(new Event(\"Balette Eloadas\", R.drawable.balette_eloadas));\r\n        lstEvent.add(new Event(\"Football\", R.drawable.football));\r\n        lstEvent.add(new Event(\"Halloween Party\", R.drawable.halloween_party));\r\n        lstEvent.add(new Event(\"Hiking\", R.drawable.hiking));\r\n        lstEvent.add(new Event(\"Party at OFE\", R.drawable.party_at_ofe));\r\n        lstEvent.add(new Event(\"Wedding\", R.drawable.wedding));\r\n\r\n        //create and set RecyclerView\r\n        RecyclerView myRv = (RecyclerView) findViewById(R.id.e_recycler_view);\r\n        //create Adapter with lstEvent in this context\r\n        EventRecyclerViewAdapter myAdapter = new EventRecyclerViewAdapter(this, lstEvent);\r\n        //separate the Recyclerview to 3 columns\r\n        myRv.setLayoutManager(new GridLayoutManager(this, 3));\r\n        //set adapter for RecyclerView\r\n        myRv.setAdapter(myAdapter);\r\n\r\n        //nav view and drawer\r\n        navigationView = findViewById(R.id.nav_view);\r\n        drawer = findViewById(R.id.drawer_layout);\r\n\r\n        //handle navigation drawer open/close with toggle\r\n        navigationView.setNavigationItemSelectedListener(this);\r\n        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close){\r\n            /** Called when a drawer has settled in a completely closed state. */\r\n            public void onDrawerClosed(View view) {\r\n                super.onDrawerClosed(view);\r\n                for(int i = 0; i < navigationView.getMenu().size(); ++i)\r\n                    navigationView.getMenu().getItem(i).setChecked(false);\r\n            }\r\n\r\n            /** Called when a drawer has settled in a completely open state. */\r\n            public void onDrawerOpened(View drawerView) {\r\n                super.onDrawerOpened(drawerView);\r\n            }\r\n        };\r\n\r\n        //add toggle to drawer\r\n        drawer.addDrawerListener(toggle);\r\n\r\n        //sync toggle\r\n        toggle.syncState();\r\n\r\n        // Write a string when this client loses connection\r\n        reference.child(uID).child(\"online\").onDisconnect().setValue(\"false\");\r\n    }\r\n\r\n    /**\r\n     * Called on selecting item from navigation list\r\n     */\r\n    @Override\r\n    public boolean onNavigationItemSelected(@NonNull MenuItem item) {\r\n        switch (item.getItemId()){\r\n            case R.id.nav_events:\r\n                Toast.makeText(this, \"nav_events\", Toast.LENGTH_SHORT).show();\r\n                break;\r\n\r\n            case R.id.nav_calendar:\r\n                Toast.makeText(this, \"nav_calendar\", Toast.LENGTH_SHORT).show();\r\n                break;\r\n\r\n            case R.id.nav_groups:\r\n                Toast.makeText(this, \"nav_groups\", Toast.LENGTH_SHORT).show();\r\n                break;\r\n\r\n            case R.id.nav_profile:\r\n                Toast.makeText(this, \"nav_profile\", Toast.LENGTH_SHORT).show();\r\n                break;\r\n\r\n            case R.id.nav_settings:\r\n                Toast.makeText(this, \"nav_settings\", Toast.LENGTH_SHORT).show();\r\n                break;\r\n\r\n            case R.id.nav_logout:\r\n                Toast.makeText(this, \"nav_logout\", Toast.LENGTH_SHORT).show();\r\n                reference.child(uID).child(\"online\").setValue(\"false\");\r\n                finish();\r\n                break;\r\n\r\n            default:\r\n                Toast.makeText(this, \"error\", Toast.LENGTH_SHORT).show();\r\n                break;\r\n        }\r\n\r\n        //close drawer on item clicked\r\n        drawer.closeDrawer(GravityCompat.START);\r\n        return true;\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/EventActivity.java	(revision c32a7afad370e7f0218f168a53c9f838e5207170)
++++ app/src/main/java/com/example/pabs/EventActivity.java	(date 1605511774921)
+@@ -18,6 +18,9 @@
+ import android.widget.Toast;
+ 
+ import com.example.pabs.Adapters.EventRecyclerViewAdapter;
++import com.example.pabs.Fragments.CalendarFragment;
++import com.example.pabs.Fragments.PasswordRecoveryFragment;
++import com.example.pabs.Fragments.SettingsFragment;
+ import com.example.pabs.Models.Event;
+ import com.google.android.material.navigation.NavigationView;
+ import com.google.firebase.database.DatabaseReference;
+@@ -129,7 +132,12 @@
+                 Toast.makeText(this, "nav_events", Toast.LENGTH_SHORT).show();
+                 break;
+ 
++            case R.id.nav_todo:
++                Toast.makeText(this, "nav_todo", Toast.LENGTH_SHORT).show();
++                break;
++
+             case R.id.nav_calendar:
++                openCalendarFragment();
+                 Toast.makeText(this, "nav_calendar", Toast.LENGTH_SHORT).show();
+                 break;
+ 
+@@ -142,6 +150,7 @@
+                 break;
+ 
+             case R.id.nav_settings:
++                openSettingsFragment();
+                 Toast.makeText(this, "nav_settings", Toast.LENGTH_SHORT).show();
+                 break;
+ 
+@@ -160,4 +169,20 @@
+         drawer.closeDrawer(GravityCompat.START);
+         return true;
+     }
++
++    private void openCalendarFragment(){
++        getSupportFragmentManager()
++                .beginTransaction()
++                .replace(R.id.drawer_layout, new CalendarFragment())
++                .addToBackStack("CalendarFragment")
++                .commit();
++    }
++
++    private void openSettingsFragment(){
++        getSupportFragmentManager()
++                .beginTransaction()
++                .replace(R.id.drawer_layout, new SettingsFragment())
++                .addToBackStack("SettingsFragment")
++                .commit();
++    }
+ }
+\ No newline at end of file
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'com.android.application'\r\napply plugin: 'com.google.gms.google-services'  // Google Services plugin\r\n\r\nandroid {\r\n    compileSdkVersion 30\r\n    buildToolsVersion \"30.0.1\"\r\n\r\n    defaultConfig {\r\n        applicationId \"com.example.pabs\"\r\n        minSdkVersion 16\r\n        targetSdkVersion 30\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n}\r\n\r\ndependencies {\r\n    implementation fileTree(dir: \"libs\", include: [\"*.jar\"])\r\n    implementation 'androidx.appcompat:appcompat:1.2.0'\r\n    implementation \"androidx.cardview:cardview:1.0.0\"\r\n    implementation 'androidx.recyclerview:recyclerview:1.0.0'\r\n    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'\r\n    implementation 'androidx.legacy:legacy-support-v4:1.0.0'\r\n    implementation 'com.google.firebase:firebase-auth:19.3.1'\r\n    testImplementation 'junit:junit:4.12'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.2'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'\r\n\r\n    // Import the BoM for the Firebase platform\r\n    implementation platform('com.google.firebase:firebase-bom:25.12.0')\r\n\r\n    // Declare the dependency for the Realtime Database library\r\n    // When using the BoM, you don't specify versions in Firebase library dependencies\r\n    implementation 'com.google.firebase:firebase-database'\r\n\r\n    // Add the dependency for the Firebase SDK for Google Analytics\r\n    // When using the BoM, don't specify versions in Firebase dependencies\r\n    implementation 'com.google.firebase:firebase-analytics'\r\n\r\n    implementation 'com.google.firebase:firebase-auth'\r\n    implementation 'com.google.android.gms:play-services-gcm:17.0.0'\r\n\r\n    // Declare the dependencies for the Firebase Cloud Messaging and Analytics libraries\r\n    // When using the BoM, you don't specify versions in Firebase library dependencies\r\n    implementation 'com.google.firebase:firebase-messaging:20.1.0'\r\n\r\n    ///Navigation menu\r\n    implementation 'androidx.navigation:navigation-fragment:2.3.0'\r\n    implementation 'androidx.navigation:navigation-ui:2.3.0'\r\n    implementation \"androidx.drawerlayout:drawerlayout:1.1.0\"\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(revision c32a7afad370e7f0218f168a53c9f838e5207170)
++++ app/build.gradle	(date 1605464849113)
+@@ -36,7 +36,7 @@
+     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+ 
+     // Import the BoM for the Firebase platform
+-    implementation platform('com.google.firebase:firebase-bom:25.12.0')
++    implementation platform('com.google.firebase:firebase-bom:26.0.0')
+ 
+     // Declare the dependency for the Realtime Database library
+     // When using the BoM, you don't specify versions in Firebase library dependencies
+@@ -48,6 +48,8 @@
+ 
+     implementation 'com.google.firebase:firebase-auth'
+     implementation 'com.google.android.gms:play-services-gcm:17.0.0'
++    // Also declare the dependency for the Google Play services library and specify its version
++    implementation 'com.google.android.gms:play-services-auth:18.1.0'
+ 
+     // Declare the dependencies for the Firebase Cloud Messaging and Analytics libraries
+     // When using the BoM, you don't specify versions in Firebase library dependencies
