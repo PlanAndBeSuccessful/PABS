@@ -5,6 +5,7 @@ android {
     compileSdkVersion 30
     buildToolsVersion "30.0.1"
 
+
     defaultConfig {
         applicationId "com.example.pabs"
         minSdkVersion 16
@@ -67,4 +68,7 @@ dependencies {
 
     //AutoCompletePlaceApi
     implementation 'com.google.android.libraries.places:places:2.4.0'
+
+    //calendar View
+    compile 'sun.bob:mcalendarview:1.0.0'
 }
