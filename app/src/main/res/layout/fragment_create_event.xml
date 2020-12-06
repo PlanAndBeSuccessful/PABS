@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.CreateEventFragment"
     android:id="@+id/fragment_event_container"
-    android:background="@color/white"
+    android:background="@drawable/register_bg"
     android:clickable="true">
 
         <!--Container-->
@@ -21,51 +21,52 @@
                 android:id="@+id/c_e_create_event_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="50dp"
+                android:paddingRight="50dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="100dp"
+                android:fontFamily="@font/roboto_thin"
                 android:text="Create Event"
-                android:textSize="30sp"
-                android:fontFamily="@font/roboto_thin" />
+                android:textColor="#FFFFFF"
+                android:textSize="35sp" />
 
-            <!--Event Name Text-->
-            <TextView
-                android:id="@+id/c_e_event_name_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/c_e_event_name_edit"
-                android:text="Event name"
-                android:textSize="22sp"
-                android:fontFamily="@font/roboto_thin" />
+
 
             <!--Event Name Edit text-->
             <EditText
                 android:id="@+id/c_e_event_name_edit"
                 android:singleLine="true"
                 android:maxLines="1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="60dp"
+                android:background="@drawable/email_bg"
+                android:drawableLeft="@drawable/event_ic"
+                android:drawablePadding="10dp"
+                android:layout_width="380dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="50dp"
+                android:fontFamily="@font/roboto_thin"
+                android:hint="Event name"
+                android:textColorHint="#000000"
+                android:padding="15dp"
                 android:layout_below="@+id/c_e_create_event_text"
                 android:layout_centerHorizontal="true" />
 
-            <!--Event Location Text-->
-            <TextView
-                android:id="@+id/c_e_event_location_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/c_e_event_location_edit"
-                android:text="Location"
-                android:textSize="22sp"
-                android:fontFamily="@font/roboto_thin" />
+
 
             <!--Event Location Edit Text-->
             <EditText
                 android:id="@+id/c_e_event_location_edit"
                 android:singleLine="true"
                 android:maxLines="1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="380dp"
+                android:layout_height="50dp"
+                android:drawableLeft="@drawable/location_ic"
+                android:drawablePadding="10dp"
+                android:background="@drawable/email_bg"
+                android:fontFamily="@font/roboto_thin"
+                android:hint="Location"
+                android:textColorHint="#000000"
+                android:padding="15dp"
                 android:layout_marginBottom="60dp"
                 android:layout_below="@+id/c_e_event_name_edit"
                 android:layout_centerHorizontal="true" />
@@ -77,8 +78,9 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/c_e_event_end_date_edit"
                 android:text="End Date"
+                android:textColor="#FFFFFF"
                 android:layout_alignLeft="@+id/c_e_event_end_date_edit"
-                android:textSize="22sp"
+                android:textSize="20sp"
                 android:fontFamily="@font/roboto_thin" />
 
             <!--Event End Date Edit Text-->
@@ -88,7 +90,9 @@
                 android:maxLines="1"
                 android:layout_width="150dp"
                 android:layout_alignParentRight="true"
-                android:layout_height="wrap_content"
+                android:background="@drawable/email_bg"
+
+                android:layout_height="40dp"
                 android:layout_below="@+id/c_e_event_location_edit"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="40dp"
@@ -101,7 +105,8 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/c_e_event_start_date_edit"
                 android:text="Start Date"
-                android:textSize="22sp"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
                 android:fontFamily="@font/roboto_thin" />
 
             <!--Event Start Date Edit Text-->
@@ -111,7 +116,8 @@
                 android:maxLines="1"
                 android:layout_width="150dp"
                 android:layout_alignParentLeft="true"
-                android:layout_height="wrap_content"
+                android:background="@drawable/email_bg"
+                android:layout_height="40dp"
                 android:layout_below="@+id/c_e_event_location_edit"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="40dp"
@@ -127,18 +133,19 @@
                 android:layout_centerHorizontal="true"
                 android:fontFamily="@font/roboto_thin"
                 android:text="Public/Private:"
-                android:textSize="22sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
 
             <!--Spinner For Selecting public/private-->
             <Spinner
                 android:id="@+id/c_e_public_private_spinner"
                 android:overlapAnchor="false"
-                android:layout_width="140dp"
-                android:layout_height="40dp"
+                android:layout_width="110dp"
+                android:layout_height="30dp"
                 android:dropDownWidth="120dp"
                 android:layout_marginRight="50dp"
                 android:spinnerMode="dropdown"
-                android:background="@android:drawable/btn_dropdown"
+               android:background="@drawable/email_bg"
                 android:layout_toRightOf="@+id/c_e_public_private_text"
                 android:layout_below="@+id/c_e_event_start_date_edit"/>
 
@@ -146,8 +153,13 @@
             <Button
                 android:id="@+id/c_e_next_button"
                 android:text="Next"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:textAllCaps="false"
+                android:textColor="#92129D"
+                android:textSize="22sp"
+                android:fontFamily="sans-serif-medium"
+                android:background="@drawable/login_button"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"/>
 
@@ -155,8 +167,13 @@
             <Button
                 android:id="@+id/c_e_back_button"
                 android:text="Back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:textAllCaps="false"
+                android:textColor="#92129D"
+                android:textSize="22sp"
+                android:fontFamily="sans-serif-medium"
+                android:background="@drawable/login_button"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"/>
         </RelativeLayout>
