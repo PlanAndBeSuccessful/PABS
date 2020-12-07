@@ -42,7 +42,7 @@
                 <!--E-mail-->
                 <EditText
                     android:id="@+id/l_email"
-                    android:text="csa@gmail.com"
+                    android:text="juhu@gmail.com"
                     android:maxLines="1"
                     android:imeOptions="actionNext"
                     android:nextFocusDown="@+id/l_login_button"

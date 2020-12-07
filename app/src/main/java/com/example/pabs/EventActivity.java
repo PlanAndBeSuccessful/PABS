@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.pabs.Adapters.EventRecyclerViewAdapter;
+import com.example.pabs.Fragments.CalendarFragment;
 import com.example.pabs.Fragments.CreateEventFragment;
 import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.Models.Event;
@@ -83,6 +84,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                 for (DataSnapshot event : snapshot.getChildren()) {
                     //Loop 1 to go through all child nodes of users
                     String temp= event.child("event_name").getValue().toString();
+
 
                     Uri myUri = null;
                     String UriStr = null;
@@ -196,6 +198,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                 break;
 
             case R.id.nav_calendar:
+                openCalendarFragment();
                 Toast.makeText(this, "nav_calendar", Toast.LENGTH_SHORT).show();
                 break;
 
@@ -236,6 +239,14 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                 .beginTransaction()
                 .replace(R.id.fragment_event_container, new CreateEventFragment())
                 .addToBackStack("CreateEventFragment")
+                .commit();
+    }
+
+    private void openCalendarFragment(){
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_event_container, new CalendarFragment())
+                .addToBackStack("CalendarFragment")
                 .commit();
     }
 

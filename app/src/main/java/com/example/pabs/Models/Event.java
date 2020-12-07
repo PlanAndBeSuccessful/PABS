@@ -1,22 +1,20 @@
 package com.example.pabs.Models;
 
-import android.net.Uri;
-
-import java.net.URI;
-
 /**
  * Event cards
  */
 
 public class Event {
     private String Title;
-    private Uri Thumbnail;
+    private int Thumbnail;
+    private String StartDate;
 
     public Event(){}
 
-    public Event(String title, Uri thumbnail) {
+    public Event(String title, int thumbnail, String startDate) {
         Title = title;
         Thumbnail = thumbnail;
+        StartDate = startDate;
     }
 
     public String getTitle() {
@@ -27,11 +25,15 @@ public class Event {
         Title = title;
     }
 
-    public Uri getThumbnail() {
+    public int getThumbnail() {
         return Thumbnail;
     }
 
-    public void setThumbnail(Uri thumbnail) {
+    public void setThumbnail(int thumbnail) {
         Thumbnail = thumbnail;
     }
+
+    public String getStartDate() { return StartDate; }
+
+    public void setStartDate(String startDate) { StartDate = startDate; }
 }

@@ -9,23 +9,12 @@
         android:layout_height="96dp"
         android:src="@drawable/elements"
         android:id="@+id/icon_list_row_calendarfragment"/>
-    <LinearLayout
+    <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/eventName"
-            android:text="EsemenyNev"
-            android:layout_marginLeft="15dp"
-            android:textSize="20dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Datum - Datum"
-            android:layout_marginLeft="15dp"
-            android:textSize="16dp"/>
-    </LinearLayout>
+        android:id="@+id/eventName"
+        android:text="EsemenyNev"
+        android:layout_marginLeft="15dp"
+        android:textSize="24dp" />
 
 </LinearLayout>

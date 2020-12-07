@@ -3,7 +3,8 @@ apply plugin: 'com.google.gms.google-services'  // Google Services plugin
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.1"
+    buildToolsVersion "30.0.2"
+
 
     defaultConfig {
         applicationId "com.example.pabs"
@@ -71,4 +72,8 @@ dependencies {
 
     //Picasso for image loading
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //calendar View
+    compile 'sun.bob:mcalendarview:1.0.0'
+
 }
