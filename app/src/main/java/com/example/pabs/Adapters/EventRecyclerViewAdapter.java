@@ -123,8 +123,10 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                                 }
                             });
 
+                            //add staff members to event
                             temp.setStaff_members(staff_members);
 
+                            //if event has a thumbnail add it to temp
                             if(event.child("thumbnail").getValue() != null){
                                 temp.setThumbnail(event.child("thumbnail").getValue().toString());
                             }
@@ -138,7 +140,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
+                    //if database failed
                     }
                 });
 

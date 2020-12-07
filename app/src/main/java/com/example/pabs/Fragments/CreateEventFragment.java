@@ -129,11 +129,13 @@ public class CreateEventFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                //if location field is empty
                 if (!TextUtils.isEmpty(location_et.getText().toString())) {
+                    //if location field is not empty
+
                     //getting lat and lng from location
                     LatLng latLng = getLocationFromAddress(getActivity(), location_et.getText().toString());
 
+                    //if location is found
                     if (latLng != null) {
 
                         //arraylist of Strings which will contain staff members
@@ -159,6 +161,7 @@ public class CreateEventFragment extends Fragment {
                             databaseEvent.setPriv_pub(dropdown.getSelectedItem().toString());
                             databaseEvent.setStaff_members(arrayList);
                             databaseEvent.setOwner_id(fireBaseUser.getUid());
+                            //set basic thumbnail
                             databaseEvent.setThumbnail("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
 
                             //pushing databaseEvent to database
@@ -168,16 +171,15 @@ public class CreateEventFragment extends Fragment {
                             openEvent(databaseEvent);
                         }
 
-                        Log.d(TAG, "onClick: " + latLng);
-
                         getAddress(latLng.latitude, latLng.longitude);
 
-
                     } else {
+                        //if location is not found
                         Toast.makeText(getActivity(), "Wrong location!", Toast.LENGTH_SHORT).show();
                     }
                 }
                 else{
+                    //if fields are empty
                     Toast.makeText(getActivity(), "Empty Fields!", Toast.LENGTH_SHORT).show();
                 }
             }

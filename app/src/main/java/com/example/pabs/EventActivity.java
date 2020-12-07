@@ -50,8 +50,6 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     //events
     List<Event> lstEvent;
 
-    List<DatabaseEvent> lstDatabaseEvent;
-
     //drawer
     private DrawerLayout drawer = null;
     private NavigationView navigationView = null;
@@ -82,35 +80,45 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 clearEvents();
                 for (DataSnapshot event : snapshot.getChildren()) {
-                    //Loop 1 to go through all child nodes of users
+                    //Loop 1 to go through all child nodes of events
                     String temp= event.child("event_name").getValue().toString();
-
 
                     Uri myUri = null;
                     String UriStr = null;
 
+                    //if the event has a thumbnail, get Uri
                     if(event.child("thumbnail").getValue() != null) {
                         UriStr = event.child("thumbnail").getValue().toString();
                         Log.d("PAPA", "onDataChange: "+UriStr);
                         myUri = Uri.parse(UriStr);
                     }
 
+                    //get no image Uri
                     Uri testUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
 
+                    //Create temporary Event
                     Event tempEv;
+
+                    //if Event has no thumbnail
                     if(UriStr == null){
+                        //Give the event, the no image thumbnail
                         tempEv = new Event();
                         tempEv.setTitle(temp);
                         tempEv.setThumbnail(testUri);
                     }
+                    //if Event has thumbnail
                     else{
+                        //Set thumbnail of event
                         tempEv = new Event();
                         tempEv.setTitle(temp);
                         tempEv.setThumbnail(myUri);
                     }
 
+                    //add events to array
                     addToEventsArray(tempEv);
                 }
+
+                //Set and show events on main screen
                 setEvents();
             }
 
@@ -246,6 +254,9 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                 .commit();
     }
 
+    /**
+     * open calendar event fragment
+     */
     private void openCalendarFragment(){
         getSupportFragmentManager()
                 .beginTransaction()

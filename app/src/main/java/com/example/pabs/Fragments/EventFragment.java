@@ -87,7 +87,7 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
     //database event
     private DatabaseEvent databaseEvent;
 
-    //camera
+    //image handling
     private ImageView image_view;
     private StorageReference mStorageRef;
     private Button ch, up;
@@ -133,7 +133,6 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
 
         if(databaseEvent.getThumbnail() != null){
             //set image if it's not null
-
             Uri myUri = Uri.parse(databaseEvent.getThumbnail());
 
             //Picasso license
@@ -153,7 +152,6 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //getActivity().getSupportFragmentManager().popBackStack("EventFragment", 1);
                 //clear all backstack
                 clearBackstack();
             }
@@ -172,20 +170,24 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                            //delete selected event
                             appleSnapshot.getRef().removeValue();
+
+                            //clear it from backstack
                             clearBackstack();
                         }
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
+                        //database failed
                         Log.e("EventFragment", "onCancelled", databaseError.toException());
                     }
                 });
             }
         });
 
-        //image button
+        //change image of event
         ch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -193,23 +195,29 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        //upload image to database
         up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(imgUri != null){
+                    //if we have an image selected
                     if (uploadTask != null && uploadTask.isInProgress()){
+                        //if upload is not finished
                         Toast.makeText(getActivity(), "Upload in progress", Toast.LENGTH_SHORT).show();
                     }else {
+                        //if upload is not started
                         fileUploader();
                     }
                 }
                 else{
+                    //if image is not selected
                     Toast.makeText(getActivity(), "Image not selected!", Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
 
+        //get reference to firebase storage "Images/" path
         mStorageRef = FirebaseStorage.getInstance().getReference("Images");
 
         // Gets the MapView from the XML layout and creates it
@@ -225,7 +233,6 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
     /**
      * fileUploader
      */
-
     private String getExtension(Uri uri){
         ContentResolver cr = getActivity().getContentResolver();
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
@@ -233,13 +240,16 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void fileUploader(){
+        //get reference to name
         final StorageReference ref = mStorageRef.child(System.currentTimeMillis() +"."+getExtension(imgUri));
 
+        //set upload task to imgUri
         final UploadTask uploadTask = ref.putFile(imgUri);
+
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
+                //start upload
                 uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override
                     public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -254,18 +264,20 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
                         if (task.isSuccessful()) {
+                            //if image is uploaded
                             Toast.makeText(getActivity(), "Image uploaded succesfully", Toast.LENGTH_SHORT).show();
-                            final Uri downloadUri = task.getResult();
-                            Log.d(TAG, "URL for image:"+downloadUri);
 
+                            final Uri downloadUri = task.getResult();
                             final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("EVENT");
 
+                            //connect firebase storage with firebase realtime database
                             ref.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     for (DataSnapshot event : snapshot.getChildren()) {
                                         //Loop 1 to go through all child nodes of users
                                         if(event.child("event_name").getValue() == databaseEvent.getEvent_name()){
+                                            //set thumbnail
                                             setThumbnail(event.getKey(), ref, downloadUri);
                                             databaseEvent.setThumbnail(downloadUri.toString());
                                         }
@@ -274,7 +286,7 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError error) {
-
+                                    //database failed
                                 }
                             });
 
@@ -287,10 +299,14 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                //upload task failed
             }
         });
     }
 
+    /**
+     * set Thumbnail
+     */
     private void setThumbnail(String key, DatabaseReference ref, Uri downloadUri){
         ref.child(key).child("thumbnail").setValue(downloadUri.toString());
     }
@@ -298,7 +314,6 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
     /**
      * Open Gallery
      */
-
     private void viewGallery(){
         startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
     }
