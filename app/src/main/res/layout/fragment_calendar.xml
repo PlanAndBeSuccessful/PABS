@@ -51,42 +51,57 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:gravity="center_horizontal"
                     android:text="Mon"
-                    android:textSize="18dp" />
+                    android:textSize="18dp"
+                    />
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:gravity="center_horizontal"
                     android:text="Tue"
                     android:textSize="18dp" />
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:gravity="center_horizontal"
                     android:text="Wed"
                     android:textSize="18dp" />
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:gravity="center_horizontal"
                     android:text="Thu"
                     android:textSize="18dp" />
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:gravity="center_horizontal"
                     android:text="Fri"
                     android:textSize="18dp" />
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:gravity="center_horizontal"
                     android:text="Sat"
                     android:textSize="18dp" />
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:gravity="center_horizontal"
                     android:text="Sun"
                     android:textSize="18dp" />
             </LinearLayout>
