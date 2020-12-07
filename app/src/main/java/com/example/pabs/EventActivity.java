@@ -99,10 +99,14 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
 
                     Event tempEv;
                     if(UriStr == null){
-                        tempEv = new Event(temp, testUri);
+                        tempEv = new Event();
+                        tempEv.setTitle(temp);
+                        tempEv.setThumbnail(testUri);
                     }
                     else{
-                        tempEv = new Event(temp, myUri);
+                        tempEv = new Event();
+                        tempEv.setTitle(temp);
+                        tempEv.setThumbnail(myUri);
                     }
 
                     addToEventsArray(tempEv);

@@ -67,7 +67,7 @@ public class CalendarRecyclerViewAdapter extends RecyclerView.Adapter<CalendarRe
 
         //set data
         holder.tv_title.setText(mData.get(position).getTitle());
-        holder.img_thumbnail.setImageResource(mData.get(position).getThumbnail());
+        //holder.img_thumbnail.setImageResource(mData.get(position).getThumbnail());
 
         //set click listener
         holder.cardView.setOnClickListener(new View.OnClickListener() {

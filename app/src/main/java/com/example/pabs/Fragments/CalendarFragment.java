@@ -2,6 +2,7 @@ package com.example.pabs.Fragments;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -113,7 +114,8 @@ public class CalendarFragment extends Fragment {
                     String event_startdate = event.child("start_date").getValue().toString();
 
                     //creating a temporary event object
-                    Event tempEv = new Event(e_name, R.drawable.balette_eloadas,event_startdate);
+                    Uri myUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
+                    Event tempEv = new Event(e_name, myUri, event_startdate);
 
                     //pushing the temporary event object into an arraylist
                     addToEventsArray(tempEv);

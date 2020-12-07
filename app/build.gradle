@@ -12,6 +12,7 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         // Read the API key from ./secure.properties into R.string.maps_api_key
         def secureProps = new Properties()
@@ -74,6 +75,9 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
 
     //calendar View
-    compile 'sun.bob:mcalendarview:1.0.0'
+    implementation 'sun.bob:mcalendarview:1.0.0'
+
+    //multidex
+    implementation 'com.android.support:multidex:1.0.3'
 
 }
