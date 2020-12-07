@@ -59,12 +59,16 @@ dependencies {
     // Declare the dependencies for the Firebase Cloud Messaging and Analytics libraries
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-messaging:21.0.0'
+    implementation 'com.google.firebase:firebase-storage:19.2.0'
 
     ///Navigation menu
-    implementation 'androidx.navigation:navigation-fragment:2.3.1'
-    implementation 'androidx.navigation:navigation-ui:2.3.1'
+    implementation 'androidx.navigation:navigation-fragment:2.3.2'
+    implementation 'androidx.navigation:navigation-ui:2.3.2'
     implementation "androidx.drawerlayout:drawerlayout:1.1.1"
 
     //AutoCompletePlaceApi
     implementation 'com.google.android.libraries.places:places:2.4.0'
+
+    //Picasso for image loading
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }

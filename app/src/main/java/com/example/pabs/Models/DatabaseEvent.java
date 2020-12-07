@@ -2,6 +2,10 @@ package com.example.pabs.Models;
 
 import java.util.List;
 
+/**
+ * Class to store Events from Firebase Database
+ */
+
 public class DatabaseEvent {
     String description;
     String start_date;
@@ -13,7 +17,7 @@ public class DatabaseEvent {
     double location_x;
     double location_y;
     String location_name;
-    Long thumbnail;
+    String thumbnail;
     String priv_pub;
     List<String> staff_members;
     String owner_id;
@@ -21,7 +25,7 @@ public class DatabaseEvent {
 
     public DatabaseEvent(){};
 
-    public DatabaseEvent(String description, String start_date, String end_date, String reminder, String repetition, String inv_code, String event_name, double location_x, double location_y, String location_name, Long thumbnail, String priv_pub, List<String> staff_members, String user_id) {
+    public DatabaseEvent(String description, String start_date, String end_date, String reminder, String repetition, String inv_code, String event_name, double location_x, double location_y, String location_name, String thumbnail, String priv_pub, List<String> staff_members, String user_id) {
         this.description = description;
         this.start_date = start_date;
         this.end_date = end_date;
@@ -126,11 +130,11 @@ public class DatabaseEvent {
         this.location_name = location_name;
     }
 
-    public Long getThumbnail() {
+    public String getThumbnail() {
         return thumbnail;
     }
 
-    public void setThumbnail(Long thumbnail) {
+    public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
     }
 

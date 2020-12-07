@@ -32,6 +32,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Creates a new event
@@ -154,6 +159,7 @@ public class CreateEventFragment extends Fragment {
                             databaseEvent.setPriv_pub(dropdown.getSelectedItem().toString());
                             databaseEvent.setStaff_members(arrayList);
                             databaseEvent.setOwner_id(fireBaseUser.getUid());
+                            databaseEvent.setThumbnail("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
 
                             //pushing databaseEvent to database
                             reference.push().setValue(databaseEvent);
@@ -220,42 +226,74 @@ public class CreateEventFragment extends Fragment {
     }
 
     /**
+     * Thread for handling the location search, to avoid UI failure
+     */
+    public class MyThread implements Callable<LatLng> {
+
+        private String strAddress;
+        private Geocoder coder;
+
+        public MyThread(String strAddress, Geocoder coder){
+            this.strAddress=strAddress;
+            this.coder=coder;
+        }
+        @Override
+        public LatLng call() {
+            LatLng p1 = null;
+            List<Address> address;
+            try {
+                // May throw an IOException
+
+                //getting first 5 results of address
+                address = coder.getFromLocationName(strAddress, 5);
+                if (address == null) {
+                    return null;
+                }
+
+                if(address.size() < 1)
+                {
+                    //if location not found
+                    //Toast.makeText(context, "Invalid Location", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    //get lat lng from location
+                    Address location = address.get(0);
+                    p1 = new LatLng(location.getLatitude(), location.getLongitude() );
+                }
+
+
+            } catch (IOException ex) {
+
+                ex.printStackTrace();
+            }
+            return p1;
+        }
+
+    }
+    /**
      * Get Location From Address
      */
     public LatLng getLocationFromAddress(Context context, String strAddress) {
 
         //init
         Geocoder coder = new Geocoder(context);
-        List<Address> address;
-        LatLng p1 = null;
-
+        //get executer
+        ExecutorService service =  Executors.newSingleThreadExecutor();
+        //creating new thread
+        MyThread myThread = new MyThread(strAddress, coder);
+        //future variable to get the value after thread completed
+        Future<LatLng> future = service.submit(myThread);
+        //init p1
+        LatLng p1= null;
         try {
-            // May throw an IOException
-
-            //getting first 5 results of address
-            address = coder.getFromLocationName(strAddress, 5);
-            if (address == null) {
-                return null;
-            }
-
-            if(address.size() < 1)
-            {
-                //if location not found
-                //Toast.makeText(context, "Invalid Location", Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-                //get lat lng from location
-                Address location = address.get(0);
-                p1 = new LatLng(location.getLatitude(), location.getLongitude() );
-            }
-
-
-        } catch (IOException ex) {
-
-            ex.printStackTrace();
+            //get LatLng result and give it to p1
+            p1 = future.get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
         //return lat lng of location
         return p1;
     }

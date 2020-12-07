@@ -19,7 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:scaleType="fitXY"
-            android:src="@drawable/event_header_example"/>
+            android:clickable="true"
+            android:focusable="true"
+             />
 
         <!--Container-->
         <RelativeLayout
@@ -105,6 +107,26 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:text="+"/>
+
+            <!--Change image button-->
+            <Button
+                android:id="@+id/fe_change_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/fe_plus_button"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="-58dp"
+                android:text="Change" />
+
+            <!--Upload image button-->
+            <Button
+                android:id="@+id/fe_upload_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/fe_change_button"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="-58dp"
+                android:text="Upload" />
 
             <!--back button-->
             <Button

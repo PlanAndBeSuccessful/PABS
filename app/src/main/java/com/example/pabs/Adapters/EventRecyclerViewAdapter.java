@@ -2,6 +2,7 @@ package com.example.pabs.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +73,8 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
 
         //set data
         holder.tv_title.setText(mData.get(position).getTitle());
-        holder.img_thumbnail.setImageResource(mData.get(position).getThumbnail());
+
+        Picasso.get().load(mData.get(position).getThumbnail()).resize(400,400).centerCrop().into(holder.img_thumbnail);
 
         //set click listener
         holder.cardView.setOnClickListener(new View.OnClickListener() {
@@ -122,12 +125,13 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
 
                             temp.setStaff_members(staff_members);
 
-                            //open Event which matches with the title from the Database Event
-                            Log.d("ASDASDASD", "Event Name: "+temp.getEvent_name());
-                            if(mData.get(position).getTitle() == temp.getEvent_name()){
-                                Log.d("ASDASDASD", "onDataChange: "+ temp.getEvent_name());
-                                openEvent(temp);
+                            if(event.child("thumbnail").getValue() != null){
+                                temp.setThumbnail(event.child("thumbnail").getValue().toString());
+                            }
 
+                            //open Event which matches with the title from the Database Event
+                            if(mData.get(position).getTitle() == temp.getEvent_name()){
+                                openEvent(temp);
                             }
                         }
                     }

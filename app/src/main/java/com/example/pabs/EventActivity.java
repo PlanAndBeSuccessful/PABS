@@ -9,7 +9,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -82,7 +84,24 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                     //Loop 1 to go through all child nodes of users
                     String temp= event.child("event_name").getValue().toString();
 
-                    Event tempEv = new Event(temp, R.drawable.balette_eloadas);
+                    Uri myUri = null;
+                    String UriStr = null;
+
+                    if(event.child("thumbnail").getValue() != null) {
+                        UriStr = event.child("thumbnail").getValue().toString();
+                        Log.d("PAPA", "onDataChange: "+UriStr);
+                        myUri = Uri.parse(UriStr);
+                    }
+
+                    Uri testUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
+
+                    Event tempEv;
+                    if(UriStr == null){
+                        tempEv = new Event(temp, testUri);
+                    }
+                    else{
+                        tempEv = new Event(temp, myUri);
+                    }
 
                     addToEventsArray(tempEv);
                 }
@@ -138,14 +157,23 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
 
     }
 
+    /**
+     * Add to events inside DataChanged method so we don't lose the results
+     */
     public void addToEventsArray(Event tempEv){
         lstEvent.add(tempEv);
     }
 
+    /**
+     * Clear events inside DataChanged method
+     */
     public void clearEvents(){
         lstEvent.clear();
     }
 
+    /**
+     * Set events inside DataChanged method
+     */
     public void setEvents(){
         //create and set RecyclerView
         RecyclerView myRv = (RecyclerView) findViewById(R.id.e_recycler_view);
@@ -221,13 +249,11 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         reference.child(uID).child("online").setValue("false");
     }
 
+    /**
+     * Called when the activity started
+     */
     @Override
     protected void onStart() {
         super.onStart();
-        lstEvent.clear();
-        FragmentManager fm = getSupportFragmentManager();
-        for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
-            fm.popBackStack();
-        }
     }
 }

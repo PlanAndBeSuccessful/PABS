@@ -23,8 +23,7 @@ This will represent the default view of a event-->
         <ImageView
             android:id="@+id/c_e_thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/events" />
+            android:layout_height="match_parent" />
 
         <!--Text in image(currently the visibility is set to gone)-->
         <TextView
