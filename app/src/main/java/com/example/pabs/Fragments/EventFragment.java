@@ -1,6 +1,7 @@
 package com.example.pabs.Fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -27,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.pabs.LoginActivity;
 import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.Models.Event;
 import com.example.pabs.R;
@@ -72,6 +74,7 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
     private Button back_button;
     private Button delete_button;
     private View containerView;
+    private ProgressDialog mDialog = null;
 
     private MapView mapView;
 
@@ -206,6 +209,9 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
                         Toast.makeText(getActivity(), "Upload in progress", Toast.LENGTH_SHORT).show();
                     }else {
                         //if upload is not started
+
+                        //ToDo: remove last image
+
                         fileUploader();
                     }
                 }
@@ -246,6 +252,13 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
         //set upload task to imgUri
         final UploadTask uploadTask = ref.putFile(imgUri);
 
+        //dialog on loading
+        mDialog = new ProgressDialog(getActivity());
+
+        mDialog.setMessage("Please wait...");
+        mDialog.setCancelable(false);
+        mDialog.show();
+
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -268,18 +281,49 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
                             Toast.makeText(getActivity(), "Image uploaded succesfully", Toast.LENGTH_SHORT).show();
 
                             final Uri downloadUri = task.getResult();
-                            final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("EVENT");
+                            final DatabaseReference refEvent = FirebaseDatabase.getInstance().getReference().child("EVENT");
 
                             //connect firebase storage with firebase realtime database
-                            ref.addValueEventListener(new ValueEventListener() {
+                            refEvent.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     for (DataSnapshot event : snapshot.getChildren()) {
                                         //Loop 1 to go through all child nodes of users
                                         if(event.child("event_name").getValue() == databaseEvent.getEvent_name()){
                                             //set thumbnail
-                                            setThumbnail(event.getKey(), ref, downloadUri);
-                                            databaseEvent.setThumbnail(downloadUri.toString());
+
+                                            if(event.child("thumbnail").getValue() == null){
+                                                setThumbnail(event.getKey(), refEvent, downloadUri);
+                                                databaseEvent.setThumbnail(downloadUri.toString());
+                                                Log.d(TAG, "Nincs kep: ");
+                                                mDialog.dismiss();
+                                            }
+                                            else{
+                                                FirebaseStorage mFirebaseStorage = FirebaseStorage.getInstance();
+
+                                                Log.d(TAG, "Van kep: " + event.child("thumbnail").getValue());
+
+                                                StorageReference photoRef = mFirebaseStorage.getReferenceFromUrl(event.child("thumbnail").getValue().toString());
+
+                                                photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        // File deleted successfully
+                                                        Log.d(TAG, "onSuccess: deleted file");
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception exception) {
+                                                        // Uh-oh, an error occurred!
+                                                        Log.d(TAG, "onFailure: did not delete file");
+                                                    }
+                                                });
+
+                                                setThumbnail(event.getKey(), refEvent, downloadUri);
+                                                databaseEvent.setThumbnail(downloadUri.toString());
+                                                mDialog.dismiss();
+                                            }
+
                                         }
                                     }
                                 }
