@@ -241,25 +241,27 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
      */
     private void deleteImage(DataSnapshot dataSnapshot){
         //clear image
-        FirebaseStorage mFirebaseStorage = FirebaseStorage.getInstance();
+        if(dataSnapshot.child("thumbnail").getValue() != null) {
+            FirebaseStorage mFirebaseStorage = FirebaseStorage.getInstance();
 
-        Log.d(TAG, "Van kep: " + dataSnapshot.child("thumbnail").getValue());
+            Log.d(TAG, "Van kep: " + dataSnapshot.child("thumbnail").getValue());
 
-        StorageReference photoRef = mFirebaseStorage.getReferenceFromUrl(dataSnapshot.child("thumbnail").getValue().toString());
+            StorageReference photoRef = mFirebaseStorage.getReferenceFromUrl(dataSnapshot.child("thumbnail").getValue().toString());
 
-        photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                // File deleted successfully
-                Log.d(TAG, "onSuccess: deleted file");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Uh-oh, an error occurred!
-                Log.d(TAG, "onFailure: did not delete file");
-            }
-        });
+            photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    // File deleted successfully
+                    Log.d(TAG, "onSuccess: deleted file");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Uh-oh, an error occurred!
+                    Log.d(TAG, "onFailure: did not delete file");
+                }
+            });
+        }
     }
 
     /**
