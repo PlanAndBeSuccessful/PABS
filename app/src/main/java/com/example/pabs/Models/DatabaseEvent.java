@@ -21,11 +21,11 @@ public class DatabaseEvent {
     String priv_pub;
     List<String> staff_members;
     String owner_id;
-
+    List<String> joined_members;
 
     public DatabaseEvent(){};
 
-    public DatabaseEvent(String description, String start_date, String end_date, String reminder, String repetition, String inv_code, String event_name, double location_x, double location_y, String location_name, String thumbnail, String priv_pub, List<String> staff_members, String user_id) {
+    public DatabaseEvent(String description, String start_date, String end_date, String reminder, String repetition, String inv_code, String event_name, double location_x, double location_y, String location_name, String thumbnail, String priv_pub, List<String> staff_members, String user_id, List<String> joined_members) {
         this.description = description;
         this.start_date = start_date;
         this.end_date = end_date;
@@ -39,8 +39,13 @@ public class DatabaseEvent {
         this.thumbnail = thumbnail;
         this.priv_pub = priv_pub;
         this.staff_members = staff_members;
-        this.owner_id = owner_id;
+        this.owner_id = user_id;
+        this.joined_members = joined_members;
     }
+
+    public List<String> getJoined_members() { return joined_members; }
+
+    public void setJoined_members(List<String> joined_members) { this.joined_members = joined_members; }
 
     public String getOwner_id() {
         return owner_id;

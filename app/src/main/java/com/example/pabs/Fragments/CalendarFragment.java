@@ -2,25 +2,17 @@ package com.example.pabs.Fragments;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.pabs.Adapters.EventRecyclerViewAdapter;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.Models.Event;
 import com.example.pabs.R;
@@ -32,8 +24,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -55,14 +45,11 @@ public class CalendarFragment extends Fragment {
 
     Context mContext;
     //List<DatabaseEvent> lstDatabaseEvent;
-
+    //events
+    List<DatabaseEvent> lstEvent;
     private View listView;
-
     //firebase
     private String uID;
-
-    //events
-    List<Event> lstEvent;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,6 +60,9 @@ public class CalendarFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //get uid of logged in user
+        uID = getActivity().getIntent().getStringExtra("USER");
+
         // Inflate the layout for this fragment
         View calendarView = inflater.inflate(R.layout.fragment_calendar, container, false);
 
@@ -104,24 +94,74 @@ public class CalendarFragment extends Fragment {
         DatabaseReference databaseEvents;
         databaseEvents = FirebaseDatabase.getInstance().getReference().child("EVENT");
 
+        //databaseEvents.addValueEventListener(new ValueEventListener() {
         databaseEvents.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 clearEvents();
-                for (DataSnapshot event : snapshot.getChildren()) {
+                for (final DataSnapshot event : snapshot.getChildren()) {
+                    final DatabaseEvent tempEv = new DatabaseEvent();
+
                     //Loop 1 to go through all child nodes of events
-                    String e_name = event.child("event_name").getValue().toString();
-                    String event_startdate = event.child("start_date").getValue().toString();
 
-                    //creating a temporary event object
-                    Uri myUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
-                    Event tempEv = new Event(e_name, myUri, event_startdate);
 
-                    //pushing the temporary event object into an arraylist
-                    addToEventsArray(tempEv);
+                    final List<String> joined_users =  new ArrayList<>();
+                    event.getRef().child("joined_members").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                            for (DataSnapshot users : snapshot.getChildren()) {
+                                //Loop 1 to go through all child nodes of joined members
+                                joined_users.add(users.getValue().toString());
+                            }
+
+
+                            final Handler handler = new Handler();
+                            final int delay = 1000; //milliseconds
+
+                            handler.postDelayed(new Runnable(){
+                            public void run(){
+                                if(!joined_users.isEmpty())//checking if the data is loaded or not
+                                {
+
+                                String e_name = event.child("event_name").getValue().toString();
+                                tempEv.setEvent_name(e_name);
+                                String event_startdate = event.child("start_date").getValue().toString();
+                                tempEv.setStart_date(event_startdate);
+
+                                tempEv.setJoined_members(joined_users);
+
+
+                                //pushing the temporary event object into an arraylist
+                                    lstEvent.add(tempEv);
+
+                                    for(DatabaseEvent i : lstEvent){
+                                        for(String j: i.getJoined_members()){
+                                            if(uID.equals(j)){
+                                                //marking the Dates on which we have Events
+                                                DateData temp = convertDate(i.getStart_date());
+                                                customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.BLUE));
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                }
+                                else
+                                    handler.postDelayed(this, delay);
+                            }
+                            }, delay);
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+
                 }
-                //marking the Dates on which we have Events
-                markEvents();
             }
 
             @Override
@@ -129,15 +169,7 @@ public class CalendarFragment extends Fragment {
 
             }
         });
-
         return calendarView;
-    }
-
-    private void markEvents() {
-        for(Event i : lstEvent){
-            DateData temp = convertDate(i.getStartDate());
-            customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR,Color.BLUE));
-        }
     }
 
     @Override
@@ -189,10 +221,6 @@ public class CalendarFragment extends Fragment {
 
     public String getMonth(int month) {
         return new DateFormatSymbols().getMonths()[month-1];
-    }
-
-    public void addToEventsArray(Event tempEv){
-        lstEvent.add(tempEv);
     }
 
     public void clearEvents(){

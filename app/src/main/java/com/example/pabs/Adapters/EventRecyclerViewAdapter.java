@@ -32,6 +32,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.os.Handler;
 
 /**
  * Creates an array of card elements
@@ -89,11 +90,11 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                 databaseEvents.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot event : snapshot.getChildren()) {
+                        for (final DataSnapshot event : snapshot.getChildren()) {
                             //Loop to go through all child nodes of event
 
                             //temp for storing data from database
-                            DatabaseEvent temp = new DatabaseEvent();
+                            final DatabaseEvent temp = new DatabaseEvent();
                             //setting data to temp from database
                             temp.setOwner_id(event.getKey());
                             temp.setEvent_name(event.child("event_name").getValue().toString());
@@ -123,18 +124,35 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                                 }
                             });
 
-                            //add staff members to event
-                            temp.setStaff_members(staff_members);
+                            final Handler handler = new Handler();
+                            final int delay = 1000; //milliseconds
 
-                            //if event has a thumbnail add it to temp
-                            if(event.child("thumbnail").getValue() != null){
-                                temp.setThumbnail(event.child("thumbnail").getValue().toString());
-                            }
+                            handler.postDelayed(new Runnable(){
+                                public void run(){
+                                    if(!staff_members.isEmpty())//checking if the data is loaded or not
+                                    {
+                                        //add staff members to event
+                                        temp.setStaff_members(staff_members);
 
-                            //open Event which matches with the title from the Database Event
-                            if(mData.get(position).getTitle() == temp.getEvent_name()){
-                                openEvent(temp);
-                            }
+                                        //if event has a thumbnail add it to temp
+                                        if(event.child("thumbnail").getValue() != null){
+                                            temp.setThumbnail(event.child("thumbnail").getValue().toString());
+                                        }
+
+                                        //open Event which matches with the title from the Database Event
+                                        if(mData.get(position).getTitle() == temp.getEvent_name()){
+                                            mFragment
+                                                    .beginTransaction()
+                                                    .replace( R.id.fragment_event_container , new EventFragment(temp))
+                                                    .addToBackStack("EventFragment")
+                                                    .commit();
+                                        }
+                                    }
+                                    else
+                                        handler.postDelayed(this, delay);
+                                }
+                            }, delay);
+
                         }
                     }
 
@@ -147,17 +165,6 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
             }
         });
 
-    }
-
-    /**
-     * Open Event Fragment with data
-     */
-    public void openEvent(DatabaseEvent databaseEvent){
-        mFragment
-                .beginTransaction()
-                .replace( R.id.fragment_event_container , new EventFragment(databaseEvent))
-                .addToBackStack("EventFragment")
-                .commit();
     }
 
     /**

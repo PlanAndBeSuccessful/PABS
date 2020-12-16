@@ -2,6 +2,8 @@ package com.example.pabs.Models;
 
 import android.net.Uri;
 
+import java.util.List;
+
 /**
  * Event cards
  */
@@ -9,14 +11,12 @@ import android.net.Uri;
 public class Event {
     private String Title;
     private Uri Thumbnail;
-    private String StartDate;
 
     public Event(){}
 
-    public Event(String title, Uri thumbnail, String startDate) {
+    public Event(String title, Uri thumbnail, String startDate, List<String> j_members) {
         Title = title;
         Thumbnail = thumbnail;
-        StartDate = startDate;
     }
 
     public String getTitle() {
@@ -35,7 +35,4 @@ public class Event {
         Thumbnail = thumbnail;
     }
 
-    public String getStartDate() { return StartDate; }
-
-    public void setStartDate(String startDate) { StartDate = startDate; }
 }
