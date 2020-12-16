@@ -173,6 +173,9 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                            //clear image
+                            deleteImage(appleSnapshot);
+
                             //delete selected event
                             appleSnapshot.getRef().removeValue();
 
@@ -209,9 +212,6 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
                         Toast.makeText(getActivity(), "Upload in progress", Toast.LENGTH_SHORT).show();
                     }else {
                         //if upload is not started
-
-                        //ToDo: remove last image
-
                         fileUploader();
                     }
                 }
@@ -234,6 +234,32 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
         mapView.getMapAsync(this);
 
         return view;
+    }
+
+    /**
+     * delete Image
+     */
+    private void deleteImage(DataSnapshot dataSnapshot){
+        //clear image
+        FirebaseStorage mFirebaseStorage = FirebaseStorage.getInstance();
+
+        Log.d(TAG, "Van kep: " + dataSnapshot.child("thumbnail").getValue());
+
+        StorageReference photoRef = mFirebaseStorage.getReferenceFromUrl(dataSnapshot.child("thumbnail").getValue().toString());
+
+        photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // File deleted successfully
+                Log.d(TAG, "onSuccess: deleted file");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Uh-oh, an error occurred!
+                Log.d(TAG, "onFailure: did not delete file");
+            }
+        });
     }
 
     /**
@@ -299,25 +325,7 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
                                                 mDialog.dismiss();
                                             }
                                             else{
-                                                FirebaseStorage mFirebaseStorage = FirebaseStorage.getInstance();
-
-                                                Log.d(TAG, "Van kep: " + event.child("thumbnail").getValue());
-
-                                                StorageReference photoRef = mFirebaseStorage.getReferenceFromUrl(event.child("thumbnail").getValue().toString());
-
-                                                photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        // File deleted successfully
-                                                        Log.d(TAG, "onSuccess: deleted file");
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception exception) {
-                                                        // Uh-oh, an error occurred!
-                                                        Log.d(TAG, "onFailure: did not delete file");
-                                                    }
-                                                });
+                                                deleteImage(event);
 
                                                 setThumbnail(event.getKey(), refEvent, downloadUri);
                                                 databaseEvent.setThumbnail(downloadUri.toString());
@@ -377,10 +385,8 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
                 bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
                 Log.d(TAG, "Image Selected Successfully!");
             } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
