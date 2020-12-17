@@ -110,7 +110,7 @@
         <sun.bob.mcalendarview.views.ExpCalendarView
             android:layout_below="@+id/calendar_day_container"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="310dp"
             android:id="@+id/calendar_calendar"
             android:background="@color/white"/>
 

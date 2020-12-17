@@ -12,7 +12,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.pabs.Adapters.CalendarRecyclerViewAdapter;
 import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.Models.Event;
 import com.example.pabs.R;
@@ -32,6 +35,7 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 
 import sun.bob.mcalendarview.MarkStyle;
+import sun.bob.mcalendarview.listeners.OnDateClickListener;
 import sun.bob.mcalendarview.listeners.OnMonthChangeListener;
 import sun.bob.mcalendarview.vo.DateData;
 
@@ -67,6 +71,7 @@ public class CalendarFragment extends Fragment {
         View calendarView = inflater.inflate(R.layout.fragment_calendar, container, false);
 
         listView = getActivity().findViewById(R.id.activity_event_layout);
+        final RecyclerView rvCalendarfragment = (RecyclerView) calendarView.findViewById(R.id.calendar_rec_view);
 
         //setting the current date in CalendarView
         setCurrDateInCalendarFragment(calendarView);
@@ -144,8 +149,27 @@ public class CalendarFragment extends Fragment {
                                                 break;
                                             }
                                         }
+                                        if(uID.equals(i.getOwner_id())){
+                                            DateData temp = convertDate(i.getStart_date());
+                                            customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.BLUE));
+                                        }
                                     }
 
+                                    final List<DatabaseEvent> onDateEvents = new ArrayList<>();
+                                    customCalendar.setOnDateClickListener(new OnDateClickListener() {
+                                        @Override
+                                        public void onDateClick(View view, DateData clickedDate) {
+                                            Log.d("DateClicked", "onDateClick: " + clickedDate);
+                                            for(DatabaseEvent i : lstEvent){
+                                                if(convertDate(i.getStart_date()).equals(clickedDate)){
+                                                    onDateEvents.add(i);
+                                                }
+                                            }
+                                            CalendarRecyclerViewAdapter adapter = new CalendarRecyclerViewAdapter(onDateEvents);
+                                            rvCalendarfragment.setAdapter(adapter);
+                                            rvCalendarfragment.setLayoutManager(new LinearLayoutManager(getActivity()));
+                                        }
+                                    });
                                 }
                                 else
                                     handler.postDelayed(this, delay);
