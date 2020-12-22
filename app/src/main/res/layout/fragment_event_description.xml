@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.EventFragment.EventDescriptionFragment"
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    android:padding="15dp">
+
+    <RelativeLayout
+        android:id="@+id/f_e_d_rl1"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <ImageView
+            android:id="@+id/f_e_d_backImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_arrow_back_24"/>
+
+        <TextView
+            android:id="@+id/f_e_d_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:text="Description"
+            android:paddingBottom="5dp"/>
+
+        <Button
+            android:id="@+id/f_e_d_setDescBtn"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:text="Set Description"
+            android:textSize="10sp"
+            android:background="@drawable/rect_btn"
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/f_e_d_tv"/>
+
+
+    </RelativeLayout>
+
+
+    <EditText
+        android:id="@+id/f_e_d_et"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/rect"
+        android:gravity="top|start"
+        android:padding="15dp"
+        android:layout_below="@+id/f_e_d_rl1"/>
+
+</RelativeLayout>

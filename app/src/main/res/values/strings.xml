@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">PABS</string>
-    <string name="username">Username</string>
-    <string name="email">E-mail addres</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- TODO: Remove or change this placeholder text -->
 </resources>

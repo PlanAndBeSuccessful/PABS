@@ -14,7 +14,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.pabs.Fragments.EventFragment;
+import com.example.pabs.Fragments.EventFragment.EventFragment;
 import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.Models.Event;
 import com.example.pabs.R;

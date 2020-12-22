@@ -5,7 +5,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,7 +21,6 @@ import android.widget.Toast;
 import com.example.pabs.Adapters.EventRecyclerViewAdapter;
 import com.example.pabs.Fragments.CalendarFragment;
 import com.example.pabs.Fragments.CreateEventFragment;
-import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.Models.Event;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
@@ -39,7 +37,7 @@ import java.util.List;
  * Main screen, handles more fragments, events, groups
  */
 
-public class EventActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class EventActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     //UI
     private ImageView create_event_img_btn;
@@ -285,4 +283,5 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     protected void onStart() {
         super.onStart();
     }
+
 }

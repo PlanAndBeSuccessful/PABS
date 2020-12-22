@@ -47,7 +47,6 @@ to work correctly, we also store a layout for other UI elements-->
 
         <!--Container for the 3 images that we use as buttons-->
         <RelativeLayout
-            android:id="@+id/rellay2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -57,7 +56,6 @@ to work correctly, we also store a layout for other UI elements-->
 
             <!--First image-->
             <ImageView
-                android:id="@+id/btn1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/transparent"
@@ -92,7 +90,6 @@ to work correctly, we also store a layout for other UI elements-->
 
             <!--Third image-->
             <ImageView
-                android:id="@+id/btn3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/transparent"

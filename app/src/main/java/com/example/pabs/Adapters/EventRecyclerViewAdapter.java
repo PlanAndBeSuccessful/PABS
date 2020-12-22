@@ -1,9 +1,6 @@
 package com.example.pabs.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,16 +10,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.pabs.Fragments.CreateEventFragment;
-import com.example.pabs.Fragments.EventFragment;
+import com.example.pabs.Fragments.EventFragment.EventFragment;
 import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.Models.Event;
 import com.example.pabs.R;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -97,6 +91,9 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                             final DatabaseEvent temp = new DatabaseEvent();
                             //setting data to temp from database
                             temp.setOwner_id(event.getKey());
+                            if(event.child("description").getValue() != null){
+                                temp.setDescription(event.child("description").getValue().toString());
+                            }
                             temp.setEvent_name(event.child("event_name").getValue().toString());
                             temp.setLocation_name(event.child("location_name").getValue().toString());
                             String tempx = event.child("location_x").getValue().toString();
@@ -140,7 +137,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                                         }
 
                                         //open Event which matches with the title from the Database Event
-                                        if(mData.get(position).getTitle() == temp.getEvent_name()){
+                                        if(mData.get(position).getTitle().equals(temp.getEvent_name())){
                                             mFragment
                                                     .beginTransaction()
                                                     .replace( R.id.fragment_event_container , new EventFragment(temp))

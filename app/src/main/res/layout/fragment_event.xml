@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.EventFragment"
+    tools:context=".Fragments.EventFragment.EventFragment"
     android:id="@+id/fragment_event_container"
     android:background="@color/white"
-    android:clickable="true">
+    android:clickable="true"
+    android:focusable="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -102,13 +103,25 @@
             <!--(+) button-->
             <Button
                 android:id="@+id/fe_plus_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/chinese_silver"
                 android:text="+"/>
 
-            <!--Change image button-->
+            <!--back button-->
+            <Button
+                android:id="@+id/fe_back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+
+                android:text="Back"/>
+
+            <!--Change image button
             <Button
                 android:id="@+id/fe_change_button"
                 android:layout_width="wrap_content"
@@ -118,7 +131,7 @@
                 android:layout_marginTop="-58dp"
                 android:text="Change" />
 
-            <!--Upload image button-->
+            Upload image button
             <Button
                 android:id="@+id/fe_upload_button"
                 android:layout_width="wrap_content"
@@ -128,15 +141,9 @@
                 android:layout_marginTop="-58dp"
                 android:text="Upload" />
 
-            <!--back button-->
-            <Button
-                android:id="@+id/fe_back_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentBottom="true"
-                android:text="Back"/>
+            back button
 
+        -->
         </RelativeLayout>
 
     </RelativeLayout>

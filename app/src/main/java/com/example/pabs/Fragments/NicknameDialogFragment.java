@@ -70,9 +70,6 @@ public class NicknameDialogFragment extends AppCompatDialogFragment {
 
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-
-
-
         return dialog;
     }
 

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Container for nickname fragment-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/half_transparent"
+    android:animateLayoutChanges="true"
+    android:visibility="visible"
+    tools:context=".Fragments.NicknameDialogFragment"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <!--Container 1-->
+        <LinearLayout
+            android:id="@+id/f_e_o_lr1"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingBottom="50dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Join/Leave Event"
+                android:textColor="@color/black"
+                android:paddingRight="10dp"
+                />
+
+            <ImageView
+                android:id="@+id/f_e_o_JoinLeaveEventImg"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/quantum_grey"
+                />
+        </LinearLayout>
+
+        <!--Container 2-->
+        <LinearLayout
+            android:id="@+id/f_e_o_lr2"
+            android:layout_alignParentRight="true"
+            android:layout_above="@id/f_e_o_lr1"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingRight="10dp"
+                android:text="Create/View ToDo"
+                android:textColor="@color/black"/>
+
+            <ImageView
+                android:id="@+id/f_e_o_ToDoImg"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/quantum_grey"
+                />
+        </LinearLayout>
+
+        <!--Container 3-->
+        <LinearLayout
+            android:id="@+id/f_e_o_lr3"
+            android:layout_alignParentRight="true"
+            android:layout_above="@id/f_e_o_lr2"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingRight="10dp"
+                android:text="Close Event"
+                android:textColor="@color/black"/>
+
+            <ImageView
+                android:id="@+id/f_e_o_CloseEventImg"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/quantum_grey"
+                />
+        </LinearLayout>
+
+        <!--Container 4-->
+        <LinearLayout
+            android:id="@+id/f_e_o_lr4"
+            android:layout_alignParentRight="true"
+            android:layout_above="@id/f_e_o_lr3"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingRight="10dp"
+                android:text="Description"
+                android:textColor="@color/black"/>
+
+            <ImageView
+                android:id="@+id/f_e_o_DescriptionImg"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/quantum_grey"
+                />
+        </LinearLayout>
+
+        <!--Container 5-->
+        <LinearLayout
+            android:id="@+id/f_e_o_lr5"
+            android:layout_alignParentRight="true"
+            android:layout_above="@id/f_e_o_lr4"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingRight="10dp"
+                android:text="Reminder"
+                android:textColor="@color/black"/>
+
+            <ImageView
+                android:id="@+id/f_e_o_ReminderImg"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/quantum_grey"/>
+        </LinearLayout>
+
+        <!--Container 6-->
+        <LinearLayout
+            android:id="@+id/f_e_o_lr6"
+            android:layout_alignParentRight="true"
+            android:layout_above="@id/f_e_o_lr5"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Add/Kick Staff"
+                android:textColor="@color/black"
+                android:paddingRight="10dp"
+                />
+
+            <ImageView
+                android:id="@+id/f_e_o_AddKickStaffImg"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/quantum_grey"
+                />
+        </LinearLayout>
+
+        <!--Container 7-->
+        <LinearLayout
+            android:id="@+id/f_e_o_lr7"
+            android:layout_alignParentRight="true"
+            android:layout_above="@id/f_e_o_lr6"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingRight="10dp"
+                android:text="Repetition"
+                android:textColor="@color/black"/>
+
+            <ImageView
+                android:id="@+id/f_e_o_RepetitionImg"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/quantum_grey"
+                />
+        </LinearLayout>
+
+        <!--Container 8-->
+        <LinearLayout
+            android:id="@+id/f_e_o_lr8"
+            android:layout_alignParentRight="true"
+            android:layout_above="@id/f_e_o_lr7"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Upload/Change Image"
+                android:textColor="@color/black"
+                android:paddingRight="10dp"
+                />
+
+            <ImageView
+                android:id="@+id/f_e_o_UpChImg"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/quantum_grey"
+                />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/f_e_o_exitImg"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/x"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,25 +1,20 @@
-package com.example.pabs.Fragments;
+package com.example.pabs.Fragments.EventFragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
+import android.os.Handler;
 import android.provider.MediaStore;
-import android.text.GetChars;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
@@ -28,15 +23,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.pabs.LoginActivity;
 import com.example.pabs.Models.DatabaseEvent;
-import com.example.pabs.Models.Event;
 import com.example.pabs.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Continuation;
@@ -58,21 +50,18 @@ import com.squareup.picasso.Picasso;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 
 /**
  * Handle an event
  */
 
-public class EventFragment extends Fragment implements OnMapReadyCallback {
+public class EventFragment extends Fragment implements OnMapReadyCallback, EventOptionsDialogFragment.EventOptionsDialogListener {
 
     public static final int GET_FROM_GALLERY = 3;
     private static final String TAG = "EventFragment";
     //UI
     private Button back_button;
-    private Button delete_button;
+    private Button plus_button;
     private View containerView;
     private ProgressDialog mDialog = null;
 
@@ -93,7 +82,6 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
     //image handling
     private ImageView image_view;
     private StorageReference mStorageRef;
-    private Button ch, up;
     public Uri imgUri;
     private StorageTask uploadTask;
 
@@ -116,7 +104,7 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
      * On Create View
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_event, container, false);
@@ -128,11 +116,7 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
         event_date_end_tv = view.findViewById(R.id.fe_event_date_end);
         event_description_tv = view.findViewById(R.id.fe_event_description);
         location_text_tv = view.findViewById(R.id.fe_location_text);
-
         image_view = view.findViewById(R.id.fe_event_image);
-
-        ch =  view.findViewById(R.id.fe_change_button);
-        up =  view.findViewById(R.id.fe_upload_button);
 
         if(databaseEvent.getThumbnail() != null){
             //set image if it's not null
@@ -140,6 +124,10 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
 
             //Picasso license
             Picasso.get().load(myUri).into(image_view);
+        }
+
+        if(databaseEvent.getDescription() != null){
+            event_description_tv.setText(databaseEvent.getDescription());
         }
 
         //setting text in UI with databaseEvent data
@@ -161,65 +149,12 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
         });
 
         //delete button to delete event
-        delete_button = view.findViewById(R.id.fe_plus_button);
+        plus_button = view.findViewById(R.id.fe_plus_button);
 
-        delete_button.setOnClickListener(new View.OnClickListener() {
+        plus_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                Query applesQuery = ref.child("EVENT").orderByChild("event_name").equalTo(databaseEvent.getEvent_name());
-
-                applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
-                            //clear image
-                            deleteImage(appleSnapshot);
-
-                            //delete selected event
-                            appleSnapshot.getRef().removeValue();
-
-                            //clear it from backstack
-                            clearBackstack();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        //database failed
-                        Log.e("EventFragment", "onCancelled", databaseError.toException());
-                    }
-                });
-            }
-        });
-
-        //change image of event
-        ch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                viewGallery();
-            }
-        });
-
-        //upload image to database
-        up.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(imgUri != null){
-                    //if we have an image selected
-                    if (uploadTask != null && uploadTask.isInProgress()){
-                        //if upload is not finished
-                        Toast.makeText(getActivity(), "Upload in progress", Toast.LENGTH_SHORT).show();
-                    }else {
-                        //if upload is not started
-                        fileUploader();
-                    }
-                }
-                else{
-                    //if image is not selected
-                    Toast.makeText(getActivity(), "Image not selected!", Toast.LENGTH_SHORT).show();
-                }
-
+                openEventOptionsDialogFragment();
             }
         });
 
@@ -237,17 +172,28 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
     }
 
     /**
+     * open event dialog fragment
+     */
+    private void openEventOptionsDialogFragment(){
+        EventOptionsDialogFragment eventOptionsDialogFragment = new EventOptionsDialogFragment();
+        eventOptionsDialogFragment.setListener(EventFragment.this);
+        eventOptionsDialogFragment.setCancelable(true);
+        eventOptionsDialogFragment.show(getActivity().getSupportFragmentManager(),"eventDialogFragment");
+    }
+
+    /**
      * delete Image
      */
     private void deleteImage(DataSnapshot dataSnapshot){
         //clear image
         if(dataSnapshot.child("thumbnail").getValue() != null) {
+            //init firebase storage
             FirebaseStorage mFirebaseStorage = FirebaseStorage.getInstance();
 
-            Log.d(TAG, "Van kep: " + dataSnapshot.child("thumbnail").getValue());
-
+            //reference to photo shown in this event
             StorageReference photoRef = mFirebaseStorage.getReferenceFromUrl(dataSnapshot.child("thumbnail").getValue().toString());
 
+            //delete the photo from firebase storage
             photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
@@ -278,7 +224,7 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
         final StorageReference ref = mStorageRef.child(System.currentTimeMillis() +"."+getExtension(imgUri));
 
         //set upload task to imgUri
-        final UploadTask uploadTask = ref.putFile(imgUri);
+        uploadTask = ref.putFile(imgUri);
 
         //dialog on loading
         mDialog = new ProgressDialog(getActivity());
@@ -308,7 +254,9 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
                             //if image is uploaded
                             Toast.makeText(getActivity(), "Image uploaded succesfully", Toast.LENGTH_SHORT).show();
 
+                            //get download Uri
                             final Uri downloadUri = task.getResult();
+                            //reference to EVENT in firebase database
                             final DatabaseReference refEvent = FirebaseDatabase.getInstance().getReference().child("EVENT");
 
                             //connect firebase storage with firebase realtime database
@@ -318,21 +266,21 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
                                     for (DataSnapshot event : snapshot.getChildren()) {
                                         //Loop 1 to go through all child nodes of users
                                         if(event.child("event_name").getValue() == databaseEvent.getEvent_name()){
-                                            //set thumbnail
 
                                             if(event.child("thumbnail").getValue() == null){
+                                                //set thumbnail if there is no image
                                                 setThumbnail(event.getKey(), refEvent, downloadUri);
                                                 databaseEvent.setThumbnail(downloadUri.toString());
                                                 Log.d(TAG, "Nincs kep: ");
-                                                mDialog.dismiss();
                                             }
                                             else{
+                                                //if there is already and image delete it, and replace it with selected one
                                                 deleteImage(event);
 
                                                 setThumbnail(event.getKey(), refEvent, downloadUri);
                                                 databaseEvent.setThumbnail(downloadUri.toString());
-                                                mDialog.dismiss();
                                             }
+                                            mDialog.dismiss();
 
                                         }
                                     }
@@ -372,6 +320,7 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
         startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
     }
 
+    //called after viewGallery startActivityForResult returned in viewGallery
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -489,5 +438,94 @@ public class EventFragment extends Fragment implements OnMapReadyCallback {
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+    @Override
+    public void UpCh() {
+        viewGallery();
+
+        final Handler handler = new Handler();
+        final int delay = 1000; //milliseconds
+
+        handler.postDelayed(new Runnable(){
+            public void run() {
+                if (imgUri != null) {
+                    //if we have an image selected
+                    if (uploadTask != null && uploadTask.isInProgress()) {
+                        //if upload is not finished
+                        Toast.makeText(getActivity(), "Upload in progress", Toast.LENGTH_SHORT).show();
+                    } else {
+                        //if upload is not started
+                        fileUploader();
+                    }
+                }  else
+                    handler.postDelayed(this, delay);
+             }
+        }, delay);
+
+    }
+
+    @Override
+    public void Repetition() {
+
+    }
+
+    @Override
+    public void AddKickStaff() {
+
+    }
+
+    @Override
+    public void Reminder() {
+
+    }
+
+    @Override
+    public void Description() {
+
+        getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace( R.id.fragment_event_container , new EventDescriptionFragment(databaseEvent))
+                    .addToBackStack("EventDescriptionFragment")
+                    .commit();
+
+    }
+
+    @Override
+    public void CloseEvent() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        Query applesQuery = ref.child("EVENT").orderByChild("event_name").equalTo(databaseEvent.getEvent_name());
+
+        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                    //clear image
+                    deleteImage(appleSnapshot);
+
+                    //delete selected event
+                    appleSnapshot.getRef().removeValue();
+
+                    //clear it from backstack
+                    clearBackstack();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //database failed
+                Log.e("EventFragment", "onCancelled", databaseError.toException());
+            }
+        });
+    }
+
+    @Override
+    public void ToDo() {
+
+    }
+
+    @Override
+    public void JoinLeaveEvent() {
+
     }
 }

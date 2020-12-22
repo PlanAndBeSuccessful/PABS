@@ -43,7 +43,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/calendar_days"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/calendar_curr_month"
                 android:weightSum="7">
@@ -115,7 +114,6 @@
             android:background="@color/white"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/calendar_rec_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/calendar_calendar"/>
