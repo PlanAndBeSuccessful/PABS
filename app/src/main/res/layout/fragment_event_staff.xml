@@ -1,14 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.EventFragment.EventStaffFragment">
+    tools:context=".Fragments.EventFragment.EventStaffFragment"
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    android:padding="15dp">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <RelativeLayout
+        android:id="@+id/f_e_s_rl0"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="50dp">
 
-</FrameLayout>
+        <ImageView
+            android:id="@+id/f_e_s_backImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_arrow_back_24" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_below="@+id/f_e_s_rl0"
+        android:id="@+id/f_e_s_rl1"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp">
+
+        <TextView
+            android:id="@+id/f_e_s_rl1_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Staff name:"
+            android:textSize="16sp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:paddingRight="10dp"/>
+
+        <EditText
+            android:id="@+id/f_e_s_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_toRightOf="@+id/f_e_s_rl1_tv"
+            android:maxLength="30"
+            android:maxLines="1"
+            android:singleLine="true" />
+    </RelativeLayout>
+    
+    <LinearLayout
+        android:id="@+id/f_e_s_rl2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/f_e_s_rl1"
+        android:paddingTop="15dp"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/f_e_s_addStaffBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/rect"
+            android:text="Add Staff"/>
+
+        <Button
+            android:id="@+id/f_e_s_removeStaffBtn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rect"
+            android:text="Remove Staff"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/f_e_s_rl3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/f_e_s_rl2"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/f_e_s_rl3_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Staff members"
+            android:paddingBottom="10dp"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/f_e_s_recyclerView"
+            android:layout_below="@id/f_e_s_rl3_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

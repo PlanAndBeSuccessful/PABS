@@ -207,6 +207,9 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.nav_events:
+                for(int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); ++i) {
+                    getSupportFragmentManager().popBackStack();
+                }
                 Toast.makeText(this, "nav_events", Toast.LENGTH_SHORT).show();
                 break;
 

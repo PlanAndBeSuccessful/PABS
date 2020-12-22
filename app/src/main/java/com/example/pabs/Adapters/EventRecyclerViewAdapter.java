@@ -1,6 +1,7 @@
 package com.example.pabs.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,7 +106,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                             temp.setPriv_pub(event.child("priv_pub").getValue().toString());
 
                             final List<String> staff_members =  new ArrayList<>();
-                            event.getRef().child("staff_members").addValueEventListener(new ValueEventListener() {
+                            event.getRef().child("staff_members").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -113,7 +114,24 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                                         //Loop 1 to go through all child nodes of staff members
                                         staff_members.add(staff.getValue().toString());
                                     }
-                                }
+
+                                    //add staff members to event
+                                    temp.setStaff_members(staff_members);
+
+                                    //if event has a thumbnail add it to temp
+                                    if(event.child("thumbnail").getValue() != null){
+                                        temp.setThumbnail(event.child("thumbnail").getValue().toString());
+                                    }
+
+                                    //open Event which matches with the title from the Database Event
+                                    if(mData.get(position).getTitle().equals(temp.getEvent_name())){
+                                        mFragment
+                                                .beginTransaction()
+                                                .replace( R.id.fragment_event_container , new EventFragment(temp))
+                                                .addToBackStack("EventFragment")
+                                                .commit();
+                                            }
+                                    }
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError error) {
@@ -121,34 +139,6 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                                 }
                             });
 
-                            final Handler handler = new Handler();
-                            final int delay = 1000; //milliseconds
-
-                            handler.postDelayed(new Runnable(){
-                                public void run(){
-                                    if(!staff_members.isEmpty())//checking if the data is loaded or not
-                                    {
-                                        //add staff members to event
-                                        temp.setStaff_members(staff_members);
-
-                                        //if event has a thumbnail add it to temp
-                                        if(event.child("thumbnail").getValue() != null){
-                                            temp.setThumbnail(event.child("thumbnail").getValue().toString());
-                                        }
-
-                                        //open Event which matches with the title from the Database Event
-                                        if(mData.get(position).getTitle().equals(temp.getEvent_name())){
-                                            mFragment
-                                                    .beginTransaction()
-                                                    .replace( R.id.fragment_event_container , new EventFragment(temp))
-                                                    .addToBackStack("EventFragment")
-                                                    .commit();
-                                        }
-                                    }
-                                    else
-                                        handler.postDelayed(this, delay);
-                                }
-                            }, delay);
 
                         }
                     }
