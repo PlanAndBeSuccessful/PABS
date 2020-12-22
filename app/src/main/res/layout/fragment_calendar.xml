@@ -9,19 +9,21 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/login_background"
         android:clickable="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="75dp"
             android:id="@+id/calendar_upperpart"
-            android:background="@color/black">
+            >
             <TextView
                 android:id="@+id/calendar_curr_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="MM/DD/YYYY"
-                android:textColor="@color/white"
+                android:fontFamily="@font/roboto"
+                android:textColor="#F4911B"
                 android:textSize="30dp"
                 android:padding="10dp"
                 android:layout_centerVertical="true"/>
@@ -32,14 +34,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/calendar_upperpart"
             android:id="@+id/calendar_day_container"
-            android:background="@color/grey">
+            android:background="#C4C4C4">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Curent_Month"
+                android:textColor="@color/white"
                 android:id="@+id/calendar_curr_month"
                 android:layout_centerHorizontal="true"
-                android:background="@color/quantum_amberA200"/>
+                android:background="#92129D"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -53,6 +56,7 @@
                     android:textAlignment="center"
                     android:gravity="center_horizontal"
                     android:text="Mon"
+                    android:fontFamily="@font/roboto_medium_italic"
                     android:textSize="18dp"
                     />
                 <TextView
@@ -61,6 +65,7 @@
                     android:layout_weight="1"
                     android:textAlignment="center"
                     android:gravity="center_horizontal"
+                    android:fontFamily="@font/roboto_medium_italic"
                     android:text="Tue"
                     android:textSize="18dp" />
                 <TextView
@@ -69,6 +74,7 @@
                     android:layout_weight="1"
                     android:textAlignment="center"
                     android:gravity="center_horizontal"
+                    android:fontFamily="@font/roboto_medium_italic"
                     android:text="Wed"
                     android:textSize="18dp" />
                 <TextView
@@ -77,6 +83,7 @@
                     android:layout_weight="1"
                     android:textAlignment="center"
                     android:gravity="center_horizontal"
+                    android:fontFamily="@font/roboto_medium_italic"
                     android:text="Thu"
                     android:textSize="18dp" />
                 <TextView
@@ -85,6 +92,7 @@
                     android:layout_weight="1"
                     android:textAlignment="center"
                     android:gravity="center_horizontal"
+                    android:fontFamily="@font/roboto_medium_italic"
                     android:text="Fri"
                     android:textSize="18dp" />
                 <TextView
@@ -93,6 +101,7 @@
                     android:layout_weight="1"
                     android:textAlignment="center"
                     android:gravity="center_horizontal"
+                    android:fontFamily="@font/roboto_medium_italic"
                     android:text="Sat"
                     android:textSize="18dp" />
                 <TextView
@@ -101,6 +110,7 @@
                     android:layout_weight="1"
                     android:textAlignment="center"
                     android:gravity="center_horizontal"
+                    android:fontFamily="@font/roboto_medium_italic"
                     android:text="Sun"
                     android:textSize="18dp" />
             </LinearLayout>

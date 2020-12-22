@@ -10,7 +10,7 @@ This will represent the default view of a event-->
     android:layout_width="125dp"
     android:layout_height="125dp"
     android:layout_margin="5dp"
-    app:cardCornerRadius="4dp">
+    app:cardCornerRadius="6dp">
 
     <!--Container where we have the Image and the Text on it-->
     <FrameLayout

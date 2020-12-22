@@ -151,7 +151,7 @@ public class CalendarFragment extends Fragment {
                                         }
                                         if(uID.equals(i.getOwner_id())){
                                             DateData temp = convertDate(i.getStart_date());
-                                            customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.BLUE));
+                                            customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR,Color.CYAN));
                                         }
                                     }
 

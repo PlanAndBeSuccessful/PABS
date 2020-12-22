@@ -3,19 +3,24 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="@color/grey">
+    android:background="@drawable/rect"
+    android:backgroundTint="#C4C4C4">
     
     <ImageView
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:src="@drawable/elements"
+        android:layout_gravity="center_vertical"
         android:id="@+id/icon_list_row_calendarfragment"/>
+
     <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/eventName"
-        android:text="EsemenyNev"
+        android:layout_width="fill_parent"
+        android:layout_height="79dp"
+        android:textColor="#92129D"
         android:layout_marginLeft="15dp"
+        android:gravity="center_vertical"
+        android:text="EsemenyNev"
         android:textSize="24dp" />
 
 </LinearLayout>
