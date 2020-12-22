@@ -2,52 +2,64 @@
 <!--Event skeleton-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_event_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.EventFragment.EventFragment"
-    android:id="@+id/fragment_event_container"
-    android:background="@color/white"
+    android:background="#D9D9D9"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    tools:context=".Fragments.EventFragment.EventFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <!--Image-->
-        <ImageView
+
+             <!--Container-->
+             <ImageView
             android:id="@+id/fe_event_image"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:scaleType="fitXY"
             android:clickable="true"
             android:focusable="true"
-             />
+            android:scaleType="fitXY"
+            android:background="@drawable/image"
+            />
 
-        <!--Container-->
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="15dp"
-            android:layout_below="@+id/fe_event_image">
+            android:layout_below="@+id/fe_event_image"
+            android:padding="15dp">
 
             <!--Event name-->
-            <TextView
-                android:id="@+id/fe_event_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Event Name"
-                android:textSize="22sp"/>
 
             <!--Date Start-->
+
+            <TextView
+                android:id="@+id/fe_event_name"
+                android:layout_width="222dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_medium_italic"
+                android:gravity="center_horizontal"
+                android:text="Event Name"
+                android:textAlignment="center"
+                android:textColor="#92129D"
+                android:textSize="35sp" />
+
             <TextView
                 android:id="@+id/fe_event_date_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/fe_event_name"
                 android:layout_marginTop="30dp"
+                android:fontFamily="@font/roboto"
                 android:text="10/26/2020"
-                android:textSize="12sp"/>
+                android:textColor="@color/black"
+                android:textSize="17sp" />
 
             <!--Date End-->
             <TextView
@@ -57,69 +69,110 @@
                 android:layout_below="@+id/fe_event_name"
                 android:layout_alignLeft="@+id/fe_event_date_start"
                 android:layout_marginLeft="125dp"
-                android:layout_toLeftOf="@+id/fe_map_layout"
                 android:layout_marginTop="30dp"
+                android:layout_toLeftOf="@+id/fe_map_layout"
+                android:fontFamily="@font/roboto"
                 android:text="13/27/2021"
-                android:textSize="12sp" />
+                android:textColor="@color/black"
+                android:textSize="17sp" />
+
+            <!--descrpition text-->
+
 
             <!--Description-->
+
+            <TextView
+                android:id="@+id/fe_description_text"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fe_map_layout"
+                android:layout_alignParentRight="true"
+
+                android:layout_marginTop="18dp"
+
+                android:layout_marginRight="241dp"
+                android:fontFamily="@font/roboto"
+                android:text="description"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+
             <TextView
                 android:id="@+id/fe_event_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="396dp"
+                android:layout_height="164dp"
                 android:layout_below="@+id/fe_event_date_start"
-                android:layout_toLeftOf="@+id/fe_map_layout"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="100dp"
+                android:layout_marginBottom="106dp"
+                android:fontFamily="@font/roboto_thin"
+                android:gravity="top|start"
                 android:paddingRight="5dp"
-                android:layout_marginTop="30dp"
                 android:text="Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello"
-                android:textSize="22sp"/>
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                tools:ignore="RtlCompat" />
 
             <!--Map Container-->
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
+            <LinearLayout
+                android:id="@+id/fe_map_layout"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:layout_alignParentRight="true"
-                android:id="@+id/fe_map_layout">
+                android:layout_alignParentRight="true">
 
                 <!--Map View-->
-                <com.google.android.gms.maps.MapView android:id="@+id/fe_map"
+                <com.google.android.gms.maps.MapView
+                    android:id="@+id/fe_map"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+
+                    />
 
             </LinearLayout>
 
 
             <!--Map location-->
+
+            <!--(+) button-->
+
+            <!--back button-->
+
             <TextView
                 android:id="@+id/fe_location_text"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/fe_map_layout"
                 android:layout_alignParentRight="true"
-                android:text="Location name"
-                android:textSize="12sp"/>
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="3dp"
+                android:fontFamily="@font/roboto"
+                android:gravity="center"
+                android:text="location"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
 
-            <!--(+) button-->
             <Button
                 android:id="@+id/fe_plus_button"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/chinese_silver"
-                android:text="+"/>
+                android:layout_marginRight="40dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/plusbutton" />
 
-            <!--back button-->
             <Button
                 android:id="@+id/fe_back_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
-
-                android:text="Back"/>
+                android:layout_marginLeft="32dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/login_button"
+                android:text="Back"
+                android:textAllCaps="false"
+                android:textColor="#92129D"
+                android:textSize="22sp" />
 
             <!--Change image button
             <Button
