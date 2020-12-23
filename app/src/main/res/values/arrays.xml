@@ -5,4 +5,10 @@
         <item>@string/weekly</item>
         <item>@string/monthly</item>
     </string-array>
+
+    <string-array name="repetition">
+        <item>@string/daily</item>
+        <item>@string/weekly</item>
+        <item>@string/monthly</item>
+    </string-array>
 </resources>

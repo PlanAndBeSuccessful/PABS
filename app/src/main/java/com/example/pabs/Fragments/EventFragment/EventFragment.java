@@ -467,7 +467,11 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
 
     @Override
     public void Repetition() {
-
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace( R.id.fragment_event_container , new EventRepetitionFragment(databaseEvent))
+                .addToBackStack("EventRepetitionFragment")
+                .commit();
     }
 
     @Override
