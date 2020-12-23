@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -157,6 +158,26 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         // Write a string to database when this client loses connection
         reference.child(uID).child("online").onDisconnect().setValue("false");
 
+        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+        connectedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                boolean connected = snapshot.getValue(Boolean.class);
+                if (connected) {
+                    //user is connected
+                } else {
+                    //user disconnected
+                    reference.child(uID).child("online").onDisconnect().setValue("false");
+                    openLoginActivity();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.err.println("Listener was cancelled");
+            }
+        });
+
         //create event button
         create_event_img_btn = findViewById(R.id.a_e_create_event_button);
         create_event_img_btn.setOnTouchListener(new View.OnTouchListener() {
@@ -169,6 +190,11 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
             }
         });
 
+    }
+
+    private void openLoginActivity(){
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
     /**

@@ -76,7 +76,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mContext, mData.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mContext, mData.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 
                 //Getting events from database and setting them to recyclerview
                 DatabaseReference databaseEvents;
