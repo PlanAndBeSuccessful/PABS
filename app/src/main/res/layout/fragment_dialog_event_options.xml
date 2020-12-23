@@ -23,23 +23,24 @@
             android:layout_alignParentBottom="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:paddingBottom="50dp">
+            android:paddingRight="30dp"
+            android:paddingBottom="100dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Join/Leave Event"
-                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_black_italic"
                 android:paddingRight="10dp"
-                />
+                android:text="Join/Leave event"
+                android:textColor="#720BC2" />
 
             <ImageView
                 android:id="@+id/f_e_o_JoinLeaveEventImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/quantum_grey"
+                android:background="@drawable/joinleaveevent"
                 />
         </LinearLayout>
 
@@ -50,6 +51,7 @@
             android:layout_above="@id/f_e_o_lr1"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:paddingRight="30dp"
             android:paddingBottom="10dp">
 
             <TextView
@@ -57,15 +59,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:paddingRight="10dp"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_black_italic"
                 android:text="Create/View ToDo"
-                android:textColor="@color/black"/>
+                android:textColor="#720BC2"/>
 
             <ImageView
                 android:id="@+id/f_e_o_ToDoImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/quantum_grey"
+                android:background="@drawable/createviewtodo"
                 />
         </LinearLayout>
 
@@ -75,6 +78,7 @@
             android:layout_alignParentRight="true"
             android:layout_above="@id/f_e_o_lr2"
             android:layout_height="wrap_content"
+            android:paddingRight="30dp"
             android:layout_width="wrap_content"
             android:paddingBottom="10dp">
 
@@ -82,16 +86,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:textSize="20sp"
                 android:paddingRight="10dp"
-                android:text="Close Event"
-                android:textColor="@color/black"/>
+                android:fontFamily="@font/roboto_black_italic"
+                android:text="Close event"
+                android:textColor="#720BC2"/>
 
             <ImageView
                 android:id="@+id/f_e_o_CloseEventImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/quantum_grey"
+                android:background="@drawable/closeevent"
                 />
         </LinearLayout>
 
@@ -101,6 +106,7 @@
             android:layout_alignParentRight="true"
             android:layout_above="@id/f_e_o_lr3"
             android:layout_height="wrap_content"
+            android:paddingRight="30dp"
             android:layout_width="wrap_content"
             android:paddingBottom="10dp">
 
@@ -109,15 +115,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:paddingRight="10dp"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_black_italic"
                 android:text="Description"
-                android:textColor="@color/black"/>
+                android:textColor="#720BC2"/>
 
             <ImageView
                 android:id="@+id/f_e_o_DescriptionImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/quantum_grey"
+                android:background="@drawable/description"
                 />
         </LinearLayout>
 
@@ -127,23 +134,25 @@
             android:layout_alignParentRight="true"
             android:layout_above="@id/f_e_o_lr4"
             android:layout_height="wrap_content"
+            android:paddingRight="30dp"
             android:layout_width="wrap_content"
             android:paddingBottom="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="20sp"
                 android:layout_gravity="center"
                 android:paddingRight="10dp"
+                android:fontFamily="@font/roboto_black_italic"
                 android:text="Reminder"
-                android:textColor="@color/black"/>
+                android:textColor="#720BC2"/>
 
             <ImageView
                 android:id="@+id/f_e_o_ReminderImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/quantum_grey"/>
+                android:background="@drawable/reminder" />
         </LinearLayout>
 
         <!--Container 6-->
@@ -152,6 +161,7 @@
             android:layout_alignParentRight="true"
             android:layout_above="@id/f_e_o_lr5"
             android:layout_height="wrap_content"
+            android:paddingRight="30dp"
             android:layout_width="wrap_content"
             android:paddingBottom="10dp">
 
@@ -160,7 +170,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Add/Kick Staff"
-                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_black_italic"
+                android:textColor="#720BC2"
                 android:paddingRight="10dp"
                 />
 
@@ -168,8 +180,7 @@
                 android:id="@+id/f_e_o_AddKickStaffImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/quantum_grey"
+                android:background="@drawable/addkickstaff"
                 />
         </LinearLayout>
 
@@ -179,23 +190,25 @@
             android:layout_alignParentRight="true"
             android:layout_above="@id/f_e_o_lr6"
             android:layout_height="wrap_content"
+            android:paddingRight="30dp"
             android:layout_width="wrap_content"
             android:paddingBottom="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="20sp"
                 android:layout_gravity="center"
+                android:fontFamily="@font/roboto_black_italic"
                 android:paddingRight="10dp"
                 android:text="Repetition"
-                android:textColor="@color/black"/>
+                android:textColor="#720BC2"/>
 
             <ImageView
                 android:id="@+id/f_e_o_RepetitionImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/quantum_grey"
+                android:background="@drawable/repetition"
                 />
         </LinearLayout>
 
@@ -205,15 +218,18 @@
             android:layout_alignParentRight="true"
             android:layout_above="@id/f_e_o_lr7"
             android:layout_height="wrap_content"
+            android:paddingRight="30dp"
             android:layout_width="wrap_content"
             android:paddingBottom="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="20sp"
                 android:layout_gravity="center"
+                android:fontFamily="@font/roboto_black_italic"
                 android:text="Upload/Change Image"
-                android:textColor="@color/black"
+                android:textColor="#720BC2"
                 android:paddingRight="10dp"
                 />
 
@@ -221,8 +237,7 @@
                 android:id="@+id/f_e_o_UpChImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/quantum_grey"
+                android:background="@drawable/uploadchangeimage"
                 />
         </LinearLayout>
 
