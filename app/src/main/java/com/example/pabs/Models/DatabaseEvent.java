@@ -155,6 +155,14 @@ public class DatabaseEvent {
         return staff_members;
     }
 
+    public void addToStaffListEnd(String str){
+        staff_members.add(str);
+    }
+
+    public void deleteStaffListElement(String str){
+        staff_members.remove(str);
+    }
+
     public void setStaff_members(List<String> staff_members) {
         this.staff_members = staff_members;
     }

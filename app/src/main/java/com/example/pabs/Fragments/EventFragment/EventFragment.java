@@ -83,7 +83,7 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
     private ImageView image_view;
     private StorageReference mStorageRef;
     public Uri imgUri;
-    private StorageTask uploadTask;
+    private StorageTask<UploadTask.TaskSnapshot> uploadTask;
 
     /**
      * Constructor
@@ -472,23 +472,29 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
 
     @Override
     public void AddKickStaff() {
-
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace( R.id.fragment_event_container , new EventStaffFragment(databaseEvent))
+                .addToBackStack("EventStaffFragment")
+                .commit();
     }
 
     @Override
     public void Reminder() {
-
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace( R.id.fragment_event_container , new EventReminderFragment(databaseEvent))
+                .addToBackStack("EventReminderFragment")
+                .commit();
     }
 
     @Override
     public void Description() {
-
         getActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .replace( R.id.fragment_event_container , new EventDescriptionFragment(databaseEvent))
                     .addToBackStack("EventDescriptionFragment")
                     .commit();
-
     }
 
     @Override
