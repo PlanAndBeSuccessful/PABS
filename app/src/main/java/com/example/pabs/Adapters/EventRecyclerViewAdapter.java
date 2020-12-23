@@ -98,6 +98,9 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                             if(event.child("reminder").getValue() != null){
                                 temp.setReminder(event.child("reminder").getValue().toString());
                             }
+                            if(event.child("repetition").getValue() != null){
+                                temp.setRepetition(event.child("repetition").getValue().toString());
+                            }
                             temp.setEvent_name(event.child("event_name").getValue().toString());
                             temp.setLocation_name(event.child("location_name").getValue().toString());
                             String tempx = event.child("location_x").getValue().toString();
