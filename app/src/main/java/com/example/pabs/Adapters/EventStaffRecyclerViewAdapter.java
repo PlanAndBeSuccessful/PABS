@@ -65,7 +65,22 @@ public class EventStaffRecyclerViewAdapter extends RecyclerView.Adapter<EventSta
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         //set data
-        holder.tv_name.setText(mData.get(position).toString());
+        final DatabaseReference refUsers = FirebaseDatabase.getInstance().getReference().child("USER");
+        refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot user : snapshot.getChildren()) {
+                    if (user.getKey().toString().equals(mData.get(position).toString())) {
+                        holder.tv_name.setText(user.child("user_name").getValue().toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override

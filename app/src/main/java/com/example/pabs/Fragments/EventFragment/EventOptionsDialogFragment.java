@@ -10,12 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.pabs.R;
+
+import static android.view.View.GONE;
 
 /**
  * Sets Nickname for new Users
@@ -38,8 +43,21 @@ public class EventOptionsDialogFragment extends AppCompatDialogFragment {
     private ImageView joinLeaveEventImg;
     private ImageView exitImg;
 
-    public void setListener(EventOptionsDialogListener eventOptionsDialogListener) {
+    private LinearLayout upChLinL;
+    private LinearLayout repetitionLinL;
+    private LinearLayout addKickStaffLinL;
+    private LinearLayout reminderLinL;
+    private LinearLayout descriptionLinL;
+    private LinearLayout closeEventLinL;
+    private LinearLayout toDoLinL;
+    private LinearLayout joinLeaveEventLinL;
+    private TextView joinLeaveEventTv;
+
+    private int mState;
+
+    public void setListener(EventOptionsDialogListener eventOptionsDialogListener, int state) {
         this.eventOptionsDialogListener = eventOptionsDialogListener;
+        this.mState = state;
     }
 
     /**
@@ -62,6 +80,17 @@ public class EventOptionsDialogFragment extends AppCompatDialogFragment {
         toDoImg = view.findViewById(R.id.f_e_o_ToDoImg);
         joinLeaveEventImg = view.findViewById(R.id.f_e_o_JoinLeaveEventImg);
         exitImg = view.findViewById(R.id.f_e_o_exitImg);
+
+        upChLinL = view.findViewById(R.id.f_e_o_lr8);
+        repetitionLinL = view.findViewById(R.id.f_e_o_lr7);
+        addKickStaffLinL = view.findViewById(R.id.f_e_o_lr6);
+        reminderLinL = view.findViewById(R.id.f_e_o_lr5);
+        descriptionLinL = view.findViewById(R.id.f_e_o_lr4);
+        closeEventLinL = view.findViewById(R.id.f_e_o_lr3);
+        toDoLinL = view.findViewById(R.id.f_e_o_lr2);
+        joinLeaveEventLinL = view.findViewById(R.id.f_e_o_lr1);
+
+        joinLeaveEventTv = view.findViewById(R.id.f_e_o_lr1_tv);
 
         upChImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,7 +166,69 @@ public class EventOptionsDialogFragment extends AppCompatDialogFragment {
         dialog.setContentView(view);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+
+        if(mState == 0){
+            //owner
+            hideJoinLeaveEvent();
+        }
+        else if(mState == 1){
+            //member
+            hideAddKickStaff();
+            hideCloseEvent();
+            hideCreateViewTodo();
+            hideDescription();
+            hideUploadChangeImage();
+            joinLeaveEventTv.setText("Leave Event");
+
+        }else if(mState == 2){
+            //staff
+            hideAddKickStaff();
+            hideCloseEvent();
+            hideDescription();
+            hideUploadChangeImage();
+            joinLeaveEventTv.setText("Leave Event");
+
+        }else if(mState == 3){
+            //no joined
+            hideAddKickStaff();
+            hideCloseEvent();
+            hideCreateViewTodo();
+            hideDescription();
+            hideUploadChangeImage();
+            hideReminder();
+            hideRepetition();
+            joinLeaveEventTv.setText("Join Event");
+        }
+        else{
+            Log.d("EODF", "Wrong mState!");
+        }
+
         return dialog;
+    }
+
+    void hideUploadChangeImage(){
+        upChLinL.setVisibility(GONE);
+    }
+    void hideRepetition(){
+        repetitionLinL.setVisibility(GONE);
+    }
+    void hideAddKickStaff(){
+        addKickStaffLinL.setVisibility(GONE);
+    }
+    void hideReminder(){
+        reminderLinL.setVisibility(GONE);
+    }
+    void hideDescription(){
+        descriptionLinL.setVisibility(GONE);
+    }
+    void hideCloseEvent(){
+        closeEventLinL.setVisibility(GONE);
+    }
+    void hideCreateViewTodo(){
+        toDoLinL.setVisibility(GONE);
+    }
+    void hideJoinLeaveEvent(){
+        joinLeaveEventLinL.setVisibility(GONE);
     }
 
     /**

@@ -163,6 +163,14 @@ public class DatabaseEvent {
         staff_members.remove(str);
     }
 
+    public void addToJoinedListEnd(String str){
+        joined_members.add(str);
+    }
+
+    public void deleteJoinedListElement(String str){
+        joined_members.remove(str);
+    }
+
     public void setStaff_members(List<String> staff_members) {
         this.staff_members = staff_members;
     }

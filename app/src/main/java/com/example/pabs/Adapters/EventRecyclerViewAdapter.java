@@ -38,14 +38,16 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
     private Context mContext;
     private List<Event> mData;
     private FragmentManager mFragment;
+    private String mUID;
 
     /**
      * Constructor of EventRecyclerViewAdapter
      */
-    public EventRecyclerViewAdapter(Context mContext, List<Event> mData, FragmentManager fragment) {
+    public EventRecyclerViewAdapter(Context mContext, List<Event> mData, FragmentManager fragment, String uID) {
         this.mContext = mContext;
         this.mData = mData;
         this.mFragment = fragment;
+        this.mUID = uID;
     }
 
     /**
@@ -91,7 +93,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                             //temp for storing data from database
                             final DatabaseEvent temp = new DatabaseEvent();
                             //setting data to temp from database
-                            temp.setOwner_id(event.getKey());
+                            temp.setOwner_id(event.child("owner_id").getValue().toString());
                             if(event.child("description").getValue() != null){
                                 temp.setDescription(event.child("description").getValue().toString());
                             }
@@ -129,14 +131,39 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                                         temp.setThumbnail(event.child("thumbnail").getValue().toString());
                                     }
 
-                                    //open Event which matches with the title from the Database Event
-                                    if(mData.get(position).getTitle().equals(temp.getEvent_name())){
-                                        mFragment
-                                                .beginTransaction()
-                                                .replace( R.id.fragment_event_container , new EventFragment(temp))
-                                                .addToBackStack("EventFragment")
-                                                .commit();
+
+                                    final List<String> joined_members =  new ArrayList<>();
+                                    event.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                            for (DataSnapshot staff : snapshot.getChildren()) {
+                                                //Loop 1 to go through all child nodes of staff members
+                                                joined_members.add(staff.getValue().toString());
                                             }
+
+                                            //add staff members to event
+                                            temp.setJoined_members(joined_members);
+
+                                            //open Event which matches with the title from the Database Event
+                                            if(mData.get(position).getTitle().equals(temp.getEvent_name())){
+                                                mFragment
+                                                        .beginTransaction()
+                                                        .replace( R.id.fragment_event_container , new EventFragment(temp, mUID))
+                                                        .addToBackStack("EventFragment")
+                                                        .commit();
+                                            }
+
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+
+
+
                                     }
 
                                 @Override

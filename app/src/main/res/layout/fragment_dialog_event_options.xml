@@ -16,9 +16,9 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
-        <!--Container 1-->
-        <LinearLayout
-            android:id="@+id/f_e_o_lr1"
+        <!--Container 0-->
+        <RelativeLayout
+            android:id="@+id/f_e_o_lr0"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:layout_height="wrap_content"
@@ -26,7 +26,19 @@
             android:paddingRight="30dp"
             android:paddingBottom="100dp">
 
+        </RelativeLayout>
+
+        <!--Container 1-->
+        <LinearLayout
+            android:id="@+id/f_e_o_lr1"
+            android:layout_above="@id/f_e_o_lr0"
+            android:layout_alignParentRight="true"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingRight="30dp">
+
             <TextView
+                android:id="@+id/f_e_o_lr1_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

@@ -90,7 +90,6 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                     //if the event has a thumbnail, get Uri
                     if(event.child("thumbnail").getValue() != null) {
                         UriStr = event.child("thumbnail").getValue().toString();
-                        Log.d("PAPA", "onDataChange: "+UriStr);
                         myUri = Uri.parse(UriStr);
                     }
 
@@ -218,7 +217,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         //create and set RecyclerView
         RecyclerView myRv = (RecyclerView) findViewById(R.id.e_recycler_view);
         //create Adapter with lstEvent in this context
-        EventRecyclerViewAdapter myAdapter = new EventRecyclerViewAdapter(this, lstEvent, getSupportFragmentManager());
+        EventRecyclerViewAdapter myAdapter = new EventRecyclerViewAdapter(this, lstEvent, getSupportFragmentManager(), uID);
         //separate the Recyclerview to 3 columns
         myRv.setLayoutManager(new GridLayoutManager(this, 3));
         //set adapter for RecyclerView
@@ -279,7 +278,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     private void openCreateEventFragment(){
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_event_container, new CreateEventFragment())
+                .replace(R.id.fragment_event_container, new CreateEventFragment(uID))
                 .addToBackStack("CreateEventFragment")
                 .commit();
     }

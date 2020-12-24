@@ -91,18 +91,55 @@ public class EventStaffFragment extends Fragment {
                             for (final DataSnapshot event : snapshot.getChildren()) {
                                 //Loop 1 to go through all child nodes of users
                                 if(event.child("event_name").getValue() == databaseEvent.getEvent_name()){
+                                    final DatabaseReference refUsers = FirebaseDatabase.getInstance().getReference().child("USER");
+                                    refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                    if(!databaseEvent.getStaff_members().contains(et.getText().toString())){
-                                        databaseEvent.addToStaffListEnd(et.getText().toString());
-                                        myAdapter.notifyDataSetChanged();
-                                        et.setText("");
-                                        hideKeyboard(getActivity());
-                                    }
-                                    else{
-                                        Toast.makeText(getActivity(), "Already staff!", Toast.LENGTH_SHORT).show();
-                                    }
+                                            boolean no_name_in_database = false;
+                                            boolean already_staff = false;
+                                            boolean staff_can_be_added = false;
 
-                                    event.getRef().child("staff_members").setValue(databaseEvent.getStaff_members());
+                                            for (DataSnapshot user : snapshot.getChildren()){
+                                                if(user.child("user_name").getValue().equals(et.getText().toString())){
+                                                    if(!databaseEvent.getStaff_members().contains(user.getKey())){
+                                                        //user can be added to staff
+                                                        staff_can_be_added = true;
+
+                                                        databaseEvent.addToStaffListEnd(user.getKey().toString());
+                                                        myAdapter.notifyDataSetChanged();
+                                                        et.setText("");
+                                                        hideKeyboard(getActivity());
+                                                        event.getRef().child("staff_members").setValue(databaseEvent.getStaff_members());
+                                                        break;
+                                                    }
+                                                    else{
+                                                        //user is already a staff
+                                                        already_staff = true;
+                                                    }
+                                                }
+                                                else{
+                                                    //there is no user with this name in database
+                                                    no_name_in_database = true;
+                                                }
+                                            }
+
+                                            if(!staff_can_be_added){
+                                                if(already_staff){
+                                                    Toast.makeText(getActivity(), "Already staff!", Toast.LENGTH_SHORT).show();
+                                                }
+                                                else if(no_name_in_database){
+                                                    Toast.makeText(getActivity(), "There is no user with that name!", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
 
                                 }
                             }
@@ -130,19 +167,53 @@ public class EventStaffFragment extends Fragment {
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for (final DataSnapshot event : snapshot.getChildren()) {
                                 //Loop 1 to go through all child nodes of users
-                                if(event.child("event_name").getValue() == databaseEvent.getEvent_name()){
+                                if (event.child("event_name").getValue() == databaseEvent.getEvent_name()) {
+                                    final DatabaseReference refUsers = FirebaseDatabase.getInstance().getReference().child("USER");
+                                    refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            boolean no_name_in_database = false;
+                                            boolean already_staff = false;
+                                            boolean staff_can_be_added = false;
 
-                                    if(databaseEvent.getStaff_members().contains(et.getText().toString())){
-                                        databaseEvent.deleteStaffListElement(et.getText().toString());
-                                        myAdapter.notifyDataSetChanged();
-                                        et.setText("");
-                                        hideKeyboard(getActivity());
-                                    }
-                                    else{
-                                        Toast.makeText(getActivity(), "Not a staff!", Toast.LENGTH_SHORT).show();
-                                    }
+                                            for (DataSnapshot user : snapshot.getChildren()) {
+                                                if (user.child("user_name").getValue().equals(et.getText().toString())) {
+                                                    if (databaseEvent.getStaff_members().contains(user.getKey())) {
+                                                        //user can be added to staff
+                                                        staff_can_be_added = true;
 
-                                    event.getRef().child("staff_members").setValue( databaseEvent.getStaff_members());
+                                                        databaseEvent.deleteStaffListElement(user.getKey().toString());
+                                                        myAdapter.notifyDataSetChanged();
+                                                        et.setText("");
+                                                        hideKeyboard(getActivity());
+                                                        event.getRef().child("staff_members").setValue(databaseEvent.getStaff_members());
+                                                    } else {
+                                                        //user is already a staff
+                                                        already_staff = true;
+                                                    }
+                                                    break;
+                                                } else {
+                                                    //there is no user with this name in database
+                                                    no_name_in_database = true;
+                                                }
+                                            }
+
+                                            if(!staff_can_be_added){
+                                                if(already_staff){
+                                                    Toast.makeText(getActivity(), "Already staff!", Toast.LENGTH_SHORT).show();
+                                                }
+                                                else if(no_name_in_database){
+                                                    Toast.makeText(getActivity(), "There is no user with that name!", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
                                 }
                             }
                         }
