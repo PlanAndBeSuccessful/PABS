@@ -9,14 +9,18 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.pabs.Adapters.EventRecyclerViewAdapter;
@@ -31,6 +35,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -48,11 +53,16 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     private String uID;
 
     //events
-    List<Event> lstEvent;
+    private List<Event> lstEvent;
+    private List<Event> lstEventCopy;
 
     //drawer
     private DrawerLayout drawer = null;
     private NavigationView navigationView = null;
+
+    //
+    private SearchView sw;
+    private EventRecyclerViewAdapter myAdapter;
 
     /**
      * On create
@@ -82,13 +92,13 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                 clearEvents();
                 for (DataSnapshot event : snapshot.getChildren()) {
                     //Loop 1 to go through all child nodes of events
-                    String temp= event.child("event_name").getValue().toString();
+                    String temp = event.child("event_name").getValue().toString();
 
                     Uri myUri = null;
                     String UriStr = null;
 
                     //if the event has a thumbnail, get Uri
-                    if(event.child("thumbnail").getValue() != null) {
+                    if (event.child("thumbnail").getValue() != null) {
                         UriStr = event.child("thumbnail").getValue().toString();
                         myUri = Uri.parse(UriStr);
                     }
@@ -100,14 +110,14 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                     Event tempEv;
 
                     //if Event has no thumbnail
-                    if(UriStr == null){
+                    if (UriStr == null) {
                         //Give the event, the no image thumbnail
                         tempEv = new Event();
                         tempEv.setTitle(temp);
                         tempEv.setThumbnail(testUri);
                     }
                     //if Event has thumbnail
-                    else{
+                    else {
                         //Set thumbnail of event
                         tempEv = new Event();
                         tempEv.setTitle(temp);
@@ -134,15 +144,19 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
 
         //handle navigation drawer open/close with toggle
         navigationView.setNavigationItemSelectedListener(this);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
-            /** Called when a drawer has settled in a completely closed state. */
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            /**
+             * Called when a drawer has settled in a completely closed state.
+             */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                for(int i = 0; i < navigationView.getMenu().size(); ++i)
+                for (int i = 0; i < navigationView.getMenu().size(); ++i)
                     navigationView.getMenu().getItem(i).setChecked(false);
             }
 
-            /** Called when a drawer has settled in a completely open state. */
+            /**
+             * Called when a drawer has settled in a completely open state.
+             */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
             }
@@ -188,7 +202,39 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                 return false;
             }
         });
+        //
 
+
+        //
+        sw = findViewById(R.id.e_search_bar);
+        sw.setQueryHint("Search event name...");
+
+        sw.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                myAdapter.filter(query);
+                hideKeyboard(EventActivity.this);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                myAdapter.filter(newText);
+                return true;
+            }
+        });
+
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private void openLoginActivity(){
@@ -217,7 +263,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         //create and set RecyclerView
         RecyclerView myRv = (RecyclerView) findViewById(R.id.e_recycler_view);
         //create Adapter with lstEvent in this context
-        EventRecyclerViewAdapter myAdapter = new EventRecyclerViewAdapter(this, lstEvent, getSupportFragmentManager(), uID);
+        myAdapter = new EventRecyclerViewAdapter(this, lstEvent, getSupportFragmentManager(), uID);
         //separate the Recyclerview to 3 columns
         myRv.setLayoutManager(new GridLayoutManager(this, 3));
         //set adapter for RecyclerView

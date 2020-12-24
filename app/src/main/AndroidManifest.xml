@@ -20,8 +20,9 @@
             android:value="@string/maps_api_key" />
 
         <activity android:name=".RegisterActivity" />
-        <activity  android:name=".EventActivity"/>
-
+        <activity  android:name=".EventActivity"
+            android:windowSoftInputMode="adjustPan">
+        </activity>
         <activity android:name=".LoginActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

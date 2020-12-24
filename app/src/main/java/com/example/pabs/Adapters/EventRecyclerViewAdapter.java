@@ -26,8 +26,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import android.os.Handler;
+
+import static android.view.View.GONE;
 
 /**
  * Creates an array of card elements
@@ -37,6 +40,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
 
     private Context mContext;
     private List<Event> mData;
+    private List<Event> mDataCopy;
     private FragmentManager mFragment;
     private String mUID;
 
@@ -48,6 +52,27 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
         this.mData = mData;
         this.mFragment = fragment;
         this.mUID = uID;
+
+        //list copy
+        mDataCopy = new ArrayList<>();
+        Collections.copy(mData, mDataCopy);
+        mDataCopy.addAll(mData);
+
+    }
+
+    public void filter(String text) {
+        mData.clear();
+        if(text.isEmpty()){
+            mData.addAll(mDataCopy);
+        } else{
+            text = text.toLowerCase();
+            for(Event item: mDataCopy){
+                if(item.getTitle().toLowerCase().contains(text)){
+                    mData.add(item);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 
     /**
@@ -80,107 +105,127 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
             public void onClick(View view) {
                 //Toast.makeText(mContext, mData.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 
-                //Getting events from database and setting them to recyclerview
-                DatabaseReference databaseEvents;
-                databaseEvents = FirebaseDatabase.getInstance().getReference().child("EVENT");
+                if(holder.tv_title.getVisibility() == View.VISIBLE){
+                    //Getting events from database and setting them to recyclerview
+                    DatabaseReference databaseEvents;
+                    databaseEvents = FirebaseDatabase.getInstance().getReference().child("EVENT");
 
-                databaseEvents.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (final DataSnapshot event : snapshot.getChildren()) {
-                            //Loop to go through all child nodes of event
+                    databaseEvents.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (final DataSnapshot event : snapshot.getChildren()) {
+                                //Loop to go through all child nodes of event
 
-                            //temp for storing data from database
-                            final DatabaseEvent temp = new DatabaseEvent();
-                            //setting data to temp from database
-                            temp.setOwner_id(event.child("owner_id").getValue().toString());
-                            if(event.child("description").getValue() != null){
-                                temp.setDescription(event.child("description").getValue().toString());
-                            }
-                            if(event.child("reminder").getValue() != null){
-                                temp.setReminder(event.child("reminder").getValue().toString());
-                            }
-                            if(event.child("repetition").getValue() != null){
-                                temp.setRepetition(event.child("repetition").getValue().toString());
-                            }
-                            temp.setEvent_name(event.child("event_name").getValue().toString());
-                            temp.setLocation_name(event.child("location_name").getValue().toString());
-                            String tempx = event.child("location_x").getValue().toString();
-                            temp.setLocation_x(Double.parseDouble(tempx));
-                            String tempy = event.child("location_y").getValue().toString();
-                            temp.setLocation_y(Double.parseDouble(tempy));
-                            temp.setStart_date(event.child("start_date").getValue().toString());
-                            temp.setEnd_date(event.child("end_date").getValue().toString());
-                            temp.setPriv_pub(event.child("priv_pub").getValue().toString());
-
-                            final List<String> staff_members =  new ArrayList<>();
-                            event.getRef().child("staff_members").addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                                    for (DataSnapshot staff : snapshot.getChildren()) {
-                                        //Loop 1 to go through all child nodes of staff members
-                                        staff_members.add(staff.getValue().toString());
-                                    }
-
-                                    //add staff members to event
-                                    temp.setStaff_members(staff_members);
-
-                                    //if event has a thumbnail add it to temp
-                                    if(event.child("thumbnail").getValue() != null){
-                                        temp.setThumbnail(event.child("thumbnail").getValue().toString());
-                                    }
-
-
-                                    final List<String> joined_members =  new ArrayList<>();
-                                    event.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                                            for (DataSnapshot staff : snapshot.getChildren()) {
-                                                //Loop 1 to go through all child nodes of staff members
-                                                joined_members.add(staff.getValue().toString());
-                                            }
-
-                                            //add staff members to event
-                                            temp.setJoined_members(joined_members);
-
-                                            //open Event which matches with the title from the Database Event
-                                            if(mData.get(position).getTitle().equals(temp.getEvent_name())){
-                                                mFragment
-                                                        .beginTransaction()
-                                                        .replace( R.id.fragment_event_container , new EventFragment(temp, mUID))
-                                                        .addToBackStack("EventFragment")
-                                                        .commit();
-                                            }
-
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-
-                                        }
-                                    });
-
-
-
-                                    }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
+                                //temp for storing data from database
+                                final DatabaseEvent temp = new DatabaseEvent();
+                                //setting data to temp from database
+                                temp.setOwner_id(event.child("owner_id").getValue().toString());
+                                if(event.child("description").getValue() != null){
+                                    temp.setDescription(event.child("description").getValue().toString());
                                 }
-                            });
+                                if(event.child("reminder").getValue() != null){
+                                    temp.setReminder(event.child("reminder").getValue().toString());
+                                }
+                                if(event.child("repetition").getValue() != null){
+                                    temp.setRepetition(event.child("repetition").getValue().toString());
+                                }
+                                temp.setEvent_name(event.child("event_name").getValue().toString());
+                                temp.setLocation_name(event.child("location_name").getValue().toString());
+                                String tempx = event.child("location_x").getValue().toString();
+                                temp.setLocation_x(Double.parseDouble(tempx));
+                                String tempy = event.child("location_y").getValue().toString();
+                                temp.setLocation_y(Double.parseDouble(tempy));
+                                temp.setStart_date(event.child("start_date").getValue().toString());
+                                temp.setEnd_date(event.child("end_date").getValue().toString());
+                                temp.setPriv_pub(event.child("priv_pub").getValue().toString());
+
+                                final List<String> staff_members =  new ArrayList<>();
+                                event.getRef().child("staff_members").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                        for (DataSnapshot staff : snapshot.getChildren()) {
+                                            //Loop 1 to go through all child nodes of staff members
+                                            staff_members.add(staff.getValue().toString());
+                                        }
+
+                                        //add staff members to event
+                                        temp.setStaff_members(staff_members);
+
+                                        //if event has a thumbnail add it to temp
+                                        if(event.child("thumbnail").getValue() != null){
+                                            temp.setThumbnail(event.child("thumbnail").getValue().toString());
+                                        }
 
 
+                                        final List<String> joined_members =  new ArrayList<>();
+                                        event.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                                for (DataSnapshot staff : snapshot.getChildren()) {
+                                                    //Loop 1 to go through all child nodes of staff members
+                                                    joined_members.add(staff.getValue().toString());
+                                                }
+
+                                                //add staff members to event
+                                                temp.setJoined_members(joined_members);
+
+                                                //open Event which matches with the title from the Database Event
+                                                if(mData.get(position).getTitle().equals(temp.getEvent_name())){
+
+                                                    holder.tv_title.postDelayed(new Runnable() {
+                                                        public void run() {
+                                                            holder.tv_title.setVisibility(View.GONE);
+                                                        }
+                                                    }, 1000);
+
+                                                    mFragment
+                                                            .beginTransaction()
+                                                            .replace( R.id.fragment_event_container , new EventFragment(temp, mUID))
+                                                            .addToBackStack("EventFragment")
+                                                            .commit();
+                                                }
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+
+
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+
+
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                    //if database failed
-                    }
-                });
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            //if database failed
+                        }
+                    });
+                }
+                else{
+                    holder.tv_title.setVisibility(View.VISIBLE);
+
+                    holder.tv_title.postDelayed(new Runnable() {
+                        public void run() {
+                            holder.tv_title.setVisibility(View.GONE);
+                        }
+                    }, 3000);
+                }
+
+
 
             }
         });

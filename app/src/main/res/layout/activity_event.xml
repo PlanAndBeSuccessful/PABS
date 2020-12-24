@@ -26,16 +26,15 @@ to work correctly, we also store a layout for other UI elements-->
         android:padding="8dp" >
 
         <!--Search bar-->
-        <AutoCompleteTextView
+        <SearchView
             android:id="@+id/e_search_bar"
             android:layout_width="400dp"
             android:layout_height="50dp"
             android:background="@drawable/email_bg"
             android:fontFamily="@font/roboto_thin"
-            android:hint="Search events..."
             android:inputType="textAutoComplete|textAutoCorrect"
             android:padding="10dp"
-            android:textSize="18sp"></AutoCompleteTextView>
+            android:textSize="18sp" />
 
         <!--Recycler view, this displays all the events-->
         <androidx.recyclerview.widget.RecyclerView

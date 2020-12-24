@@ -30,10 +30,10 @@ This will represent the default view of a event-->
             android:id="@+id/c_e_event_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/half_transparent"
+            android:background="#88676767"
             android:gravity="center"
             android:layout_alignParentBottom="true"
-            android:text="Hello guys today I will show you"
+            android:text="Title"
             android:visibility="gone"
             android:textColor="@color/white"
             android:textSize="18sp"/>
