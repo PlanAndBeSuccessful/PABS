@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Container for nickname fragment-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:visibility="visible"
+    tools:context=".Fragments.GroupFragment.CodeDialogFragment"
+    android:padding="16dp">
+
+    <!--Container for nickname and button-->
+    <RelativeLayout
+        android:layout_centerInParent="true"
+        android:background="@drawable/login_button"
+        android:backgroundTint="@color/chinese_silver"
+        android:layout_height="125dp"
+        android:layout_width="match_parent">
+
+        <!--Nickname edit text-->
+        <EditText
+            android:id="@+id/d_c_code"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/email_bg"
+            android:ems="10"
+            android:fontFamily="@font/roboto_thin"
+            android:hint="group code..."
+            android:inputType="text"
+            android:maxLines="1"
+            android:padding="15dp"
+            android:textColorHint="#000000"/>
+
+        <!--Join button-->
+
+        <!--Continue button-->
+        <Button
+            android:id="@+id/d_c_join"
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:layout_below="@id/d_c_code"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/login_button"
+            android:clickable="true"
+            android:text="Join" />
+
+        <Button
+            android:id="@+id/d_c_cancel"
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:layout_below="@id/d_c_code"
+            android:layout_marginTop="25dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="40dp"
+            android:background="@drawable/login_button"
+            android:text="cancel"
+            android:clickable="true"/>
+    </RelativeLayout>
+
+
+</RelativeLayout>
