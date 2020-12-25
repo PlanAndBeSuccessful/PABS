@@ -203,7 +203,7 @@
         private void openEventOptionsDialogFragment(){
             EventOptionsDialogFragment eventOptionsDialogFragment = new EventOptionsDialogFragment();
             eventOptionsDialogFragment.setListener(EventFragment.this, mState);
-            eventOptionsDialogFragment.setCancelable(true);
+            eventOptionsDialogFragment.setCancelable(false);
             eventOptionsDialogFragment.show(getActivity().getSupportFragmentManager(),"eventDialogFragment");
         }
 

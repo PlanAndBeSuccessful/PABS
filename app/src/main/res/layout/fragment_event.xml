@@ -176,29 +176,6 @@
                 android:textColor="#92129D"
                 android:textSize="22sp" />
 
-            <!--Change image button
-            <Button
-                android:id="@+id/fe_change_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/fe_plus_button"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="-58dp"
-                android:text="Change" />
-
-            Upload image button
-            <Button
-                android:id="@+id/fe_upload_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/fe_change_button"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="-58dp"
-                android:text="Upload" />
-
-            back button
-
-        -->
         </RelativeLayout>
 
     </RelativeLayout>

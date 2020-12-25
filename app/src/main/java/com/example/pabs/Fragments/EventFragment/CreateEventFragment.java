@@ -1,4 +1,4 @@
-package com.example.pabs.Fragments;
+package com.example.pabs.Fragments.EventFragment;
 
 import android.content.Context;
 import android.location.Address;
@@ -86,7 +86,7 @@ public class CreateEventFragment extends Fragment {
         View CreateEventView = inflater.inflate(R.layout.fragment_create_event, container, false);
         containerView = getActivity().findViewById(R.id.activity_event_layout);
         //
-        FragmentEventContainer = getActivity().findViewById(R.id.fragment_container);
+        FragmentEventContainer = getActivity().findViewById(R.id.fragment_event_container);
 
         //back button
         back_button = CreateEventView.findViewById(R.id.c_e_back_button);

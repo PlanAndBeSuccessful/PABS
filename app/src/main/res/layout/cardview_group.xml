@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Here we store event elements to be added to the RecyclerView.
+This will represent the default view of a event-->
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_group"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_width="125dp"
+    android:layout_height="125dp"
+    android:layout_margin="5dp"
+    app:cardCornerRadius="6dp">
+
+    <!--Container where we have the Image and the Text on it-->
+    <FrameLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+
+        android:layout_height="match_parent">
+
+        <!--Text in image(currently the visibility is set to gone)-->
+        <TextView
+            android:id="@+id/c_e_group_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#88676767"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:text="Title"
+            android:textColor="@color/white"
+            android:textSize="18sp"/>
+
+    </FrameLayout>
+
+</androidx.cardview.widget.CardView>

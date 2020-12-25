@@ -11,10 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +23,7 @@ import android.widget.Toast;
 
 import com.example.pabs.Adapters.EventRecyclerViewAdapter;
 import com.example.pabs.Fragments.CalendarFragment;
-import com.example.pabs.Fragments.CreateEventFragment;
+import com.example.pabs.Fragments.EventFragment.CreateEventFragment;
 import com.example.pabs.Models.Event;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +33,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -47,6 +44,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
 
     //UI
     private ImageView create_event_img_btn;
+    private ImageView open_group_btn;
 
     //firebase
     private DatabaseReference reference;
@@ -54,7 +52,6 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
 
     //events
     private List<Event> lstEvent;
-    private List<Event> lstEventCopy;
 
     //drawer
     private DrawerLayout drawer = null;
@@ -62,7 +59,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
 
     //
     private SearchView sw;
-    private EventRecyclerViewAdapter myAdapter;
+    private EventRecyclerViewAdapter myEventAdapter;
 
     /**
      * On create
@@ -139,8 +136,8 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         });
 
         //nav view and drawer
-        navigationView = findViewById(R.id.nav_view);
-        drawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.a_e_nav_view);
+        drawer = findViewById(R.id.a_e_drawer_layout);
 
         //handle navigation drawer open/close with toggle
         navigationView.setNavigationItemSelectedListener(this);
@@ -204,6 +201,18 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         });
         //
 
+        //open group button
+        open_group_btn = findViewById(R.id.a_e_open_group_button);
+        open_group_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    clearBackstack();
+                    openGroupActivity();
+                }
+                return false;
+            }
+        });
 
         //
         sw = findViewById(R.id.e_search_bar);
@@ -212,14 +221,14 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         sw.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                myAdapter.filter(query);
+                myEventAdapter.filter(query);
                 hideKeyboard(EventActivity.this);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                myAdapter.filter(newText);
+                myEventAdapter.filter(newText);
                 return true;
             }
         });
@@ -263,11 +272,11 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         //create and set RecyclerView
         RecyclerView myRv = (RecyclerView) findViewById(R.id.e_recycler_view);
         //create Adapter with lstEvent in this context
-        myAdapter = new EventRecyclerViewAdapter(this, lstEvent, getSupportFragmentManager(), uID);
+        myEventAdapter = new EventRecyclerViewAdapter(this, lstEvent, getSupportFragmentManager(), uID);
         //separate the Recyclerview to 3 columns
         myRv.setLayoutManager(new GridLayoutManager(this, 3));
         //set adapter for RecyclerView
-        myRv.setAdapter(myAdapter);
+        myRv.setAdapter(myEventAdapter);
     }
 
     /**
@@ -278,18 +287,19 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.nav_events:
-                for(int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); ++i) {
-                    getSupportFragmentManager().popBackStack();
-                }
+                clearBackstack();
                 Toast.makeText(this, "nav_events", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_calendar:
+                clearBackstack();
                 openCalendarFragment();
                 Toast.makeText(this, "nav_calendar", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_groups:
+                clearBackstack();
+                openGroupActivity();
                 Toast.makeText(this, "nav_groups", Toast.LENGTH_SHORT).show();
                 break;
 
@@ -317,6 +327,20 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         return true;
     }
 
+    private void clearBackstack(){
+        for(int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); ++i) {
+            getSupportFragmentManager().popBackStack();
+        }
+    }
+
+    /**
+     * open group activity
+     */
+    private void openGroupActivity(){
+        Intent intent = new Intent(this, GroupActivity.class);
+        intent.putExtra("USER", uID);
+        startActivity(intent);
+    }
 
     /**
      * open create event fragment
