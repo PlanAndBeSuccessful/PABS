@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.example.pabs.Adapters.EventRecyclerViewAdapter;
 import com.example.pabs.Fragments.CalendarFragment;
 import com.example.pabs.Fragments.EventFragment.CreateEventFragment;
+import com.example.pabs.Fragments.MyToDoFragment;
 import com.example.pabs.Models.Event;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
@@ -47,6 +48,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
 
     //UI
     private ImageView create_event_img_btn;
+    private ImageView open_group_button;
 
     //firebase
     private DatabaseReference reference;
@@ -203,11 +205,25 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
             }
         });
         //
+        open_group_button = findViewById(R.id.a_e_open_group_button);
+        open_group_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openGroupActivity();
+            }
+        });
 
-
-        //
+        //search bar
         sw = findViewById(R.id.e_search_bar);
         sw.setQueryHint("Search event name...");
+
+        sw.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                hideKeyboard(EventActivity.this);
+                return false;
+            }
+        });
 
         sw.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -237,8 +253,16 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+
     private void openLoginActivity(){
         Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
+    private void openGroupActivity() {
+        Intent intent = new Intent(this, GroupActivity.class);
+        intent.putExtra("USER", uID);
+        finish();
         startActivity(intent);
     }
 
@@ -290,6 +314,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                 break;
 
             case R.id.nav_groups:
+                openGroupActivity();
                 Toast.makeText(this, "nav_groups", Toast.LENGTH_SHORT).show();
                 break;
 
@@ -299,6 +324,11 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
 
             case R.id.nav_settings:
                 Toast.makeText(this, "nav_settings", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.nav_todo:
+                openMyToDoFragment();
+                Toast.makeText(this, "nav_todo", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_logout:
@@ -326,6 +356,17 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                 .beginTransaction()
                 .replace(R.id.fragment_event_container, new CreateEventFragment(uID))
                 .addToBackStack("CreateEventFragment")
+                .commit();
+    }
+
+    /**
+     * open MyToDo event fragment
+     */
+    private void openMyToDoFragment(){
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_event_container, new MyToDoFragment())
+                .addToBackStack("MyToDoFragment")
                 .commit();
     }
 
