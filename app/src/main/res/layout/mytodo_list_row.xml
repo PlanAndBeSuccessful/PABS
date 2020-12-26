@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grey">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:id="@+id/titlebar">
+            <TextView
+                android:id="@+id/belong"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.8"
+                android:layout_marginLeft="10dp"
+                android:text="HaHa"
+                android:textSize="32dp"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:text="Delete"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/todo_delete_btn"/>
+        </LinearLayout>
+
+        <!--<TextView
+            android:id="@+id/todo_task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tasks"
+            android:textSize="24dp"
+            android:layout_below="@+id/belong"
+            android:layout_marginLeft="50dp"/>-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/task_list"
+            android:layout_below="@+id/titlebar"
+            android:layout_marginLeft="50dp"/>
+    </RelativeLayout>
+
+
+</LinearLayout>

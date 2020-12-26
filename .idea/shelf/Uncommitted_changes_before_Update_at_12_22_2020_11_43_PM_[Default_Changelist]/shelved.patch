@@ -1,0 +1,444 @@
+Index: app/src/main/java/com/example/pabs/Fragments/CalendarFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pabs.Fragments;\r\n\r\nimport android.content.Context;\r\nimport android.graphics.Color;\r\nimport android.os.Bundle;\r\nimport android.os.Handler;\r\nimport android.util.Log;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.example.pabs.Adapters.CalendarRecyclerViewAdapter;\r\nimport com.example.pabs.Models.DatabaseEvent;\r\nimport com.example.pabs.Models.Event;\r\nimport com.example.pabs.R;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.text.DateFormatSymbols;\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.ArrayList;\r\nimport java.util.Calendar;\r\nimport java.util.Date;\r\nimport java.util.List;\r\nimport java.util.Locale;\r\nimport java.util.StringTokenizer;\r\n\r\nimport sun.bob.mcalendarview.MarkStyle;\r\nimport sun.bob.mcalendarview.listeners.OnDateClickListener;\r\nimport sun.bob.mcalendarview.listeners.OnMonthChangeListener;\r\nimport sun.bob.mcalendarview.vo.DateData;\r\n\r\npublic class CalendarFragment extends Fragment {\r\n\r\n    //calendar\r\n    sun.bob.mcalendarview.views.ExpCalendarView customCalendar;\r\n\r\n    //TextViews\r\n    TextView curr_month, currDate;\r\n\r\n    Context mContext;\r\n    //List<DatabaseEvent> lstDatabaseEvent;\r\n    //events\r\n    List<DatabaseEvent> lstEvent;\r\n    private View listView;\r\n    //firebase\r\n    private String uID;\r\n\r\n    @Override\r\n    public void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n\r\n    }\r\n\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        //get uid of logged in user\r\n        uID = getActivity().getIntent().getStringExtra(\"USER\");\r\n\r\n        // Inflate the layout for this fragment\r\n        View calendarView = inflater.inflate(R.layout.fragment_calendar, container, false);\r\n\r\n        listView = getActivity().findViewById(R.id.activity_event_layout);\r\n        final RecyclerView rvCalendarfragment = (RecyclerView) calendarView.findViewById(R.id.calendar_rec_view);\r\n\r\n        //setting the current date in CalendarView\r\n        setCurrDateInCalendarFragment(calendarView);\r\n\r\n        //getting the custom calendar view object\r\n        customCalendar = calendarView.findViewById(R.id.calendar_calendar);\r\n\r\n        //setting the current month and year in CalendarView\r\n        curr_month = calendarView.findViewById(R.id.calendar_curr_month);\r\n        int cmonth = Calendar.getInstance().get(Calendar.MONTH)+1;\r\n        int cyear = Calendar.getInstance().get(Calendar.YEAR);\r\n        setCurrMonthandYear(curr_month, cmonth, cyear);\r\n\r\n        customCalendar.setOnMonthChangeListener(new OnMonthChangeListener() {\r\n            @Override\r\n            public void onMonthChange(int year, int month) {\r\n                setCurrMonthandYear(curr_month, month, year);\r\n            }\r\n        });\r\n\r\n        //set data for events example\r\n        lstEvent = new ArrayList<>();\r\n\r\n        //Getting events from database and setting them to recyclerview\r\n        DatabaseReference databaseEvents;\r\n        databaseEvents = FirebaseDatabase.getInstance().getReference().child(\"EVENT\");\r\n\r\n        //databaseEvents.addValueEventListener(new ValueEventListener() {\r\n        databaseEvents.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                clearEvents();\r\n                for (final DataSnapshot event : snapshot.getChildren()) {\r\n                    final DatabaseEvent tempEv = new DatabaseEvent();\r\n\r\n                    //Loop 1 to go through all child nodes of events\r\n\r\n\r\n                    final List<String> joined_users =  new ArrayList<>();\r\n                    event.getRef().child(\"joined_members\").addValueEventListener(new ValueEventListener() {\r\n                        @Override\r\n                        public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n\r\n                            for (DataSnapshot users : snapshot.getChildren()) {\r\n                                //Loop 1 to go through all child nodes of joined members\r\n                                joined_users.add(users.getValue().toString());\r\n                            }\r\n\r\n\r\n                            final Handler handler = new Handler();\r\n                            final int delay = 1000; //milliseconds\r\n\r\n                            handler.postDelayed(new Runnable(){\r\n                            public void run(){\r\n                                if(!joined_users.isEmpty())//checking if the data is loaded or not\r\n                                {\r\n\r\n                                String e_name = event.child(\"event_name\").getValue().toString();\r\n                                tempEv.setEvent_name(e_name);\r\n                                String event_startdate = event.child(\"start_date\").getValue().toString();\r\n                                tempEv.setStart_date(event_startdate);\r\n\r\n                                tempEv.setJoined_members(joined_users);\r\n\r\n\r\n                                //pushing the temporary event object into an arraylist\r\n                                    lstEvent.add(tempEv);\r\n\r\n                                    for(DatabaseEvent i : lstEvent){\r\n                                        for(String j: i.getJoined_members()){\r\n                                            if(uID.equals(j)){\r\n                                                //marking the Dates on which we have Events\r\n                                                DateData temp = convertDate(i.getStart_date());\r\n                                                customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.BLUE));\r\n                                                break;\r\n                                            }\r\n                                        }\r\n                                        if(uID.equals(i.getOwner_id())){\r\n                                            DateData temp = convertDate(i.getStart_date());\r\n                                            customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.BLUE));\r\n                                        }\r\n                                    }\r\n\r\n                                    final List<DatabaseEvent> onDateEvents = new ArrayList<>();\r\n                                    customCalendar.setOnDateClickListener(new OnDateClickListener() {\r\n                                        @Override\r\n                                        public void onDateClick(View view, DateData clickedDate) {\r\n                                            Log.d(\"DateClicked\", \"onDateClick: \" + clickedDate);\r\n                                            for(DatabaseEvent i : lstEvent){\r\n                                                if(convertDate(i.getStart_date()).equals(clickedDate)){\r\n                                                    onDateEvents.add(i);\r\n                                                }\r\n                                            }\r\n                                            CalendarRecyclerViewAdapter adapter = new CalendarRecyclerViewAdapter(onDateEvents);\r\n                                            rvCalendarfragment.setAdapter(adapter);\r\n                                            rvCalendarfragment.setLayoutManager(new LinearLayoutManager(getActivity()));\r\n                                        }\r\n                                    });\r\n                                }\r\n                                else\r\n                                    handler.postDelayed(this, delay);\r\n                            }\r\n                            }, delay);\r\n\r\n                        }\r\n\r\n                        @Override\r\n                        public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                        }\r\n                    });\r\n\r\n\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n        return calendarView;\r\n    }\r\n\r\n    @Override\r\n    public void onStart() {\r\n        super.onStart();\r\n        //Hiding the activity layout\r\n        listView.setVisibility(View.GONE);\r\n    }\r\n\r\n    @Override\r\n    public void onStop() {\r\n        super.onStop();\r\n        listView.setVisibility(View.VISIBLE);\r\n    }\r\n\r\n    private void setCurrDateInCalendarFragment(View calendarView){\r\n        Date d = Calendar.getInstance().getTime();\r\n        SimpleDateFormat df = new SimpleDateFormat(\"dd/MM/yyyy\", Locale.getDefault());\r\n        String curr_date = df.format(d);\r\n        currDate = calendarView.findViewById(R.id.calendar_curr_date);\r\n        currDate.setText(curr_date);\r\n    }\r\n\r\n    private void setCurrMonthandYear(TextView curr_month, int month, int year){\r\n        curr_month.setText(getMonth(month) + \" \" + year);\r\n    }\r\n\r\n    private DateData convertDate(String date){\r\n        StringTokenizer token = new StringTokenizer(date,\"/\");\r\n        int nap=0,honap=0,ev=0;\r\n        int cnt = 0;\r\n        while(token.hasMoreTokens()){\r\n            if(cnt == 0) {\r\n                nap = Integer.parseInt(token.nextToken());\r\n                cnt++;\r\n            }\r\n            else if(cnt == 1){\r\n                honap = Integer.parseInt(token.nextToken());\r\n                cnt++;\r\n            }\r\n            else if(cnt == 2){\r\n                ev = Integer.parseInt(token.nextToken());\r\n                cnt++;\r\n            }\r\n        }\r\n        DateData dateData = new DateData(ev,honap,nap);\r\n        return dateData;\r\n    }\r\n\r\n    public String getMonth(int month) {\r\n        return new DateFormatSymbols().getMonths()[month-1];\r\n    }\r\n\r\n    public void clearEvents(){\r\n        lstEvent.clear();\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/Fragments/CalendarFragment.java	(revision abf6f802c0f4d8405d2532f7b9deac4f00ac6de4)
++++ app/src/main/java/com/example/pabs/Fragments/CalendarFragment.java	(date 1608631970294)
+@@ -133,6 +133,8 @@
+                                 tempEv.setEvent_name(e_name);
+                                 String event_startdate = event.child("start_date").getValue().toString();
+                                 tempEv.setStart_date(event_startdate);
++                                String owner = event.child("owner_id").getValue().toString();
++                                tempEv.setOwner_id(owner);
+ 
+                                 tempEv.setJoined_members(joined_users);
+ 
+@@ -141,17 +143,19 @@
+                                     lstEvent.add(tempEv);
+ 
+                                     for(DatabaseEvent i : lstEvent){
+-                                        for(String j: i.getJoined_members()){
+-                                            if(uID.equals(j)){
+-                                                //marking the Dates on which we have Events
+-                                                DateData temp = convertDate(i.getStart_date());
+-                                                customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.BLUE));
+-                                                break;
+-                                            }
+-                                        }
+-                                        if(uID.equals(i.getOwner_id())){
+-                                            DateData temp = convertDate(i.getStart_date());
+-                                            customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.BLUE));
++                                        if(uID.equals(i.getOwner_id())){
++                                            DateData temp = convertDate(i.getStart_date());
++                                            customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.BLUE));
++                                        }
++                                        else {
++                                            for (String j : i.getJoined_members()) {
++                                                if (uID.equals(j)) {
++                                                    //marking the Dates on which we have Events
++                                                    DateData temp = convertDate(i.getStart_date());
++                                                    customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.BLUE));
++                                                    break;
++                                                }
++                                            }
+                                         }
+                                     }
+ 
+Index: app/src/main/res/layout/calendarfragment_list_row.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"wrap_content\"\r\n    android:orientation=\"horizontal\"\r\n    android:background=\"@color/grey\">\r\n    \r\n    <ImageView\r\n        android:layout_width=\"75dp\"\r\n        android:layout_height=\"75dp\"\r\n        android:src=\"@drawable/elements\"\r\n        android:id=\"@+id/icon_list_row_calendarfragment\"/>\r\n    <TextView\r\n        android:layout_width=\"fill_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:id=\"@+id/eventName\"\r\n        android:text=\"EsemenyNev\"\r\n        android:layout_marginLeft=\"15dp\"\r\n        android:textSize=\"24dp\" />\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/calendarfragment_list_row.xml	(revision abf6f802c0f4d8405d2532f7b9deac4f00ac6de4)
++++ app/src/main/res/layout/calendarfragment_list_row.xml	(date 1608627905179)
+@@ -8,7 +8,7 @@
+     <ImageView
+         android:layout_width="75dp"
+         android:layout_height="75dp"
+-        android:src="@drawable/elements"
++        android:src="@drawable/ic_baseline_arrow_back_24"
+         android:id="@+id/icon_list_row_calendarfragment"/>
+     <TextView
+         android:layout_width="fill_parent"
+Index: app/src/main/res/layout/fragment_calendar.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<FrameLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".Fragments.CalendarFragment\"\r\n    android:clickable=\"true\">\r\n\r\n    <RelativeLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:clickable=\"true\">\r\n\r\n        <RelativeLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"75dp\"\r\n            android:id=\"@+id/calendar_upperpart\"\r\n            android:background=\"@color/black\">\r\n            <TextView\r\n                android:id=\"@+id/calendar_curr_date\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:text=\"MM/DD/YYYY\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"30dp\"\r\n                android:padding=\"10dp\"\r\n                android:layout_centerVertical=\"true\"/>\r\n        </RelativeLayout>\r\n\r\n        <RelativeLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_below=\"@+id/calendar_upperpart\"\r\n            android:id=\"@+id/calendar_day_container\"\r\n            android:background=\"@color/grey\">\r\n            <TextView\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:text=\"Curent_Month\"\r\n                android:id=\"@+id/calendar_curr_month\"\r\n                android:layout_centerHorizontal=\"true\"\r\n                android:background=\"@color/quantum_amberA200\"/>\r\n            <LinearLayout\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_centerHorizontal=\"true\"\r\n                android:layout_below=\"@+id/calendar_curr_month\"\r\n                android:weightSum=\"7\">\r\n                <TextView\r\n                    android:layout_width=\"0dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_weight=\"1\"\r\n                    android:textAlignment=\"center\"\r\n                    android:gravity=\"center_horizontal\"\r\n                    android:text=\"Mon\"\r\n                    android:textSize=\"18dp\"\r\n                    />\r\n                <TextView\r\n                    android:layout_width=\"0dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_weight=\"1\"\r\n                    android:textAlignment=\"center\"\r\n                    android:gravity=\"center_horizontal\"\r\n                    android:text=\"Tue\"\r\n                    android:textSize=\"18dp\" />\r\n                <TextView\r\n                    android:layout_width=\"0dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_weight=\"1\"\r\n                    android:textAlignment=\"center\"\r\n                    android:gravity=\"center_horizontal\"\r\n                    android:text=\"Wed\"\r\n                    android:textSize=\"18dp\" />\r\n                <TextView\r\n                    android:layout_width=\"0dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_weight=\"1\"\r\n                    android:textAlignment=\"center\"\r\n                    android:gravity=\"center_horizontal\"\r\n                    android:text=\"Thu\"\r\n                    android:textSize=\"18dp\" />\r\n                <TextView\r\n                    android:layout_width=\"0dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_weight=\"1\"\r\n                    android:textAlignment=\"center\"\r\n                    android:gravity=\"center_horizontal\"\r\n                    android:text=\"Fri\"\r\n                    android:textSize=\"18dp\" />\r\n                <TextView\r\n                    android:layout_width=\"0dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_weight=\"1\"\r\n                    android:textAlignment=\"center\"\r\n                    android:gravity=\"center_horizontal\"\r\n                    android:text=\"Sat\"\r\n                    android:textSize=\"18dp\" />\r\n                <TextView\r\n                    android:layout_width=\"0dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_weight=\"1\"\r\n                    android:textAlignment=\"center\"\r\n                    android:gravity=\"center_horizontal\"\r\n                    android:text=\"Sun\"\r\n                    android:textSize=\"18dp\" />\r\n            </LinearLayout>\r\n        </RelativeLayout>\r\n\r\n        <sun.bob.mcalendarview.views.ExpCalendarView\r\n            android:layout_below=\"@+id/calendar_day_container\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"310dp\"\r\n            android:id=\"@+id/calendar_calendar\"\r\n            android:background=\"@color/white\"/>\r\n\r\n        <androidx.recyclerview.widget.RecyclerView\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_below=\"@+id/calendar_calendar\"/>\r\n\r\n    </RelativeLayout>\r\n\r\n</FrameLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_calendar.xml	(revision abf6f802c0f4d8405d2532f7b9deac4f00ac6de4)
++++ app/src/main/res/layout/fragment_calendar.xml	(date 1608627273076)
+@@ -116,7 +116,8 @@
+         <androidx.recyclerview.widget.RecyclerView
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+-            android:layout_below="@+id/calendar_calendar"/>
++            android:layout_below="@+id/calendar_calendar"
++            android:id="@+id/calendar_rec_view"/>
+ 
+     </RelativeLayout>
+ 
+Index: app/src/main/java/com/example/pabs/Models/Task.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/Models/Task.java	(date 1608627184804)
++++ app/src/main/java/com/example/pabs/Models/Task.java	(date 1608627184804)
+@@ -0,0 +1,52 @@
++package com.example.pabs.Models;
++
++import sun.bob.mcalendarview.vo.DateData;
++
++public class Task {
++    public String origin;
++    public String description;
++    public DateData deadline;
++    public boolean done;
++
++    public Task(){
++    }
++
++    public Task(String origin, String description, DateData deadline, boolean done) {
++        this.origin = origin;
++        this.description = description;
++        this.deadline = deadline;
++        this.done = done;
++    }
++
++    public String getOrigin() {
++        return origin;
++    }
++
++    public String getDescription() {
++        return description;
++    }
++
++    public DateData getDeadline() {
++        return deadline;
++    }
++
++    public boolean isDone() {
++        return done;
++    }
++
++    public void setOrigin(String origin) {
++        this.origin = origin;
++    }
++
++    public void setDescription(String description) {
++        this.description = description;
++    }
++
++    public void setDeadline(DateData deadline) {
++        this.deadline = deadline;
++    }
++
++    public void setDone(boolean done) {
++        this.done = done;
++    }
++}
+Index: app/src/main/java/com/example/pabs/Fragments/MyToDoFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/Fragments/MyToDoFragment.java	(date 1608640527161)
++++ app/src/main/java/com/example/pabs/Fragments/MyToDoFragment.java	(date 1608640527161)
+@@ -0,0 +1,45 @@
++package com.example.pabs.Fragments;
++
++import android.os.Bundle;
++
++import androidx.fragment.app.Fragment;
++
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++
++import com.example.pabs.R;
++
++public class MyToDoFragment extends Fragment {
++
++    private View listView;
++
++    @Override
++    public void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++    }
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                             Bundle savedInstanceState) {
++        // Inflate the layout for this fragment
++        View myToDoview = inflater.inflate(R.layout.fragment_my_to_do, container, false);
++
++        listView = getActivity().findViewById(R.id.activity_event_layout);
++
++        return myToDoview;
++    }
++
++    @Override
++    public void onStart() {
++        super.onStart();
++        //Hiding the activity layout
++        listView.setVisibility(View.GONE);
++    }
++
++    @Override
++    public void onStop() {
++        super.onStop();
++        listView.setVisibility(View.VISIBLE);
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_my_to_do.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_my_to_do.xml	(date 1608659205167)
++++ app/src/main/res/layout/fragment_my_to_do.xml	(date 1608659205167)
+@@ -0,0 +1,28 @@
++<?xml version="1.0" encoding="utf-8"?>
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context=".Fragments.MyToDoFragment"
++    android:background="@color/white">
++
++    <RelativeLayout
++        android:layout_width="match_parent"
++        android:layout_height="match_parent">
++
++    <TextView
++        android:id="@+id/todo_title"
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:text="MY TODOs"
++        android:textSize="32dp"
++        android:textAlignment="center"/>
++
++    <androidx.recyclerview.widget.RecyclerView
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:layout_below="@+id/todo_title"
++        android:id="@+id/todo_rec_view"/>
++    </RelativeLayout>
++
++</FrameLayout>
+\ No newline at end of file
+Index: app/src/main/res/menu/drawer_menu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<!--Menu part of the Navigation Drawer-->\r\n<menu xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    tools:showIn=\"navigation_view\">\r\n\r\n    <!--Here we have a group of different items\r\n     to open different activities/fragments-->\r\n    <group android:checkableBehavior=\"single\">\r\n        <!--events-->\r\n        <item\r\n            android:id=\"@+id/nav_events\"\r\n            android:icon=\"@drawable/event_ic\"\r\n            android:title=\"Events\" />\r\n        <!--profile-->\r\n        <item\r\n            android:id=\"@+id/nav_profile\"\r\n            android:icon=\"@drawable/member_ic\"\r\n            android:title=\"Profile\" />\r\n        <!--Calendar-->\r\n        <item\r\n            android:id=\"@+id/nav_calendar\"\r\n            android:icon=\"@drawable/calendar_ic\"\r\n            android:title=\"Calendar\" />\r\n        <!--groups-->\r\n        <item\r\n            android:id=\"@+id/nav_groups\"\r\n            android:icon=\"@drawable/group_ic\"\r\n            android:title=\"Groups\" />\r\n        <!--MyToDo-->\r\n        <item\r\n            android:icon=\"@drawable/todo_ic\"\r\n            android:title=\"MyToDo\" />\r\n        <!--settings-->\r\n        <item\r\n            android:id=\"@+id/nav_settings\"\r\n            android:icon=\"@drawable/settings_ic\"\r\n            android:title=\"Settings\" />\r\n\r\n    </group>\r\n\r\n    <!--Group of items only for one execution-->\r\n    <item android:title=\"Logout\">\r\n        <menu>\r\n            <!--logout-->\r\n            <item\r\n                android:id=\"@+id/nav_logout\"\r\n                android:icon=\"@drawable/logout_ic\"\r\n                android:title=\"Logout\" />\r\n        </menu>\r\n    </item>\r\n\r\n\r\n\r\n</menu>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/menu/drawer_menu.xml	(revision abf6f802c0f4d8405d2532f7b9deac4f00ac6de4)
++++ app/src/main/res/menu/drawer_menu.xml	(date 1608636596807)
+@@ -29,6 +29,7 @@
+             android:title="Groups" />
+         <!--MyToDo-->
+         <item
++            android:id="@+id/nav_todo"
+             android:icon="@drawable/todo_ic"
+             android:title="MyToDo" />
+         <!--settings-->
+Index: app/src/main/res/layout/mytodo_list_row.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/mytodo_list_row.xml	(date 1608656275439)
++++ app/src/main/res/layout/mytodo_list_row.xml	(date 1608656275439)
+@@ -0,0 +1,28 @@
++<?xml version="1.0" encoding="utf-8"?>
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    xmlns:app="http://schemas.android.com/apk/res-auto">
++
++    <RelativeLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content">
++        <TextView
++            android:id="@+id/belong"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginLeft="20dp"
++            android:text="HaHa"
++            android:textSize="32dp"/>
++
++        <TextView
++            android:id="@+id/todo_task"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="Tasks"
++            android:textSize="24dp"
++            android:layout_below="@+id/belong"
++            android:layout_marginLeft="50dp"/>
++    </RelativeLayout>
++
++</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/pabs/Adapters/ToDoRecyclerViewAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/Adapters/ToDoRecyclerViewAdapter.java	(date 1608659600563)
++++ app/src/main/java/com/example/pabs/Adapters/ToDoRecyclerViewAdapter.java	(date 1608659600563)
+@@ -0,0 +1,94 @@
++package com.example.pabs.Adapters;
++
++import android.content.Context;
++import android.util.Log;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.widget.ImageView;
++import android.widget.TextView;
++import android.widget.Toast;
++
++import androidx.annotation.NonNull;
++import androidx.cardview.widget.CardView;
++import androidx.fragment.app.FragmentManager;
++import androidx.recyclerview.widget.RecyclerView;
++
++import com.example.pabs.Fragments.EventFragment.EventFragment;
++import com.example.pabs.Models.DatabaseEvent;
++import com.example.pabs.Models.Event;
++import com.example.pabs.Models.Task;
++import com.example.pabs.R;
++import com.google.firebase.database.DataSnapshot;
++import com.google.firebase.database.DatabaseError;
++import com.google.firebase.database.DatabaseReference;
++import com.google.firebase.database.FirebaseDatabase;
++import com.google.firebase.database.ValueEventListener;
++import com.squareup.picasso.Picasso;
++
++import java.util.ArrayList;
++import java.util.List;
++
++/**
++ * Creates an array of card elements
++ */
++
++public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerViewAdapter.ViewHolder>{
++
++    // Provide a direct reference to each of the views within a data item
++    // Used to cache the views within the item layout for fast access
++    public class ViewHolder extends RecyclerView.ViewHolder {
++        // Your holder should contain a member variable
++        // for any view that will be set as you render a row
++        public TextView belong;
++        public TextView todo_task;
++
++        // We also create a constructor that accepts the entire item row
++        // and does the view lookups to find each subview
++        public ViewHolder(View itemView) {
++            // Stores the itemView in a public final member variable that can be used
++            // to access the context from any ViewHolder instance.
++            super(itemView);
++
++            belong = (TextView) itemView.findViewById(R.id.belong);
++            todo_task = (TextView) itemView.findViewById(R.id.todo_task);
++        }
++    }
++
++    //Store a member variable for the events
++    private List<Task> tasks;
++
++    //Pass-in the contact array into the constructor
++    public ToDoRecyclerViewAdapter(List<Task> taskarr){
++        tasks = taskarr;
++    }
++
++    @NonNull
++    @Override
++    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
++        Context context = parent.getContext();
++        LayoutInflater inflater = LayoutInflater.from(context);
++
++        //inflate custom layout
++        View todo_listview = inflater.inflate(R.layout.mytodo_list_row,parent,false);
++        //Return a new holder instance
++        ViewHolder viewHolder = new ViewHolder(todo_listview);
++        return viewHolder;
++    }
++
++    @Override
++    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
++        //Get the data model based on position
++        Task ev = tasks.get(position);
++
++        //set item views based on views and data model
++        TextView textView = holder.belong;
++        textView.setText(ev.getOrigin());
++        TextView txtView = holder.todo_task;
++    }
++
++    @Override
++    public int getItemCount() {
++        return tasks.size();
++    }
++}
+Index: app/src/main/java/com/example/pabs/EventActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pabs;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.ActionBarDrawerToggle;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.view.GravityCompat;\r\nimport androidx.drawerlayout.widget.DrawerLayout;\r\nimport androidx.recyclerview.widget.GridLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.annotation.SuppressLint;\r\nimport android.net.Uri;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.MenuItem;\r\nimport android.view.MotionEvent;\r\nimport android.view.View;\r\nimport android.widget.ImageView;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.pabs.Adapters.EventRecyclerViewAdapter;\r\nimport com.example.pabs.Fragments.CalendarFragment;\r\nimport com.example.pabs.Fragments.CreateEventFragment;\r\nimport com.example.pabs.Models.Event;\r\nimport com.google.android.material.navigation.NavigationView;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\n\r\n/**\r\n * Main screen, handles more fragments, events, groups\r\n */\r\n\r\npublic class EventActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {\r\n\r\n    //UI\r\n    private ImageView create_event_img_btn;\r\n\r\n    //firebase\r\n    private DatabaseReference reference;\r\n    private String uID;\r\n\r\n    //events\r\n    List<Event> lstEvent;\r\n\r\n    //drawer\r\n    private DrawerLayout drawer = null;\r\n    private NavigationView navigationView = null;\r\n\r\n    /**\r\n     * On create\r\n     */\r\n    @SuppressLint(\"ClickableViewAccessibility\")\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_event);\r\n\r\n        //get uid of logged in user\r\n        uID = getIntent().getStringExtra(\"USER\");\r\n\r\n        //firebase database -> get reference to USER table\r\n        reference = FirebaseDatabase.getInstance().getReference().child(\"USER\");\r\n\r\n        //set data for events example\r\n        lstEvent = new ArrayList<>();\r\n\r\n        //Getting events from database and setting them to recyclerview\r\n        DatabaseReference databaseEvents;\r\n        databaseEvents = FirebaseDatabase.getInstance().getReference().child(\"EVENT\");\r\n\r\n        databaseEvents.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                clearEvents();\r\n                for (DataSnapshot event : snapshot.getChildren()) {\r\n                    //Loop 1 to go through all child nodes of events\r\n                    String temp= event.child(\"event_name\").getValue().toString();\r\n\r\n                    Uri myUri = null;\r\n                    String UriStr = null;\r\n\r\n                    //if the event has a thumbnail, get Uri\r\n                    if(event.child(\"thumbnail\").getValue() != null) {\r\n                        UriStr = event.child(\"thumbnail\").getValue().toString();\r\n                        Log.d(\"PAPA\", \"onDataChange: \"+UriStr);\r\n                        myUri = Uri.parse(UriStr);\r\n                    }\r\n\r\n                    //get no image Uri\r\n                    Uri testUri = Uri.parse(\"https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351\");\r\n\r\n                    //Create temporary Event\r\n                    Event tempEv;\r\n\r\n                    //if Event has no thumbnail\r\n                    if(UriStr == null){\r\n                        //Give the event, the no image thumbnail\r\n                        tempEv = new Event();\r\n                        tempEv.setTitle(temp);\r\n                        tempEv.setThumbnail(testUri);\r\n                    }\r\n                    //if Event has thumbnail\r\n                    else{\r\n                        //Set thumbnail of event\r\n                        tempEv = new Event();\r\n                        tempEv.setTitle(temp);\r\n                        tempEv.setThumbnail(myUri);\r\n                    }\r\n\r\n                    //add events to array\r\n                    addToEventsArray(tempEv);\r\n                }\r\n\r\n                //Set and show events on main screen\r\n                setEvents();\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n\r\n        //nav view and drawer\r\n        navigationView = findViewById(R.id.nav_view);\r\n        drawer = findViewById(R.id.drawer_layout);\r\n\r\n        //handle navigation drawer open/close with toggle\r\n        navigationView.setNavigationItemSelectedListener(this);\r\n        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close){\r\n            /** Called when a drawer has settled in a completely closed state. */\r\n            public void onDrawerClosed(View view) {\r\n                super.onDrawerClosed(view);\r\n                for(int i = 0; i < navigationView.getMenu().size(); ++i)\r\n                    navigationView.getMenu().getItem(i).setChecked(false);\r\n            }\r\n\r\n            /** Called when a drawer has settled in a completely open state. */\r\n            public void onDrawerOpened(View drawerView) {\r\n                super.onDrawerOpened(drawerView);\r\n            }\r\n        };\r\n\r\n        //add toggle to drawer\r\n        drawer.addDrawerListener(toggle);\r\n\r\n        //sync toggle\r\n        toggle.syncState();\r\n\r\n        // Write a string to database when this client loses connection\r\n        reference.child(uID).child(\"online\").onDisconnect().setValue(\"false\");\r\n\r\n        //create event button\r\n        create_event_img_btn = findViewById(R.id.a_e_create_event_button);\r\n        create_event_img_btn.setOnTouchListener(new View.OnTouchListener() {\r\n            @Override\r\n            public boolean onTouch(View view, MotionEvent motionEvent) {\r\n                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {\r\n                    openCreateEventFragment();\r\n                }\r\n                return false;\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n    /**\r\n     * Add to events inside DataChanged method so we don't lose the results\r\n     */\r\n    public void addToEventsArray(Event tempEv){\r\n        lstEvent.add(tempEv);\r\n    }\r\n\r\n    /**\r\n     * Clear events inside DataChanged method\r\n     */\r\n    public void clearEvents(){\r\n        lstEvent.clear();\r\n    }\r\n\r\n    /**\r\n     * Set events inside DataChanged method\r\n     */\r\n    public void setEvents(){\r\n        //create and set RecyclerView\r\n        RecyclerView myRv = (RecyclerView) findViewById(R.id.e_recycler_view);\r\n        //create Adapter with lstEvent in this context\r\n        EventRecyclerViewAdapter myAdapter = new EventRecyclerViewAdapter(this, lstEvent, getSupportFragmentManager());\r\n        //separate the Recyclerview to 3 columns\r\n        myRv.setLayoutManager(new GridLayoutManager(this, 3));\r\n        //set adapter for RecyclerView\r\n        myRv.setAdapter(myAdapter);\r\n    }\r\n\r\n    /**\r\n     * Called on selecting item from navigation list\r\n     */\r\n    @SuppressLint(\"NonConstantResourceId\")\r\n    @Override\r\n    public boolean onNavigationItemSelected(@NonNull MenuItem item) {\r\n        switch (item.getItemId()){\r\n            case R.id.nav_events:\r\n                Toast.makeText(this, \"nav_events\", Toast.LENGTH_SHORT).show();\r\n                break;\r\n\r\n            case R.id.nav_calendar:\r\n                openCalendarFragment();\r\n                Toast.makeText(this, \"nav_calendar\", Toast.LENGTH_SHORT).show();\r\n                break;\r\n\r\n            case R.id.nav_groups:\r\n                Toast.makeText(this, \"nav_groups\", Toast.LENGTH_SHORT).show();\r\n                break;\r\n\r\n            case R.id.nav_profile:\r\n                Toast.makeText(this, \"nav_profile\", Toast.LENGTH_SHORT).show();\r\n                break;\r\n\r\n            case R.id.nav_settings:\r\n                Toast.makeText(this, \"nav_settings\", Toast.LENGTH_SHORT).show();\r\n                break;\r\n\r\n            case R.id.nav_logout:\r\n                Toast.makeText(this, \"nav_logout\", Toast.LENGTH_SHORT).show();\r\n                reference.child(uID).child(\"online\").setValue(\"false\");\r\n                finish();\r\n                break;\r\n\r\n            default:\r\n                Toast.makeText(this, \"error\", Toast.LENGTH_SHORT).show();\r\n                break;\r\n        }\r\n\r\n        //close drawer on item clicked\r\n        drawer.closeDrawer(GravityCompat.START);\r\n        return true;\r\n    }\r\n\r\n\r\n    /**\r\n     * open create event fragment\r\n     */\r\n    private void openCreateEventFragment(){\r\n        getSupportFragmentManager()\r\n                .beginTransaction()\r\n                .replace(R.id.fragment_event_container, new CreateEventFragment())\r\n                .addToBackStack(\"CreateEventFragment\")\r\n                .commit();\r\n    }\r\n\r\n    /**\r\n     * open calendar event fragment\r\n     */\r\n    private void openCalendarFragment(){\r\n        getSupportFragmentManager()\r\n                .beginTransaction()\r\n                .replace(R.id.fragment_event_container, new CalendarFragment())\r\n                .addToBackStack(\"CalendarFragment\")\r\n                .commit();\r\n    }\r\n\r\n    /**\r\n     * Called when the activity is exiting\r\n     */\r\n    @Override\r\n    protected void onDestroy() {\r\n        super.onDestroy();\r\n        lstEvent.clear();\r\n        reference.child(uID).child(\"online\").setValue(\"false\");\r\n    }\r\n\r\n    /**\r\n     * Called when the activity started\r\n     */\r\n    @Override\r\n    protected void onStart() {\r\n        super.onStart();\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/EventActivity.java	(revision abf6f802c0f4d8405d2532f7b9deac4f00ac6de4)
++++ app/src/main/java/com/example/pabs/EventActivity.java	(date 1608640527237)
+@@ -21,6 +21,7 @@
+ import com.example.pabs.Adapters.EventRecyclerViewAdapter;
+ import com.example.pabs.Fragments.CalendarFragment;
+ import com.example.pabs.Fragments.CreateEventFragment;
++import com.example.pabs.Fragments.MyToDoFragment;
+ import com.example.pabs.Models.Event;
+ import com.google.android.material.navigation.NavigationView;
+ import com.google.firebase.database.DataSnapshot;
+@@ -214,6 +215,11 @@
+                 openCalendarFragment();
+                 Toast.makeText(this, "nav_calendar", Toast.LENGTH_SHORT).show();
+                 break;
++
++            case R.id.nav_todo:
++                openMyToDoFragment();
++                Toast.makeText(this, "nav_todo", Toast.LENGTH_SHORT).show();
++                break;
+ 
+             case R.id.nav_groups:
+                 Toast.makeText(this, "nav_groups", Toast.LENGTH_SHORT).show();
+@@ -265,6 +271,17 @@
+                 .addToBackStack("CalendarFragment")
+                 .commit();
+     }
++
++    /**
++     * open MyToDo event fragment
++     */
++    private void openMyToDoFragment(){
++        getSupportFragmentManager()
++                .beginTransaction()
++                .replace(R.id.fragment_event_container, new MyToDoFragment())
++                .addToBackStack("MyToDoFragment")
++                .commit();
++    }
+ 
+     /**
+      * Called when the activity is exiting
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_12_16_2020_12_10_AM__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_12_16_2020_12_10_AM__Default_Changelist_.xml
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_11_17_2020_11_36_PM__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_11_17_2020_11_36_PM__Default_Changelist_.xml
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_12_16_2020_3_18_PM__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_12_16_2020_3_18_PM__Default_Changelist_.xml
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_12_16_2020_5_25_PM__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_12_16_2020_5_25_PM__Default_Changelist_.xml

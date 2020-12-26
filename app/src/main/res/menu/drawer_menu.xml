@@ -29,6 +29,7 @@
             android:title="Groups" />
         <!--MyToDo-->
         <item
+            android:id="@+id/nav_todo"
             android:icon="@drawable/todo_ic"
             android:title="MyToDo" />
         <!--settings-->

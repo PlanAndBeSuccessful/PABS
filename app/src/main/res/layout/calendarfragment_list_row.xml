@@ -9,7 +9,7 @@
     <ImageView
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:src="@drawable/elements"
+        android:src="@drawable/ic_baseline_arrow_back_24"
         android:layout_gravity="center_vertical"
         android:id="@+id/icon_list_row_calendarfragment"/>
 
