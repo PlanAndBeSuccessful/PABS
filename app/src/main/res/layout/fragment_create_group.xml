@@ -37,7 +37,7 @@
             android:singleLine="true"
             android:maxLines="1"
             android:background="@drawable/email_bg"
-            android:drawableLeft="@drawable/event_ic"
+            android:drawableLeft="@drawable/group_ic"
             android:drawablePadding="10dp"
             android:layout_width="380dp"
             android:layout_height="50dp"
