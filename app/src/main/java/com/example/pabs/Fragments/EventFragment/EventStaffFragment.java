@@ -46,7 +46,7 @@ public class EventStaffFragment extends Fragment {
 
     private View containerView;
 
-    private TextView tv;
+
     private EditText et;
     private Button addStaffBtn;
     private Button removeStaffBtn;
@@ -73,7 +73,7 @@ public class EventStaffFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_event_staff, container, false);
         containerView = getActivity().findViewById(R.id.activity_event_layout);
 
-        tv = view.findViewById(R.id.f_e_s_rl1_tv);
+
         et = view.findViewById(R.id.f_e_s_et);
         addStaffBtn = view.findViewById(R.id.f_e_s_addStaffBtn);
         removeStaffBtn = view.findViewById(R.id.f_e_s_removeStaffBtn);
