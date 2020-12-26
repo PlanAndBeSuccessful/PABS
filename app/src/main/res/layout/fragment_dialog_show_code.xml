@@ -13,7 +13,7 @@
     <!--Container for textView and button-->
     <RelativeLayout
         android:layout_centerInParent="true"
-        android:background="@drawable/rect"
+        android:background="@drawable/login_button"
         android:backgroundTint="@color/chinese_silver"
         android:layout_height="125dp"
         android:layout_width="match_parent">
@@ -26,10 +26,10 @@
             android:layout_centerInParent="true"
             android:layout_alignParentTop="true"
             android:layout_marginTop="5dp"
-            android:background="@drawable/login_button"
+            android:background="@drawable/email_bg"
             android:maxLines="1"
             android:text="Code"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textColor="@color/black"
             android:padding="15dp"
             android:gravity="center_horizontal"
@@ -45,6 +45,8 @@
             android:layout_marginTop="25dp"
             android:background="@drawable/login_button"
             android:clickable="true"
+            android:textColor="#92129D"
+            android:textAllCaps="false"
             android:text="Close" />
 
     </RelativeLayout>
