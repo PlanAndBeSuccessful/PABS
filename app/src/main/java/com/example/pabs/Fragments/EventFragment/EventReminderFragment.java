@@ -1,29 +1,20 @@
 package com.example.pabs.Fragments.EventFragment;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.pabs.Adapters.EventStaffRecyclerViewAdapter;
 import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.R;
 import com.google.firebase.database.DataSnapshot;
@@ -39,7 +30,7 @@ public class EventReminderFragment extends Fragment {
     private View containerView;
 
     //database event
-    private DatabaseEvent databaseEvent;
+    private final DatabaseEvent databaseEvent;
 
     private SwitchCompat sw;
     private ImageView iv;
@@ -49,7 +40,7 @@ public class EventReminderFragment extends Fragment {
 
     private boolean switch_on = false;
 
-    EventReminderFragment(DatabaseEvent dE){
+    EventReminderFragment(DatabaseEvent dE) {
         databaseEvent = dE;
     }
 
@@ -88,8 +79,8 @@ public class EventReminderFragment extends Fragment {
         sp.setVisibility(View.GONE);
         tv.setVisibility(View.GONE);
 
-        if(databaseEvent.getReminder() != null){
-            if(!databaseEvent.getReminder().equals("")){
+        if (databaseEvent.getReminder() != null) {
+            if (!databaseEvent.getReminder().equals("")) {
                 sp.setVisibility(View.VISIBLE);
                 tv.setVisibility(View.VISIBLE);
                 sw.setChecked(true);
@@ -99,11 +90,10 @@ public class EventReminderFragment extends Fragment {
                 reminderArr.add("daily");
                 reminderArr.add("weekly");
                 reminderArr.add("monthly");
-                int i=reminderArr.indexOf(databaseEvent.getReminder().toString());
+                int i = reminderArr.indexOf(databaseEvent.getReminder());
                 sp.setSelection(i);
             }
         }
-
 
 
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -126,27 +116,27 @@ public class EventReminderFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 final DatabaseReference refEvent = FirebaseDatabase.getInstance().getReference().child("EVENT");
-                    refEvent.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            for (final DataSnapshot event : snapshot.getChildren()) {
-                                //Loop 1 to go through all child nodes of users
-                                if (event.child("event_name").getValue() == databaseEvent.getEvent_name()) {
-                                    if (switch_on) {
-                                        databaseEvent.setReminder(sp.getSelectedItem().toString());
-                                    } else {
-                                        databaseEvent.setReminder("");
-                                    }
-                                    event.getRef().child("reminder").setValue(databaseEvent.getReminder());
+                refEvent.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (final DataSnapshot event : snapshot.getChildren()) {
+                            //Loop 1 to go through all child nodes of users
+                            if (event.child("event_name").getValue() == databaseEvent.getEvent_name()) {
+                                if (switch_on) {
+                                    databaseEvent.setReminder(sp.getSelectedItem().toString());
+                                } else {
+                                    databaseEvent.setReminder("");
                                 }
+                                event.getRef().child("reminder").setValue(databaseEvent.getReminder());
                             }
                         }
+                    }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            //database failed
-                        }
-                    });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        //database failed
+                    }
+                });
 
             }
         });
@@ -158,7 +148,7 @@ public class EventReminderFragment extends Fragment {
     /**
      * clearBackstack
      */
-    public void clearBackstack(){
+    public void clearBackstack() {
         //clear all backstact
         getActivity().getSupportFragmentManager().popBackStack("EventReminderFragment", 1);
     }

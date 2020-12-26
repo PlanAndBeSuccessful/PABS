@@ -21,25 +21,21 @@ import java.security.SecureRandom;
 
 public class CreateGroupFragment extends Fragment {
 
+    //
+    static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final String TAG = "CreateGroupFragment";
-
+    static SecureRandom rnd = new SecureRandom();
     //UI
     private View containerView;
     private Button back_button;
     private Button next_button;
     private EditText name_et;
     private FrameLayout FragmentGroupContainer;
-
     //firebase
     private DatabaseReference reference = null;
+    private final String mUID;
 
-    private String mUID;
-
-    //
-    static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    static SecureRandom rnd = new SecureRandom();
-
-    public CreateGroupFragment(String uID){
+    public CreateGroupFragment(String uID) {
         mUID = uID;
     }
 
@@ -93,14 +89,14 @@ public class CreateGroupFragment extends Fragment {
                     group.setGroup_name(name_et.getText().toString());
                     group.setGroup_owner(mUID);
                     group.setInvite_code(randomString(8));
+                    group.setGroup_id(reference.push().getKey());
 
                     //pushing databaseEvent to database
-                    reference.push().setValue(group);
+                    reference.child(group.getGroup_id()).setValue(group);
 
                     //open event
                     openGroup(group, mUID);
-                }
-                else{
+                } else {
                     Toast.makeText(getActivity(), "Fields are empty!", Toast.LENGTH_SHORT).show();
                 }
 
@@ -113,9 +109,9 @@ public class CreateGroupFragment extends Fragment {
     }
 
 
-    String randomString(int len){
+    String randomString(int len) {
         StringBuilder sb = new StringBuilder(len);
-        for(int i = 0; i < len; i++)
+        for (int i = 0; i < len; i++)
             sb.append(AB.charAt(rnd.nextInt(AB.length())));
         return sb.toString();
     }
@@ -123,10 +119,10 @@ public class CreateGroupFragment extends Fragment {
     /**
      * open EventFragment with Data of created event
      */
-    public void openGroup(Group group, String mUID){
+    public void openGroup(Group group, String mUID) {
         getActivity().getSupportFragmentManager()
                 .beginTransaction()
-                .replace( R.id.fragment_group_container , new GroupFragment(group, mUID))
+                .replace(R.id.fragment_group_container, new GroupFragment(group, mUID))
                 .addToBackStack("GroupFragment")
                 .commit();
     }

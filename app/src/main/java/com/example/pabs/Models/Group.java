@@ -6,15 +6,17 @@ public class Group {
     String group_name;
     String group_owner;
     String invite_code;
+    String group_id;
     ArrayList<String> member_list;
 
     public Group() {
     }
 
-    public Group(String group_name, String group_owner, String invite_code, ArrayList<String> member_list) {
+    public Group(String group_name, String group_owner, String invite_code, String group_id, ArrayList<String> member_list) {
         this.group_name = group_name;
         this.group_owner = group_owner;
         this.invite_code = invite_code;
+        this.group_id = group_id;
         this.member_list = member_list;
     }
 
@@ -40,6 +42,14 @@ public class Group {
 
     public void setInvite_code(String invite_code) {
         this.invite_code = invite_code;
+    }
+
+    public String getGroup_id() {
+        return group_id;
+    }
+
+    public void setGroup_id(String group_id) {
+        this.group_id = group_id;
     }
 
     public ArrayList<String> getMember_list() {

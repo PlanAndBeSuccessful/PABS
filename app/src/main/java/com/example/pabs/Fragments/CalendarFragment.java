@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pabs.Adapters.CalendarRecyclerViewAdapter;
 import com.example.pabs.Models.DatabaseEvent;
-import com.example.pabs.Models.Event;
 import com.example.pabs.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -81,7 +80,7 @@ public class CalendarFragment extends Fragment {
 
         //setting the current month and year in CalendarView
         curr_month = calendarView.findViewById(R.id.calendar_curr_month);
-        int cmonth = Calendar.getInstance().get(Calendar.MONTH)+1;
+        int cmonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
         int cyear = Calendar.getInstance().get(Calendar.YEAR);
         setCurrMonthandYear(curr_month, cmonth, cyear);
 
@@ -110,7 +109,7 @@ public class CalendarFragment extends Fragment {
                     //Loop 1 to go through all child nodes of events
 
 
-                    final List<String> joined_users =  new ArrayList<>();
+                    final List<String> joined_users = new ArrayList<>();
                     event.getRef().child("joined_members").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -124,56 +123,55 @@ public class CalendarFragment extends Fragment {
                             final Handler handler = new Handler();
                             final int delay = 1000; //milliseconds
 
-                            handler.postDelayed(new Runnable(){
-                            public void run(){
-                                if(!joined_users.isEmpty())//checking if the data is loaded or not
-                                {
+                            handler.postDelayed(new Runnable() {
+                                public void run() {
+                                    if (!joined_users.isEmpty())//checking if the data is loaded or not
+                                    {
 
-                                String e_name = event.child("event_name").getValue().toString();
-                                tempEv.setEvent_name(e_name);
-                                String event_startdate = event.child("start_date").getValue().toString();
-                                tempEv.setStart_date(event_startdate);
+                                        String e_name = event.child("event_name").getValue().toString();
+                                        tempEv.setEvent_name(e_name);
+                                        String event_startdate = event.child("start_date").getValue().toString();
+                                        tempEv.setStart_date(event_startdate);
 
-                                tempEv.setJoined_members(joined_users);
+                                        tempEv.setJoined_members(joined_users);
 
 
-                                //pushing the temporary event object into an arraylist
-                                    lstEvent.add(tempEv);
+                                        //pushing the temporary event object into an arraylist
+                                        lstEvent.add(tempEv);
 
-                                    for(DatabaseEvent i : lstEvent){
-                                        for(String j: i.getJoined_members()){
-                                            if(uID.equals(j)){
-                                                //marking the Dates on which we have Events
-                                                DateData temp = convertDate(i.getStart_date());
-                                                customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.BLUE));
-                                                break;
-                                            }
-                                        }
-                                        if(uID.equals(i.getOwner_id())){
-                                            DateData temp = convertDate(i.getStart_date());
-                                            customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR,Color.CYAN));
-                                        }
-                                    }
-
-                                    final List<DatabaseEvent> onDateEvents = new ArrayList<>();
-                                    customCalendar.setOnDateClickListener(new OnDateClickListener() {
-                                        @Override
-                                        public void onDateClick(View view, DateData clickedDate) {
-                                            Log.d("DateClicked", "onDateClick: " + clickedDate);
-                                            for(DatabaseEvent i : lstEvent){
-                                                if(convertDate(i.getStart_date()).equals(clickedDate)){
-                                                    onDateEvents.add(i);
+                                        for (DatabaseEvent i : lstEvent) {
+                                            for (String j : i.getJoined_members()) {
+                                                if (uID.equals(j)) {
+                                                    //marking the Dates on which we have Events
+                                                    DateData temp = convertDate(i.getStart_date());
+                                                    customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.BLUE));
+                                                    break;
                                                 }
                                             }
-                                            CalendarRecyclerViewAdapter adapter = new CalendarRecyclerViewAdapter(onDateEvents);
-                                            rvCalendarfragment.setAdapter(adapter);
-                                            rvCalendarfragment.setLayoutManager(new LinearLayoutManager(getActivity()));
+                                            if (uID.equals(i.getOwner_id())) {
+                                                DateData temp = convertDate(i.getStart_date());
+                                                customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.CYAN));
+                                            }
                                         }
-                                    });
+
+                                        final List<DatabaseEvent> onDateEvents = new ArrayList<>();
+                                        customCalendar.setOnDateClickListener(new OnDateClickListener() {
+                                            @Override
+                                            public void onDateClick(View view, DateData clickedDate) {
+                                                Log.d("DateClicked", "onDateClick: " + clickedDate);
+                                                for (DatabaseEvent i : lstEvent) {
+                                                    if (convertDate(i.getStart_date()).equals(clickedDate)) {
+                                                        onDateEvents.add(i);
+                                                    }
+                                                }
+                                                CalendarRecyclerViewAdapter adapter = new CalendarRecyclerViewAdapter(onDateEvents);
+                                                rvCalendarfragment.setAdapter(adapter);
+                                                rvCalendarfragment.setLayoutManager(new LinearLayoutManager(getActivity()));
+                                            }
+                                        });
+                                    } else
+                                        handler.postDelayed(this, delay);
                                 }
-                                else
-                                    handler.postDelayed(this, delay);
-                            }
                             }, delay);
 
                         }
@@ -209,7 +207,7 @@ public class CalendarFragment extends Fragment {
         listView.setVisibility(View.VISIBLE);
     }
 
-    private void setCurrDateInCalendarFragment(View calendarView){
+    private void setCurrDateInCalendarFragment(View calendarView) {
         Date d = Calendar.getInstance().getTime();
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         String curr_date = df.format(d);
@@ -217,37 +215,35 @@ public class CalendarFragment extends Fragment {
         currDate.setText(curr_date);
     }
 
-    private void setCurrMonthandYear(TextView curr_month, int month, int year){
+    private void setCurrMonthandYear(TextView curr_month, int month, int year) {
         curr_month.setText(getMonth(month) + " " + year);
     }
 
-    private DateData convertDate(String date){
-        StringTokenizer token = new StringTokenizer(date,"/");
-        int nap=0,honap=0,ev=0;
+    private DateData convertDate(String date) {
+        StringTokenizer token = new StringTokenizer(date, "/");
+        int nap = 0, honap = 0, ev = 0;
         int cnt = 0;
-        while(token.hasMoreTokens()){
-            if(cnt == 0) {
+        while (token.hasMoreTokens()) {
+            if (cnt == 0) {
                 nap = Integer.parseInt(token.nextToken());
                 cnt++;
-            }
-            else if(cnt == 1){
+            } else if (cnt == 1) {
                 honap = Integer.parseInt(token.nextToken());
                 cnt++;
-            }
-            else if(cnt == 2){
+            } else if (cnt == 2) {
                 ev = Integer.parseInt(token.nextToken());
                 cnt++;
             }
         }
-        DateData dateData = new DateData(ev,honap,nap);
+        DateData dateData = new DateData(ev, honap, nap);
         return dateData;
     }
 
     public String getMonth(int month) {
-        return new DateFormatSymbols().getMonths()[month-1];
+        return new DateFormatSymbols().getMonths()[month - 1];
     }
 
-    public void clearEvents(){
+    public void clearEvents() {
         lstEvent.clear();
     }
 }

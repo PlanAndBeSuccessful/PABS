@@ -1,13 +1,5 @@
 package com.example.pabs;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -19,6 +11,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pabs.Adapters.GroupRecyclerViewAdapter;
 import com.example.pabs.Fragments.CalendarFragment;
@@ -40,23 +40,38 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
     private ImageView create_group_img_btn;
     private ImageView open_event_img_btn;
     private ImageView group_code_img_btn;
-
-    //firebase
-    private DatabaseReference reference;
-    private String uID;
-
-    //events
-    private ArrayList<Group> lstGroup = new ArrayList<>();
+    private SearchView sw;
 
     //drawer
     private DrawerLayout drawer = null;
     private NavigationView navigationView = null;
 
+    //firebase
+    private DatabaseReference reference;
+    private String uID;
+
+    //groups
+    private ArrayList<Group> lstGroup = new ArrayList<>();
+
+    //adapter
+    private GroupRecyclerViewAdapter myGroupAdapter;
+
+    //data
     private String mCode;
 
-    //
-    private SearchView sw;
-    private GroupRecyclerViewAdapter myGroupAdapter;
+    /**
+     * hideKeyboard
+     */
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 
     /**
      * On create
@@ -70,13 +85,13 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
         //get uid of logged in user
         uID = getIntent().getStringExtra("USER");
 
+        //init data for group
+        lstGroup = new ArrayList<>();
+
         //firebase database -> get reference to USER table
         reference = FirebaseDatabase.getInstance().getReference().child("USER");
 
-        //set data for events example
-        lstGroup = new ArrayList<>();
-
-        //Getting events from database and setting them to recyclerview
+        //Getting groups from database and setting them to recyclerview
         DatabaseReference databaseGroupRef;
         databaseGroupRef = FirebaseDatabase.getInstance().getReference().child("GROUP");
 
@@ -93,22 +108,24 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
                     tempGrp.setGroup_name(group.child("group_name").getValue().toString());
                     tempGrp.setGroup_owner(group.child("group_owner").getValue().toString());
                     tempGrp.setInvite_code(group.child("invite_code").getValue().toString());
+                    tempGrp.setGroup_id(group.child("group_id").getValue().toString());
 
-                    final ArrayList<String> joined_members =  new ArrayList<>();
+
+                    final ArrayList<String> joined_members = new ArrayList<>();
                     group.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            for (DataSnapshot member : snapshot.getChildren()){
+                            for (DataSnapshot member : snapshot.getChildren()) {
                                 joined_members.add(member.getValue().toString());
                             }
 
                             tempGrp.setMember_list(joined_members);
 
-                            if(joined_members.contains(uID) || uID.equals(tempGrp.getGroup_owner())){
-                                //add events to array
+                            if (joined_members.contains(uID) || uID.equals(tempGrp.getGroup_owner())) {
+                                //add groups to array
                                 addToGroupArray(tempGrp);
 
-                                //Set and show events on main screen
+                                //Set and show groups on main screen
                                 setGroups();
                             }
                         }
@@ -211,9 +228,17 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
             }
         });
 
-        //
+        //search view
         sw = findViewById(R.id.g_search_bar);
         sw.setQueryHint("Search group name...");
+
+        sw.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                hideKeyboard(GroupActivity.this);
+                return false;
+            }
+        });
 
         sw.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -232,47 +257,34 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
 
     }
 
-
-
-    public static void hideKeyboard(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
-        View view = activity.getCurrentFocus();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = new View(activity);
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    private void openLoginActivity(){
+    private void openLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 
-    private void openCodeDialogFragment(){
+    private void openCodeDialogFragment() {
         CodeDialogFragment codeDialogFragment = new CodeDialogFragment();
-        codeDialogFragment.show(getSupportFragmentManager(),"codeDialogFragment");
+        codeDialogFragment.show(getSupportFragmentManager(), "codeDialogFragment");
     }
 
     /**
      * Add to events inside DataChanged method so we don't lose the results
      */
-    public void addToGroupArray(Group tempEv){
+    public void addToGroupArray(Group tempEv) {
         lstGroup.add(tempEv);
     }
 
     /**
      * Clear events inside DataChanged method
      */
-    public void clearEvents(){
+    public void clearEvents() {
         lstGroup.clear();
     }
 
     /**
      * Set events inside DataChanged method
      */
-    public void setGroups(){
+    public void setGroups() {
         //create and set RecyclerView
         RecyclerView myRv = (RecyclerView) findViewById(R.id.g_recycler_view);
         //create Adapter with lstEvent in this context
@@ -289,7 +301,7 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.nav_events:
                 clearBackstack();
                 openEventActivity();
@@ -330,8 +342,8 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
         return true;
     }
 
-    private void clearBackstack(){
-        for(int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); ++i) {
+    private void clearBackstack() {
+        for (int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); ++i) {
             getSupportFragmentManager().popBackStack();
         }
     }
@@ -339,16 +351,17 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
     /**
      * open event activity
      */
-    private void openEventActivity(){
+    private void openEventActivity() {
         Intent intent = new Intent(this, EventActivity.class);
         intent.putExtra("USER", uID);
+        finish();
         startActivity(intent);
     }
 
     /**
      * open create event fragment
      */
-    private void openCreateGroupFragment(){
+    private void openCreateGroupFragment() {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_group_container, new CreateGroupFragment(uID))
@@ -359,7 +372,7 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
     /**
      * open calendar event fragment
      */
-    private void openCalendarFragment(){
+    private void openCalendarFragment() {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_event_container, new CalendarFragment())

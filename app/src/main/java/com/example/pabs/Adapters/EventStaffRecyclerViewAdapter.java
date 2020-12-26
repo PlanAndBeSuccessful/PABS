@@ -1,42 +1,32 @@
 package com.example.pabs.Adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.pabs.Fragments.EventFragment.EventFragment;
-import com.example.pabs.Models.DatabaseEvent;
-import com.example.pabs.Models.Event;
 import com.example.pabs.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
-import android.os.Handler;
 
 /**
  * Creates an array of card elements
  */
 
-public class EventStaffRecyclerViewAdapter extends RecyclerView.Adapter<EventStaffRecyclerViewAdapter.MyViewHolder>{
+public class EventStaffRecyclerViewAdapter extends RecyclerView.Adapter<EventStaffRecyclerViewAdapter.MyViewHolder> {
 
-    private Context mContext;
-    private List<String> mData;
+    private final Context mContext;
+    private final List<String> mData;
 
     /**
      * Constructor of EventRecyclerViewAdapter
@@ -70,7 +60,7 @@ public class EventStaffRecyclerViewAdapter extends RecyclerView.Adapter<EventSta
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot user : snapshot.getChildren()) {
-                    if (user.getKey().toString().equals(mData.get(position).toString())) {
+                    if (user.getKey().equals(mData.get(position))) {
                         holder.tv_name.setText(user.child("user_name").getValue().toString());
                     }
                 }
@@ -101,7 +91,7 @@ public class EventStaffRecyclerViewAdapter extends RecyclerView.Adapter<EventSta
     /**
      * Creates card item
      */
-    public static class MyViewHolder extends RecyclerView.ViewHolder{
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         //UI
         TextView tv_name;

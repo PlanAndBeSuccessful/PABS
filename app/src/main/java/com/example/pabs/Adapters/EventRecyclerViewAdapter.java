@@ -1,13 +1,11 @@
 package com.example.pabs.Adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -28,21 +26,18 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import android.os.Handler;
-
-import static android.view.View.GONE;
 
 /**
  * Creates an array of card elements
  */
 
-public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecyclerViewAdapter.MyViewHolder>{
+public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecyclerViewAdapter.MyViewHolder> {
 
-    private Context mContext;
-    private List<Event> mData;
-    private List<Event> mDataCopy;
-    private FragmentManager mFragment;
-    private String mUID;
+    private final Context mContext;
+    private final List<Event> mData;
+    private final List<Event> mDataCopy;
+    private final FragmentManager mFragment;
+    private final String mUID;
 
     /**
      * Constructor of EventRecyclerViewAdapter
@@ -62,12 +57,12 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
 
     public void filter(String text) {
         mData.clear();
-        if(text.isEmpty()){
+        if (text.isEmpty()) {
             mData.addAll(mDataCopy);
-        } else{
+        } else {
             text = text.toLowerCase();
-            for(Event item: mDataCopy){
-                if(item.getTitle().toLowerCase().contains(text)){
+            for (Event item : mDataCopy) {
+                if (item.getTitle().toLowerCase().contains(text)) {
                     mData.add(item);
                 }
             }
@@ -97,7 +92,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
         //set data
         holder.tv_title.setText(mData.get(position).getTitle());
 
-        Picasso.get().load(mData.get(position).getThumbnail()).resize(400,400).centerCrop().into(holder.img_thumbnail);
+        Picasso.get().load(mData.get(position).getThumbnail()).resize(400, 400).centerCrop().into(holder.img_thumbnail);
 
         //set click listener
         holder.cardView.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +100,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
             public void onClick(View view) {
                 //Toast.makeText(mContext, mData.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 
-                if(holder.tv_title.getVisibility() == View.VISIBLE){
+                if (holder.tv_title.getVisibility() == View.VISIBLE) {
                     //Getting events from database and setting them to recyclerview
                     DatabaseReference databaseEvents;
                     databaseEvents = FirebaseDatabase.getInstance().getReference().child("EVENT");
@@ -120,13 +115,13 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                                 final DatabaseEvent temp = new DatabaseEvent();
                                 //setting data to temp from database
                                 temp.setOwner_id(event.child("owner_id").getValue().toString());
-                                if(event.child("description").getValue() != null){
+                                if (event.child("description").getValue() != null) {
                                     temp.setDescription(event.child("description").getValue().toString());
                                 }
-                                if(event.child("reminder").getValue() != null){
+                                if (event.child("reminder").getValue() != null) {
                                     temp.setReminder(event.child("reminder").getValue().toString());
                                 }
-                                if(event.child("repetition").getValue() != null){
+                                if (event.child("repetition").getValue() != null) {
                                     temp.setRepetition(event.child("repetition").getValue().toString());
                                 }
                                 temp.setEvent_name(event.child("event_name").getValue().toString());
@@ -139,7 +134,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                                 temp.setEnd_date(event.child("end_date").getValue().toString());
                                 temp.setPriv_pub(event.child("priv_pub").getValue().toString());
 
-                                final List<String> staff_members =  new ArrayList<>();
+                                final List<String> staff_members = new ArrayList<>();
                                 event.getRef().child("staff_members").addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -153,12 +148,12 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                                         temp.setStaff_members(staff_members);
 
                                         //if event has a thumbnail add it to temp
-                                        if(event.child("thumbnail").getValue() != null){
+                                        if (event.child("thumbnail").getValue() != null) {
                                             temp.setThumbnail(event.child("thumbnail").getValue().toString());
                                         }
 
 
-                                        final List<String> joined_members =  new ArrayList<>();
+                                        final List<String> joined_members = new ArrayList<>();
                                         event.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -172,7 +167,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                                                 temp.setJoined_members(joined_members);
 
                                                 //open Event which matches with the title from the Database Event
-                                                if(mData.get(position).getTitle().equals(temp.getEvent_name())){
+                                                if (mData.get(position).getTitle().equals(temp.getEvent_name())) {
 
                                                     holder.tv_title.postDelayed(new Runnable() {
                                                         public void run() {
@@ -182,7 +177,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
 
                                                     mFragment
                                                             .beginTransaction()
-                                                            .replace( R.id.fragment_event_container , new EventFragment(temp, mUID))
+                                                            .replace(R.id.fragment_event_container, new EventFragment(temp, mUID))
                                                             .addToBackStack("EventFragment")
                                                             .commit();
                                                 }
@@ -194,7 +189,6 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
 
                                             }
                                         });
-
 
 
                                     }
@@ -214,8 +208,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                             //if database failed
                         }
                     });
-                }
-                else{
+                } else {
                     holder.tv_title.setVisibility(View.VISIBLE);
 
                     holder.tv_title.postDelayed(new Runnable() {
@@ -224,7 +217,6 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                         }
                     }, 3000);
                 }
-
 
 
             }
@@ -243,7 +235,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
     /**
      * Creates card item
      */
-    public static class MyViewHolder extends RecyclerView.ViewHolder{
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         //UI
         TextView tv_title;
@@ -258,7 +250,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
 
             //get UI as objects
             tv_title = (TextView) itemView.findViewById(R.id.c_e_event_title);
-            img_thumbnail= (ImageView) itemView.findViewById(R.id.c_e_thumbnail);
+            img_thumbnail = (ImageView) itemView.findViewById(R.id.c_e_thumbnail);
             cardView = (CardView) itemView.findViewById(R.id.card_event);
 
         }

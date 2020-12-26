@@ -1,10 +1,6 @@
 package com.example.pabs.Fragments.EventFragment;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.R;
@@ -32,9 +31,9 @@ public class EventDescriptionFragment extends Fragment {
     private Button setDescBtn;
 
     //database event
-    private DatabaseEvent databaseEvent;
+    private final DatabaseEvent databaseEvent;
 
-    EventDescriptionFragment(DatabaseEvent dE){
+    EventDescriptionFragment(DatabaseEvent dE) {
         databaseEvent = dE;
     }
 
@@ -56,7 +55,7 @@ public class EventDescriptionFragment extends Fragment {
         iv = view.findViewById(R.id.f_e_d_backImg);
         setDescBtn = view.findViewById(R.id.f_e_d_setDescBtn);
 
-        if(databaseEvent.getDescription() != null){
+        if (databaseEvent.getDescription() != null) {
             et.setText(databaseEvent.getDescription());
         }
 
@@ -76,7 +75,7 @@ public class EventDescriptionFragment extends Fragment {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot event : snapshot.getChildren()) {
                             //Loop 1 to go through all child nodes of users
-                            if(event.child("event_name").getValue() == databaseEvent.getEvent_name()){
+                            if (event.child("event_name").getValue() == databaseEvent.getEvent_name()) {
                                 databaseEvent.setDescription(et.getText().toString());
                                 refEvent.child(event.getKey()).child("description").setValue(databaseEvent.getDescription());
                                 Log.d("EDF", "onDataChange: Successful");
@@ -98,7 +97,7 @@ public class EventDescriptionFragment extends Fragment {
     /**
      * clearBackstack
      */
-    public void clearBackstack(){
+    public void clearBackstack() {
         //clear all backstact
         getActivity().getSupportFragmentManager().popBackStack("EventDescriptionFragment", 1);
     }

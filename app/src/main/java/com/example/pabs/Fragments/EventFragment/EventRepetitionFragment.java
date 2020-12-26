@@ -1,11 +1,6 @@
 package com.example.pabs.Fragments.EventFragment;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +10,10 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.fragment.app.Fragment;
 
 import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.R;
@@ -31,7 +30,7 @@ public class EventRepetitionFragment extends Fragment {
     private View containerView;
 
     //database event
-    private DatabaseEvent databaseEvent;
+    private final DatabaseEvent databaseEvent;
 
     private SwitchCompat sw;
     private ImageView iv;
@@ -41,7 +40,7 @@ public class EventRepetitionFragment extends Fragment {
 
     private boolean switch_on = false;
 
-    EventRepetitionFragment(DatabaseEvent dE){
+    EventRepetitionFragment(DatabaseEvent dE) {
         databaseEvent = dE;
     }
 
@@ -80,8 +79,8 @@ public class EventRepetitionFragment extends Fragment {
         sp.setVisibility(View.GONE);
         tv.setVisibility(View.GONE);
 
-        if(databaseEvent.getRepetition() != null){
-            if(!databaseEvent.getRepetition().equals("")){
+        if (databaseEvent.getRepetition() != null) {
+            if (!databaseEvent.getRepetition().equals("")) {
                 sp.setVisibility(View.VISIBLE);
                 tv.setVisibility(View.VISIBLE);
                 sw.setChecked(true);
@@ -91,11 +90,10 @@ public class EventRepetitionFragment extends Fragment {
                 repetitionArr.add("daily");
                 repetitionArr.add("weekly");
                 repetitionArr.add("monthly");
-                int i=repetitionArr.indexOf(databaseEvent.getRepetition().toString());
+                int i = repetitionArr.indexOf(databaseEvent.getRepetition());
                 sp.setSelection(i);
             }
         }
-
 
 
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -150,7 +148,7 @@ public class EventRepetitionFragment extends Fragment {
     /**
      * clearBackstack
      */
-    public void clearBackstack(){
+    public void clearBackstack() {
         //clear all backstact
         getActivity().getSupportFragmentManager().popBackStack("EventRepetitionFragment", 1);
     }

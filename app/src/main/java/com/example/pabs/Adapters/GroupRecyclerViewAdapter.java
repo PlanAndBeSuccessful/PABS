@@ -11,9 +11,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.pabs.Fragments.EventFragment.EventFragment;
 import com.example.pabs.Fragments.GroupFragment.GroupFragment;
-import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.Models.Group;
 import com.example.pabs.R;
 import com.google.firebase.database.DataSnapshot;
@@ -24,17 +22,22 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
-public class GroupRecyclerViewAdapter  extends RecyclerView.Adapter<GroupRecyclerViewAdapter.MyViewHolder>{
-    private Context mContext;
-    private ArrayList<Group> mData;
-    private ArrayList<Group> mDataCopy;
-    private FragmentManager mFragment;
-    private String mUID;
+public class GroupRecyclerViewAdapter extends RecyclerView.Adapter<GroupRecyclerViewAdapter.MyViewHolder> {
+
+    //UI
+    private final Context mContext;
+    private final FragmentManager mFragment;
+
+    //Array
+    private final ArrayList<Group> mData;
+    private final ArrayList<Group> mDataCopy;
+
+    //data
+    private final String mUID;
 
     /**
-     * Constructor of EventRecyclerViewAdapter
+     * Constructor of GroupRecyclerViewAdapter
      */
     public GroupRecyclerViewAdapter(Context mContext, ArrayList<Group> mData, FragmentManager fragment, String uID) {
         this.mContext = mContext;
@@ -49,15 +52,18 @@ public class GroupRecyclerViewAdapter  extends RecyclerView.Adapter<GroupRecycle
 
     }
 
+    /**
+     * filter for searching through adapter elements
+     */
     public void filter(String text) {
 
         mData.clear();
-        if(text.isEmpty()){
+        if (text.isEmpty()) {
             mData.addAll(mDataCopy);
-        } else{
+        } else {
             text = text.toLowerCase();
-            for(Group item: mDataCopy){
-                if(item.getGroup_name().toLowerCase().contains(text)){
+            for (Group item : mDataCopy) {
+                if (item.getGroup_name().toLowerCase().contains(text)) {
                     mData.add(item);
                 }
             }
@@ -97,62 +103,62 @@ public class GroupRecyclerViewAdapter  extends RecyclerView.Adapter<GroupRecycle
                 DatabaseReference databaseGroupRef;
                 databaseGroupRef = FirebaseDatabase.getInstance().getReference().child("GROUP");
                 databaseGroupRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            for (final DataSnapshot group : snapshot.getChildren()) {
-                                //Loop to go through all child nodes of event
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (final DataSnapshot group : snapshot.getChildren()) {
+                            //Loop to go through all child nodes of event
 
-                                //temp for storing data from database
-                                final Group temp = new Group();
-                                //setting data to temp from database
-                                temp.setGroup_owner(group.child("group_owner").getValue().toString());
-                                temp.setGroup_name(group.child("group_name").getValue().toString());
+                            //temp for storing data from database
+                            final Group temp = new Group();
+                            //setting data to temp from database
+                            temp.setGroup_owner(group.child("group_owner").getValue().toString());
+                            temp.setGroup_name(group.child("group_name").getValue().toString());
+                            temp.setGroup_id(group.child("group_id").getValue().toString());
+                            temp.setInvite_code(group.child("invite_code").getValue().toString());
 
-                                final ArrayList<String> joined_members =  new ArrayList<>();
-                                group.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            final ArrayList<String> joined_members = new ArrayList<>();
+                            group.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                        for (DataSnapshot member : snapshot.getChildren()) {
-                                            //Loop 1 to go through all child nodes of staff members
-                                            joined_members.add(member.getValue().toString());
-                                        }
-
-                                        //add staff members to event
-                                        temp.setMember_list(joined_members);
-
-
-                                        //open Event which matches with the title from the Database Event
-                                        if(mData.get(position).getGroup_name().equals(temp.getGroup_name())){
-                                            mFragment
-                                                    .beginTransaction()
-                                                    .replace( R.id.fragment_group_container , new GroupFragment(temp, mUID))
-                                                    .addToBackStack("GroupFragment")
-                                                    .commit();
-                                        }
-
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError error) {
-
-                                            }
-                                        });
-
-
-
+                                    for (DataSnapshot member : snapshot.getChildren()) {
+                                        //Loop to go through all child nodes of joined members
+                                        joined_members.add(member.getValue().toString());
                                     }
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            //if database failed
+                                    //add joined members to event
+                                    temp.setMember_list(joined_members);
+
+
+                                    //open Group which matches with the name from the Database Group
+                                    if (mData.get(position).getGroup_name().equals(temp.getGroup_name())) {
+                                        mFragment
+                                                .beginTransaction()
+                                                .replace(R.id.fragment_group_container, new GroupFragment(temp, mUID))
+                                                .addToBackStack("GroupFragment")
+                                                .commit();
+                                    }
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+
                         }
-                    });
-                }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        //if database failed
+                    }
+                });
+            }
 
         });
-///////////////////
     }
 
     /**
@@ -166,7 +172,7 @@ public class GroupRecyclerViewAdapter  extends RecyclerView.Adapter<GroupRecycle
     /**
      * Creates card item
      */
-    public static class MyViewHolder extends RecyclerView.ViewHolder{
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         //UI
         TextView tv_title;

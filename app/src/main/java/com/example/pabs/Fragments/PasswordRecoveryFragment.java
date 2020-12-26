@@ -1,10 +1,6 @@
 package com.example.pabs.Fragments;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,15 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.example.pabs.LoginActivity;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.example.pabs.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class PasswordRecoveryFragment extends Fragment {
 
@@ -51,25 +47,23 @@ public class PasswordRecoveryFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //reading the text from the EditText
-                if(!TextUtils.isEmpty(PR_email.getText().toString())){
-                String Emailaddress = PR_email.getText().toString();
-                Log.d("Email:",Emailaddress);
+                if (!TextUtils.isEmpty(PR_email.getText().toString())) {
+                    String Emailaddress = PR_email.getText().toString();
+                    Log.d("Email:", Emailaddress);
                     //Sending the email with firebase auth
                     auth = FirebaseAuth.getInstance();
                     auth.sendPasswordResetEmail(Emailaddress).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 Toast.makeText(getActivity(), "E-mail sent!", Toast.LENGTH_SHORT);
                                 getActivity().getSupportFragmentManager().popBackStack("PasswordRecoveryFragment", 1);
-                            }
-                            else{
+                            } else {
                                 Toast.makeText(getActivity(), "An Eroor occured!", Toast.LENGTH_SHORT);
                             }
                         }
                     });
-                }
-                else{
+                } else {
                     Toast.makeText(getActivity(), "You forgot to give an e-mail", Toast.LENGTH_SHORT).show();
                 }
             }

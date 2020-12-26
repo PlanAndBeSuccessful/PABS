@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.pabs.R;
 
-public class CodeDialogFragment  extends AppCompatDialogFragment {
+public class CodeDialogFragment extends AppCompatDialogFragment {
 
     //edittext
     private EditText code_et;
@@ -27,11 +27,12 @@ public class CodeDialogFragment  extends AppCompatDialogFragment {
     //
     private Button join_bt;
     private Button cancel_bt;
+
     /**
      * When the dialog is created
      */
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState){
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         //setting view
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_dialog_code, null);
@@ -50,14 +51,11 @@ public class CodeDialogFragment  extends AppCompatDialogFragment {
                     //calling interface to set the nickname
                     codeDialogListener.applyCode(code);
                     dialog.dismiss();
-                }
-                else{
+                } else {
                     Toast.makeText(getActivity(), "Please type in the invite code!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
-        //setCancelButtonListener((Button) Objects.requireNonNull(view.findViewById(R.id.button_cancel)), dialog);
 
         cancel_bt = (Button) view.findViewById(R.id.d_c_cancel);
 
@@ -78,7 +76,6 @@ public class CodeDialogFragment  extends AppCompatDialogFragment {
     }
 
 
-
     /**
      * when the CodeDialogListener is implemented in another class
      */
@@ -97,7 +94,7 @@ public class CodeDialogFragment  extends AppCompatDialogFragment {
     /**
      * interface to set the nickname
      */
-    public interface CodeDialogListener{
+    public interface CodeDialogListener {
         void applyCode(String code);
     }
 }

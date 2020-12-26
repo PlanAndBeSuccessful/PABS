@@ -8,7 +8,7 @@
     android:background="@color/half_transparent"
     android:animateLayoutChanges="true"
     android:visibility="visible"
-    tools:context=".Fragments.EventFragment.EventOptionsDialogFragment"
+    tools:context=".Fragments.GroupFragment.GroupOptionsDialogFragment"
     >
 
     <RelativeLayout
@@ -18,7 +18,7 @@
 
         <!--Container 0-->
         <RelativeLayout
-            android:id="@+id/f_e_o_lr0"
+            android:id="@+id/f_g_o_lr0"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:layout_height="wrap_content"
@@ -30,26 +30,26 @@
 
         <!--Container 1-->
         <LinearLayout
-            android:id="@+id/f_e_o_lr1"
-            android:layout_above="@id/f_e_o_lr0"
+            android:id="@+id/f_g_o_lr1"
+            android:layout_above="@id/f_g_o_lr0"
             android:layout_alignParentRight="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:paddingRight="30dp">
 
             <TextView
-                android:id="@+id/f_e_o_lr1_tv"
+                android:id="@+id/f_g_o_lr1_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_black_italic"
                 android:paddingRight="10dp"
-                android:text="Join/Leave event"
+                android:text="Leave group"
                 android:textColor="#720BC2" />
 
             <ImageView
-                android:id="@+id/f_e_o_JoinLeaveEventImg"
+                android:id="@+id/f_g_o_leaveGroupImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/joinleaveevent"
@@ -58,198 +58,117 @@
 
         <!--Container 2-->
         <LinearLayout
-            android:id="@+id/f_e_o_lr2"
+            android:id="@+id/f_g_o_lr2"
+            android:layout_above="@id/f_g_o_lr1"
             android:layout_alignParentRight="true"
-            android:layout_above="@id/f_e_o_lr1"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:paddingRight="30dp"
             android:paddingBottom="10dp">
 
             <TextView
+                android:id="@+id/f_g_o_lr2_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:paddingRight="10dp"
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_black_italic"
-                android:text="Create/View ToDo"
-                android:textColor="#720BC2"/>
+                android:paddingRight="10dp"
+                android:text="Group events"
+                android:textColor="#720BC2" />
 
             <ImageView
-                android:id="@+id/f_e_o_ToDoImg"
+                android:id="@+id/f_g_o_groupEventsImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/createviewtodo"
+                android:background="@drawable/joinleaveevent"
                 />
         </LinearLayout>
 
         <!--Container 3-->
         <LinearLayout
-            android:id="@+id/f_e_o_lr3"
+            android:id="@+id/f_g_o_lr3"
+            android:layout_above="@id/f_g_o_lr2"
             android:layout_alignParentRight="true"
-            android:layout_above="@id/f_e_o_lr2"
             android:layout_height="wrap_content"
-            android:paddingRight="30dp"
             android:layout_width="wrap_content"
+            android:paddingRight="30dp"
             android:paddingBottom="10dp">
 
             <TextView
+                android:id="@+id/f_g_o_lr3_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="20sp"
-                android:paddingRight="10dp"
                 android:fontFamily="@font/roboto_black_italic"
-                android:text="Close event"
-                android:textColor="#720BC2"/>
+                android:paddingRight="10dp"
+                android:text="Add/kick members"
+                android:textColor="#720BC2" />
 
             <ImageView
-                android:id="@+id/f_e_o_CloseEventImg"
+                android:id="@+id/f_g_o_addKickMembersImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/closeevent"
+                android:background="@drawable/joinleaveevent"
                 />
         </LinearLayout>
 
         <!--Container 4-->
         <LinearLayout
-            android:id="@+id/f_e_o_lr4"
+            android:id="@+id/f_g_o_lr4"
+            android:layout_above="@id/f_g_o_lr3"
             android:layout_alignParentRight="true"
-            android:layout_above="@id/f_e_o_lr3"
             android:layout_height="wrap_content"
-            android:paddingRight="30dp"
             android:layout_width="wrap_content"
+            android:paddingRight="30dp"
             android:paddingBottom="10dp">
 
             <TextView
+                android:id="@+id/f_g_o_lr4_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:paddingRight="10dp"
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_black_italic"
-                android:text="Description"
-                android:textColor="#720BC2"/>
+                android:paddingRight="10dp"
+                android:text="Close group"
+                android:textColor="#720BC2" />
 
             <ImageView
-                android:id="@+id/f_e_o_DescriptionImg"
+                android:id="@+id/f_g_o_closeGroupImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/description"
+                android:background="@drawable/joinleaveevent"
                 />
         </LinearLayout>
 
         <!--Container 5-->
         <LinearLayout
-            android:id="@+id/f_e_o_lr5"
+            android:id="@+id/f_g_o_lr5"
+            android:layout_above="@id/f_g_o_lr4"
             android:layout_alignParentRight="true"
-            android:layout_above="@id/f_e_o_lr4"
             android:layout_height="wrap_content"
-            android:paddingRight="30dp"
             android:layout_width="wrap_content"
+            android:paddingRight="30dp"
             android:paddingBottom="10dp">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_gravity="center"
-                android:paddingRight="10dp"
-                android:fontFamily="@font/roboto_black_italic"
-                android:text="Reminder"
-                android:textColor="#720BC2"/>
-
-            <ImageView
-                android:id="@+id/f_e_o_ReminderImg"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/reminder" />
-        </LinearLayout>
-
-        <!--Container 6-->
-        <LinearLayout
-            android:id="@+id/f_e_o_lr6"
-            android:layout_alignParentRight="true"
-            android:layout_above="@id/f_e_o_lr5"
-            android:layout_height="wrap_content"
-            android:paddingRight="30dp"
-            android:layout_width="wrap_content"
-            android:paddingBottom="10dp">
-
-            <TextView
+                android:id="@+id/f_g_o_lr5_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Add/Kick Staff"
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_black_italic"
-                android:textColor="#720BC2"
                 android:paddingRight="10dp"
-                />
+                android:text="Show Code"
+                android:textColor="#720BC2" />
 
             <ImageView
-                android:id="@+id/f_e_o_AddKickStaffImg"
+                android:id="@+id/f_g_o_showCodeImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/addkickstaff"
-                />
-        </LinearLayout>
-
-        <!--Container 7-->
-        <LinearLayout
-            android:id="@+id/f_e_o_lr7"
-            android:layout_alignParentRight="true"
-            android:layout_above="@id/f_e_o_lr6"
-            android:layout_height="wrap_content"
-            android:paddingRight="30dp"
-            android:layout_width="wrap_content"
-            android:paddingBottom="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_gravity="center"
-                android:fontFamily="@font/roboto_black_italic"
-                android:paddingRight="10dp"
-                android:text="Repetition"
-                android:textColor="#720BC2"/>
-
-            <ImageView
-                android:id="@+id/f_e_o_RepetitionImg"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/repetition"
-                />
-        </LinearLayout>
-
-        <!--Container 8-->
-        <LinearLayout
-            android:id="@+id/f_e_o_lr8"
-            android:layout_alignParentRight="true"
-            android:layout_above="@id/f_e_o_lr7"
-            android:layout_height="wrap_content"
-            android:paddingRight="30dp"
-            android:layout_width="wrap_content"
-            android:paddingBottom="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_gravity="center"
-                android:fontFamily="@font/roboto_black_italic"
-                android:text="Upload/Change Image"
-                android:textColor="#720BC2"
-                android:paddingRight="10dp"
-                />
-
-            <ImageView
-                android:id="@+id/f_e_o_UpChImg"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/uploadchangeimage"
+                android:background="@drawable/joinleaveevent"
                 />
         </LinearLayout>
 
@@ -258,7 +177,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/f_e_o_exitImg"
+                android:id="@+id/f_g_o_exitImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/x"

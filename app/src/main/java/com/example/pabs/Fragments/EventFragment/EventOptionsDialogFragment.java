@@ -1,22 +1,17 @@
 package com.example.pabs.Fragments.EventFragment;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.pabs.R;
 
@@ -29,7 +24,7 @@ import static android.view.View.GONE;
 public class EventOptionsDialogFragment extends AppCompatDialogFragment {
 
     //edittext
-    private  EventOptionsDialogListener eventOptionsDialogListener;
+    private EventOptionsDialogListener eventOptionsDialogListener;
     //dialog
     private Dialog dialog;
     //ImageView
@@ -64,7 +59,7 @@ public class EventOptionsDialogFragment extends AppCompatDialogFragment {
      * When the dialog is created
      */
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState){
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         //setting view
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_dialog_event_options, null);
@@ -167,11 +162,10 @@ public class EventOptionsDialogFragment extends AppCompatDialogFragment {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
 
-        if(mState == 0){
+        if (mState == 0) {
             //owner
             hideJoinLeaveEvent();
-        }
-        else if(mState == 1){
+        } else if (mState == 1) {
             //member
             hideAddKickStaff();
             hideCloseEvent();
@@ -180,7 +174,7 @@ public class EventOptionsDialogFragment extends AppCompatDialogFragment {
             hideUploadChangeImage();
             joinLeaveEventTv.setText("Leave Event");
 
-        }else if(mState == 2){
+        } else if (mState == 2) {
             //staff
             hideAddKickStaff();
             hideCloseEvent();
@@ -188,7 +182,7 @@ public class EventOptionsDialogFragment extends AppCompatDialogFragment {
             hideUploadChangeImage();
             joinLeaveEventTv.setText("Leave Event");
 
-        }else if(mState == 3){
+        } else if (mState == 3) {
             //no joined
             hideAddKickStaff();
             hideCloseEvent();
@@ -198,50 +192,63 @@ public class EventOptionsDialogFragment extends AppCompatDialogFragment {
             hideReminder();
             hideRepetition();
             joinLeaveEventTv.setText("Join Event");
-        }
-        else{
+        } else {
             Log.d("EODF", "Wrong mState!");
         }
 
         return dialog;
     }
 
-    void hideUploadChangeImage(){
+    void hideUploadChangeImage() {
         upChLinL.setVisibility(GONE);
     }
-    void hideRepetition(){
+
+    void hideRepetition() {
         repetitionLinL.setVisibility(GONE);
     }
-    void hideAddKickStaff(){
+
+    void hideAddKickStaff() {
         addKickStaffLinL.setVisibility(GONE);
     }
-    void hideReminder(){
+
+    void hideReminder() {
         reminderLinL.setVisibility(GONE);
     }
-    void hideDescription(){
+
+    void hideDescription() {
         descriptionLinL.setVisibility(GONE);
     }
-    void hideCloseEvent(){
+
+    void hideCloseEvent() {
         closeEventLinL.setVisibility(GONE);
     }
-    void hideCreateViewTodo(){
+
+    void hideCreateViewTodo() {
         toDoLinL.setVisibility(GONE);
     }
-    void hideJoinLeaveEvent(){
+
+    void hideJoinLeaveEvent() {
         joinLeaveEventLinL.setVisibility(GONE);
     }
 
     /**
      * interface to launch option elements
      */
-    public interface EventOptionsDialogListener{
+    public interface EventOptionsDialogListener {
         void UpCh();
+
         void Repetition();
+
         void AddKickStaff();
+
         void Reminder();
+
         void Description();
+
         void CloseEvent();
+
         void ToDo();
+
         void JoinLeaveEvent();
     }
 }

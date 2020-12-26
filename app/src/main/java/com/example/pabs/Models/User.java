@@ -11,7 +11,7 @@ public class User {
     private String user_name;
     private String online;
 
-    public User(){
+    public User() {
     }
 
     public User(String token, String e_mail, String nickname, String user_name, String online) {

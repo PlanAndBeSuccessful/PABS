@@ -4,9 +4,6 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,7 +16,8 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.pabs.Fragments.EventFragment.EventFragment;
+import androidx.fragment.app.Fragment;
+
 import com.example.pabs.HelperClass.DateInputMask;
 import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.R;
@@ -30,7 +28,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
@@ -61,9 +58,9 @@ public class CreateEventFragment extends Fragment {
     //firebase
     private DatabaseReference reference = null;
 
-    private String mUID;
+    private final String mUID;
 
-    public CreateEventFragment(String uID){
+    public CreateEventFragment(String uID) {
         mUID = uID;
     }
 
@@ -175,8 +172,7 @@ public class CreateEventFragment extends Fragment {
                         //if location is not found
                         Toast.makeText(getActivity(), "Wrong location!", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else{
+                } else {
                     //if fields are empty
                     Toast.makeText(getActivity(), "Empty Fields!", Toast.LENGTH_SHORT).show();
                 }
@@ -191,10 +187,10 @@ public class CreateEventFragment extends Fragment {
     /**
      * open EventFragment with Data of created event
      */
-    public void openEvent(DatabaseEvent databaseEvent){
+    public void openEvent(DatabaseEvent databaseEvent) {
         getActivity().getSupportFragmentManager()
                 .beginTransaction()
-                .replace( R.id.fragment_event_container , new EventFragment(databaseEvent, mUID))
+                .replace(R.id.fragment_event_container, new EventFragment(databaseEvent, mUID))
                 .addToBackStack("EventFragment")
                 .commit();
     }
@@ -211,66 +207,18 @@ public class CreateEventFragment extends Fragment {
             List<Address> addresses = geo.getFromLocation(lat, lng, 5);
             if (addresses.isEmpty()) {
                 Log.d(TAG, "Waiting for Location");
-            }
-            else {
+            } else {
                 if (addresses.size() > 0) {
                     //if location from lat lng was found write address
-                    Log.d(TAG, addresses.get(0).getAddressLine(0) + ", " + addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() +", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
+                    Log.d(TAG, addresses.get(0).getAddressLine(0) + ", " + addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
                 }
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             //if location lat lng was not found
             Log.d(TAG, "No Location Name Found");
         }
     }
 
-    /**
-     * Thread for handling the location search, to avoid UI failure
-     */
-    public class MyThread implements Callable<LatLng> {
-
-        private String strAddress;
-        private Geocoder coder;
-
-        public MyThread(String strAddress, Geocoder coder){
-            this.strAddress=strAddress;
-            this.coder=coder;
-        }
-        @Override
-        public LatLng call() {
-            LatLng p1 = null;
-            List<Address> address;
-            try {
-                // May throw an IOException
-
-                //getting first 5 results of address
-                address = coder.getFromLocationName(strAddress, 5);
-                if (address == null) {
-                    return null;
-                }
-
-                if(address.size() < 1)
-                {
-                    //if location not found
-                    //Toast.makeText(context, "Invalid Location", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    //get lat lng from location
-                    Address location = address.get(0);
-                    p1 = new LatLng(location.getLatitude(), location.getLongitude() );
-                }
-
-
-            } catch (IOException ex) {
-
-                ex.printStackTrace();
-            }
-            return p1;
-        }
-
-    }
     /**
      * Get Location From Address
      */
@@ -279,13 +227,13 @@ public class CreateEventFragment extends Fragment {
         //init
         Geocoder coder = new Geocoder(context);
         //get executer
-        ExecutorService service =  Executors.newSingleThreadExecutor();
+        ExecutorService service = Executors.newSingleThreadExecutor();
         //creating new thread
         MyThread myThread = new MyThread(strAddress, coder);
         //future variable to get the value after thread completed
         Future<LatLng> future = service.submit(myThread);
         //init p1
-        LatLng p1= null;
+        LatLng p1 = null;
         try {
             //get LatLng result and give it to p1
             p1 = future.get();
@@ -306,7 +254,7 @@ public class CreateEventFragment extends Fragment {
         super.onStart();
         //Hiding the activity layout
         containerView.setVisibility(View.GONE);
-        Log.d(TAG, "onStart: "+getActivity().getSupportFragmentManager().getBackStackEntryCount());
+        Log.d(TAG, "onStart: " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
     }
 
     /**
@@ -316,5 +264,50 @@ public class CreateEventFragment extends Fragment {
     public void onStop() {
         super.onStop();
         containerView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Thread for handling the location search, to avoid UI failure
+     */
+    public class MyThread implements Callable<LatLng> {
+
+        private final String strAddress;
+        private final Geocoder coder;
+
+        public MyThread(String strAddress, Geocoder coder) {
+            this.strAddress = strAddress;
+            this.coder = coder;
+        }
+
+        @Override
+        public LatLng call() {
+            LatLng p1 = null;
+            List<Address> address;
+            try {
+                // May throw an IOException
+
+                //getting first 5 results of address
+                address = coder.getFromLocationName(strAddress, 5);
+                if (address == null) {
+                    return null;
+                }
+
+                if (address.size() < 1) {
+                    //if location not found
+                    //Toast.makeText(context, "Invalid Location", Toast.LENGTH_SHORT).show();
+                } else {
+                    //get lat lng from location
+                    Address location = address.get(0);
+                    p1 = new LatLng(location.getLatitude(), location.getLongitude());
+                }
+
+
+            } catch (IOException ex) {
+
+                ex.printStackTrace();
+            }
+            return p1;
+        }
+
     }
 }

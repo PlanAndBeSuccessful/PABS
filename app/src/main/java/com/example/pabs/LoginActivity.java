@@ -98,11 +98,10 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
 
                 login_btn.setClickable(false);
                 //check internet connection
-                if(isInternetConnectionActivated()){
+                if (isInternetConnectionActivated()) {
                     //internet is active
                     login();
-                }
-                else{
+                } else {
                     //internet is not active
                     new AlertDialog.Builder(LoginActivity.this)
                             .setTitle("No internet connection!")
@@ -129,31 +128,26 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
      */
     private boolean isInternetConnectionActivated() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-            //we are connected to a network
-            return true;
-        }
-        else{
-            //we are not connected to a network
-            return false;
-        }
+        //we are connected to a network
+        //we are not connected to a network
+        return connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
     }
 
     /**
      * Set token to avoid losing it
      */
-    private void setToken(String s){
+    private void setToken(String s) {
         this.token = s;
     }
 
     /**
      * Login
      */
-    private void login(){
+    private void login() {
 
         // check if fields are empty
-        if (!TextUtils.isEmpty(email_et.getText().toString()) && !TextUtils.isEmpty(password_et.getText().toString()) ) {
+        if (!TextUtils.isEmpty(email_et.getText().toString()) && !TextUtils.isEmpty(password_et.getText().toString())) {
 
             //get information from the edit text fields
             final String email = email_et.getText().toString();
@@ -190,7 +184,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         //check if user is online
-                                        if(snapshot.child("online").getValue().equals("false")){
+                                        if (snapshot.child("online").getValue().equals("false")) {
                                             //check if use has a nickname
                                             if (snapshot.child("nickname").getValue().equals("")) {
                                                 //set nickname
@@ -204,8 +198,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                                                 //settings
                                                 mDialog.dismiss();
                                             }
-                                        }
-                                        else{
+                                        } else {
                                             Log.d(TAG, "User is already online!");
                                             Toast.makeText(LoginActivity.this, "User is already online!", Toast.LENGTH_SHORT).show();
                                             //settings
@@ -213,6 +206,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                                             mDialog.dismiss();
                                         }
                                     }
+
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
                                         //database error
@@ -222,9 +216,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                                         Log.w(TAG, "On cancelled: " + error);
                                     }
                                 });
-                            }
-                            else
-                            {
+                            } else {
                                 // If sign in fails, display a message to the user.
                                 Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                                 //settings
@@ -233,9 +225,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
                             }
                         }
                     });
-        }
-        else
-        {
+        } else {
             // If sign in fails, display a message to the user.
             Toast.makeText(LoginActivity.this, "Wrong E-mail or Password!", Toast.LENGTH_SHORT).show();
             //settings
@@ -244,7 +234,6 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
         }
 
     }
-
 
 
     /**
@@ -259,7 +248,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
     /**
      * login successful
      */
-    private void loginSuccessful(){
+    private void loginSuccessful() {
         Toast.makeText(LoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
 
         //settings for user
@@ -272,15 +261,15 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
     /**
      * open nickname dialog fragment
      */
-    private void openNicknameDialogFragment(){
+    private void openNicknameDialogFragment() {
         NicknameDialogFragment nicknameDialogFragment = new NicknameDialogFragment();
-        nicknameDialogFragment.show(getSupportFragmentManager(),"nicknameDialogFragment");
+        nicknameDialogFragment.show(getSupportFragmentManager(), "nicknameDialogFragment");
     }
 
     /**
      * open forgot password fragment
      */
-    private void openPasswordRecoveryFragment(){
+    private void openPasswordRecoveryFragment() {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container_login, new PasswordRecoveryFragment())
@@ -291,7 +280,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
     /**
      * open register activity
      */
-    private void openRegisterActivity(){
+    private void openRegisterActivity() {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }

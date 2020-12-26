@@ -1,24 +1,19 @@
 package com.example.pabs.Fragments;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.fragment.app.Fragment;
-
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.pabs.R;
 
@@ -40,7 +35,7 @@ public class NicknameDialogFragment extends AppCompatDialogFragment {
      * When the dialog is created
      */
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState){
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         //setting view
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_dialog_nickname, null);
@@ -59,8 +54,7 @@ public class NicknameDialogFragment extends AppCompatDialogFragment {
                     //calling interface to set the nickname
                     nicknameDialogListener.applyNickname(nickname);
                     dialog.dismiss();
-                }
-                else{
+                } else {
                     Toast.makeText(getActivity(), "Please type in you nickname!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -74,7 +68,6 @@ public class NicknameDialogFragment extends AppCompatDialogFragment {
     }
 
 
-
     /**
      * when the NicknameDialogListener is implemented in another class
      */
@@ -86,14 +79,14 @@ public class NicknameDialogFragment extends AppCompatDialogFragment {
             nicknameDialogListener = (NicknameDialogListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() +
-                "Must implement NicknameDialogListener");
+                    "Must implement NicknameDialogListener");
         }
     }
 
     /**
      * interface to set the nickname
      */
-    public interface NicknameDialogListener{
+    public interface NicknameDialogListener {
         void applyNickname(String nickname);
     }
 }

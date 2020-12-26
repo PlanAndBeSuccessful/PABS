@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Container for nickname fragment-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:visibility="visible"
+    tools:context=".Fragments.GroupFragment.ShowCodeDialogFragment"
+    android:padding="16dp">
+
+    <!--Container for textView and button-->
+    <RelativeLayout
+        android:layout_centerInParent="true"
+        android:background="@drawable/rect"
+        android:backgroundTint="@color/chinese_silver"
+        android:layout_height="125dp"
+        android:layout_width="match_parent">
+
+        <!--Code text view-->
+        <TextView
+            android:id="@+id/d_s_c_code"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/login_button"
+            android:maxLines="1"
+            android:text="Code"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:padding="15dp"
+            android:gravity="center_horizontal"
+            android:clickable="true"/>
+
+        <!--Close button-->
+        <Button
+            android:id="@+id/d_s_c_close"
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:layout_below="@id/d_s_c_code"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/login_button"
+            android:clickable="true"
+            android:text="Close" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

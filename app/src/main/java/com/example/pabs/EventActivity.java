@@ -1,13 +1,5 @@
 package com.example.pabs;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -20,6 +12,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pabs.Adapters.EventRecyclerViewAdapter;
 import com.example.pabs.Fragments.CalendarFragment;
@@ -60,6 +60,17 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     //
     private SearchView sw;
     private EventRecyclerViewAdapter myEventAdapter;
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 
     /**
      * On create
@@ -214,9 +225,17 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
             }
         });
 
-        //
+        //search view
         sw = findViewById(R.id.e_search_bar);
         sw.setQueryHint("Search event name...");
+
+        sw.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                hideKeyboard(EventActivity.this);
+                return false;
+            }
+        });
 
         sw.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -235,18 +254,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
 
     }
 
-    public static void hideKeyboard(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
-        View view = activity.getCurrentFocus();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = new View(activity);
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    private void openLoginActivity(){
+    private void openLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
@@ -254,21 +262,21 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     /**
      * Add to events inside DataChanged method so we don't lose the results
      */
-    public void addToEventsArray(Event tempEv){
+    public void addToEventsArray(Event tempEv) {
         lstEvent.add(tempEv);
     }
 
     /**
      * Clear events inside DataChanged method
      */
-    public void clearEvents(){
+    public void clearEvents() {
         lstEvent.clear();
     }
 
     /**
      * Set events inside DataChanged method
      */
-    public void setEvents(){
+    public void setEvents() {
         //create and set RecyclerView
         RecyclerView myRv = (RecyclerView) findViewById(R.id.e_recycler_view);
         //create Adapter with lstEvent in this context
@@ -285,7 +293,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.nav_events:
                 clearBackstack();
                 Toast.makeText(this, "nav_events", Toast.LENGTH_SHORT).show();
@@ -327,8 +335,8 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         return true;
     }
 
-    private void clearBackstack(){
-        for(int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); ++i) {
+    private void clearBackstack() {
+        for (int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); ++i) {
             getSupportFragmentManager().popBackStack();
         }
     }
@@ -336,16 +344,17 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     /**
      * open group activity
      */
-    private void openGroupActivity(){
+    private void openGroupActivity() {
         Intent intent = new Intent(this, GroupActivity.class);
         intent.putExtra("USER", uID);
+        finish();
         startActivity(intent);
     }
 
     /**
      * open create event fragment
      */
-    private void openCreateEventFragment(){
+    private void openCreateEventFragment() {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_event_container, new CreateEventFragment(uID))
@@ -356,7 +365,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     /**
      * open calendar event fragment
      */
-    private void openCalendarFragment(){
+    private void openCalendarFragment() {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_event_container, new CalendarFragment())

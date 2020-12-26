@@ -12,7 +12,8 @@ public class Event {
     private String Title;
     private Uri Thumbnail;
 
-    public Event(){}
+    public Event() {
+    }
 
     public Event(String title, Uri thumbnail, String startDate, List<String> j_members) {
         Title = title;

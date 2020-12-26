@@ -13,6 +13,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String s) {
         super.onNewToken(s);
-        Log.d("MYTOKEN", "onNewToken: "+s);
+        Log.d("MYTOKEN", "onNewToken: " + s);
     }
 }

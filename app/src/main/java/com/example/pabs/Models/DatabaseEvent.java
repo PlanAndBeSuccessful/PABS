@@ -23,7 +23,8 @@ public class DatabaseEvent {
     String owner_id;
     List<String> joined_members;
 
-    public DatabaseEvent(){};
+    public DatabaseEvent() {
+    }
 
     public DatabaseEvent(String description, String start_date, String end_date, String reminder, String repetition, String inv_code, String event_name, double location_x, double location_y, String location_name, String thumbnail, String priv_pub, List<String> staff_members, String user_id, List<String> joined_members) {
         this.description = description;
@@ -43,9 +44,13 @@ public class DatabaseEvent {
         this.joined_members = joined_members;
     }
 
-    public List<String> getJoined_members() { return joined_members; }
+    public List<String> getJoined_members() {
+        return joined_members;
+    }
 
-    public void setJoined_members(List<String> joined_members) { this.joined_members = joined_members; }
+    public void setJoined_members(List<String> joined_members) {
+        this.joined_members = joined_members;
+    }
 
     public String getOwner_id() {
         return owner_id;
@@ -155,23 +160,23 @@ public class DatabaseEvent {
         return staff_members;
     }
 
-    public void addToStaffListEnd(String str){
+    public void setStaff_members(List<String> staff_members) {
+        this.staff_members = staff_members;
+    }
+
+    public void addToStaffListEnd(String str) {
         staff_members.add(str);
     }
 
-    public void deleteStaffListElement(String str){
+    public void deleteStaffListElement(String str) {
         staff_members.remove(str);
     }
 
-    public void addToJoinedListEnd(String str){
+    public void addToJoinedListEnd(String str) {
         joined_members.add(str);
     }
 
-    public void deleteJoinedListElement(String str){
+    public void deleteJoinedListElement(String str) {
         joined_members.remove(str);
-    }
-
-    public void setStaff_members(List<String> staff_members) {
-        this.staff_members = staff_members;
     }
 }
