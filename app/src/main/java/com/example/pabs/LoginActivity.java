@@ -283,7 +283,7 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
     private void openPasswordRecoveryFragment(){
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, new PasswordRecoveryFragment())
+                .replace(R.id.fragment_container_login, new PasswordRecoveryFragment())
                 .addToBackStack("PasswordRecoveryFragment")
                 .commit();
     }

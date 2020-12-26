@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -21,10 +20,11 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.example.pabs.Adapters.EventRecyclerViewAdapter;
+import com.example.pabs.Adapters.GroupRecyclerViewAdapter;
 import com.example.pabs.Fragments.CalendarFragment;
-import com.example.pabs.Fragments.EventFragment.CreateEventFragment;
-import com.example.pabs.Models.Event;
+import com.example.pabs.Fragments.GroupFragment.CodeDialogFragment;
+import com.example.pabs.Fragments.GroupFragment.CreateGroupFragment;
+import com.example.pabs.Models.Group;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,33 +33,30 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
-
-/**
- * Main screen, handles more fragments, events, groups
- */
-
-public class EventActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class GroupActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, CodeDialogFragment.CodeDialogListener {
 
     //UI
-    private ImageView create_event_img_btn;
-    private ImageView open_group_btn;
+    private ImageView create_group_img_btn;
+    private ImageView open_event_img_btn;
+    private ImageView group_code_img_btn;
 
     //firebase
     private DatabaseReference reference;
     private String uID;
 
     //events
-    private List<Event> lstEvent;
+    private ArrayList<Group> lstGroup = new ArrayList<>();
 
     //drawer
     private DrawerLayout drawer = null;
     private NavigationView navigationView = null;
 
+    private String mCode;
+
     //
     private SearchView sw;
-    private EventRecyclerViewAdapter myEventAdapter;
+    private GroupRecyclerViewAdapter myGroupAdapter;
 
     /**
      * On create
@@ -68,7 +65,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event);
+        setContentView(R.layout.activity_group);
 
         //get uid of logged in user
         uID = getIntent().getStringExtra("USER");
@@ -77,56 +74,53 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         reference = FirebaseDatabase.getInstance().getReference().child("USER");
 
         //set data for events example
-        lstEvent = new ArrayList<>();
+        lstGroup = new ArrayList<>();
 
         //Getting events from database and setting them to recyclerview
-        DatabaseReference databaseEvents;
-        databaseEvents = FirebaseDatabase.getInstance().getReference().child("EVENT");
+        DatabaseReference databaseGroupRef;
+        databaseGroupRef = FirebaseDatabase.getInstance().getReference().child("GROUP");
 
-        databaseEvents.addValueEventListener(new ValueEventListener() {
+        databaseGroupRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 clearEvents();
-                for (DataSnapshot event : snapshot.getChildren()) {
-                    //Loop 1 to go through all child nodes of events
-                    String temp = event.child("event_name").getValue().toString();
+                for (DataSnapshot group : snapshot.getChildren()) {
 
-                    Uri myUri = null;
-                    String UriStr = null;
+                    //Create temporary Group
+                    final Group tempGrp;
+                    tempGrp = new Group();
 
-                    //if the event has a thumbnail, get Uri
-                    if (event.child("thumbnail").getValue() != null) {
-                        UriStr = event.child("thumbnail").getValue().toString();
-                        myUri = Uri.parse(UriStr);
-                    }
+                    tempGrp.setGroup_name(group.child("group_name").getValue().toString());
+                    tempGrp.setGroup_owner(group.child("group_owner").getValue().toString());
+                    tempGrp.setInvite_code(group.child("invite_code").getValue().toString());
 
-                    //get no image Uri
-                    Uri testUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
+                    final ArrayList<String> joined_members =  new ArrayList<>();
+                    group.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot member : snapshot.getChildren()){
+                                joined_members.add(member.getValue().toString());
+                            }
 
-                    //Create temporary Event
-                    Event tempEv;
+                            tempGrp.setMember_list(joined_members);
 
-                    //if Event has no thumbnail
-                    if (UriStr == null) {
-                        //Give the event, the no image thumbnail
-                        tempEv = new Event();
-                        tempEv.setTitle(temp);
-                        tempEv.setThumbnail(testUri);
-                    }
-                    //if Event has thumbnail
-                    else {
-                        //Set thumbnail of event
-                        tempEv = new Event();
-                        tempEv.setTitle(temp);
-                        tempEv.setThumbnail(myUri);
-                    }
+                            if(joined_members.contains(uID) || uID.equals(tempGrp.getGroup_owner())){
+                                //add events to array
+                                addToGroupArray(tempGrp);
 
-                    //add events to array
-                    addToEventsArray(tempEv);
+                                //Set and show events on main screen
+                                setGroups();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
                 }
 
-                //Set and show events on main screen
-                setEvents();
             }
 
             @Override
@@ -136,8 +130,8 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         });
 
         //nav view and drawer
-        navigationView = findViewById(R.id.a_e_nav_view);
-        drawer = findViewById(R.id.a_e_drawer_layout);
+        navigationView = findViewById(R.id.a_g_nav_view);
+        drawer = findViewById(R.id.a_g_drawer_layout);
 
         //handle navigation drawer open/close with toggle
         navigationView.setNavigationItemSelectedListener(this);
@@ -189,51 +183,56 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         });
 
         //create event button
-        create_event_img_btn = findViewById(R.id.a_e_create_event_button);
-        create_event_img_btn.setOnTouchListener(new View.OnTouchListener() {
+        create_group_img_btn = findViewById(R.id.a_g_create_group_button);
+        create_group_img_btn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    openCreateEventFragment();
+                    openCreateGroupFragment();
                 }
                 return false;
             }
         });
         //
-
-        //open group button
-        open_group_btn = findViewById(R.id.a_e_open_group_button);
-        open_group_btn.setOnTouchListener(new View.OnTouchListener() {
+        open_event_img_btn = findViewById(R.id.a_g_open_event_button);
+        open_event_img_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    clearBackstack();
-                    openGroupActivity();
-                }
-                return false;
+            public void onClick(View view) {
+                clearBackstack();
+                openEventActivity();
+            }
+        });
+
+        group_code_img_btn = findViewById(R.id.a_g_group_code_button);
+        group_code_img_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openCodeDialogFragment();
             }
         });
 
         //
-        sw = findViewById(R.id.e_search_bar);
-        sw.setQueryHint("Search event name...");
+        sw = findViewById(R.id.g_search_bar);
+        sw.setQueryHint("Search group name...");
 
         sw.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                myEventAdapter.filter(query);
-                hideKeyboard(EventActivity.this);
+                myGroupAdapter.filter(query);
+                hideKeyboard(GroupActivity.this);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                myEventAdapter.filter(newText);
+                myGroupAdapter.filter(newText);
                 return true;
             }
         });
 
     }
+
+
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -251,32 +250,37 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         startActivity(intent);
     }
 
+    private void openCodeDialogFragment(){
+        CodeDialogFragment codeDialogFragment = new CodeDialogFragment();
+        codeDialogFragment.show(getSupportFragmentManager(),"codeDialogFragment");
+    }
+
     /**
      * Add to events inside DataChanged method so we don't lose the results
      */
-    public void addToEventsArray(Event tempEv){
-        lstEvent.add(tempEv);
+    public void addToGroupArray(Group tempEv){
+        lstGroup.add(tempEv);
     }
 
     /**
      * Clear events inside DataChanged method
      */
     public void clearEvents(){
-        lstEvent.clear();
+        lstGroup.clear();
     }
 
     /**
      * Set events inside DataChanged method
      */
-    public void setEvents(){
+    public void setGroups(){
         //create and set RecyclerView
-        RecyclerView myRv = (RecyclerView) findViewById(R.id.e_recycler_view);
+        RecyclerView myRv = (RecyclerView) findViewById(R.id.g_recycler_view);
         //create Adapter with lstEvent in this context
-        myEventAdapter = new EventRecyclerViewAdapter(this, lstEvent, getSupportFragmentManager(), uID);
+        myGroupAdapter = new GroupRecyclerViewAdapter(this, lstGroup, getSupportFragmentManager(), uID);
         //separate the Recyclerview to 3 columns
         myRv.setLayoutManager(new GridLayoutManager(this, 3));
         //set adapter for RecyclerView
-        myRv.setAdapter(myEventAdapter);
+        myRv.setAdapter(myGroupAdapter);
     }
 
     /**
@@ -288,6 +292,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         switch (item.getItemId()){
             case R.id.nav_events:
                 clearBackstack();
+                openEventActivity();
                 Toast.makeText(this, "nav_events", Toast.LENGTH_SHORT).show();
                 break;
 
@@ -298,8 +303,6 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                 break;
 
             case R.id.nav_groups:
-                clearBackstack();
-                openGroupActivity();
                 Toast.makeText(this, "nav_groups", Toast.LENGTH_SHORT).show();
                 break;
 
@@ -334,10 +337,10 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     }
 
     /**
-     * open group activity
+     * open event activity
      */
-    private void openGroupActivity(){
-        Intent intent = new Intent(this, GroupActivity.class);
+    private void openEventActivity(){
+        Intent intent = new Intent(this, EventActivity.class);
         intent.putExtra("USER", uID);
         startActivity(intent);
     }
@@ -345,11 +348,11 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     /**
      * open create event fragment
      */
-    private void openCreateEventFragment(){
+    private void openCreateGroupFragment(){
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_event_container, new CreateEventFragment(uID))
-                .addToBackStack("CreateEventFragment")
+                .replace(R.id.fragment_group_container, new CreateGroupFragment(uID))
+                .addToBackStack("CreateGroupFragment")
                 .commit();
     }
 
@@ -370,7 +373,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        lstEvent.clear();
+        lstGroup.clear();
         reference.child(uID).child("online").setValue("false");
     }
 
@@ -382,4 +385,58 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         super.onStart();
     }
 
+    @Override
+    public void applyCode(String code) {
+        mCode = code;
+
+        //Getting events from database and setting them to recyclerview
+        DatabaseReference databaseGroupRef;
+        databaseGroupRef = FirebaseDatabase.getInstance().getReference().child("GROUP");
+
+        databaseGroupRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                clearEvents();
+                for (final DataSnapshot group : snapshot.getChildren()) {
+
+                    if ((group.child("invite_code").getValue().toString()).equals(mCode)) {
+                        //Create temporary Group
+                        final Group tempGrp;
+                        tempGrp = new Group();
+
+                        tempGrp.setGroup_name(group.child("group_name").getValue().toString());
+                        tempGrp.setGroup_owner(group.child("group_owner").getValue().toString());
+                        tempGrp.setInvite_code(group.child("invite_code").getValue().toString());
+
+                        final ArrayList<String> joined_members = new ArrayList<>();
+                        group.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot member : snapshot.getChildren()) {
+                                    joined_members.add(member.getValue().toString());
+                                }
+
+                                joined_members.add(uID);
+
+                                group.getRef().child("joined_members").setValue(joined_members);
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 }

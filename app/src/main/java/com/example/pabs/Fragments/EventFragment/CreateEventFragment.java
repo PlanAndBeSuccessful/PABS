@@ -1,4 +1,4 @@
-package com.example.pabs.Fragments;
+package com.example.pabs.Fragments.EventFragment;
 
 import android.content.Context;
 import android.location.Address;
@@ -61,6 +61,12 @@ public class CreateEventFragment extends Fragment {
     //firebase
     private DatabaseReference reference = null;
 
+    private String mUID;
+
+    public CreateEventFragment(String uID){
+        mUID = uID;
+    }
+
     /**
      * on fragment created
      */
@@ -80,7 +86,7 @@ public class CreateEventFragment extends Fragment {
         View CreateEventView = inflater.inflate(R.layout.fragment_create_event, container, false);
         containerView = getActivity().findViewById(R.id.activity_event_layout);
         //
-        FragmentEventContainer = getActivity().findViewById(R.id.fragment_container);
+        FragmentEventContainer = getActivity().findViewById(R.id.fragment_event_container);
 
         //back button
         back_button = CreateEventView.findViewById(R.id.c_e_back_button);
@@ -138,14 +144,6 @@ public class CreateEventFragment extends Fragment {
 
                     //if location is found
                     if (latLng != null) {
-
-                        //arraylist of Strings which will contain staff members
-                        ArrayList<String> arrayList = new ArrayList<String>();
-
-                        arrayList.add("asd");
-                        arrayList.add("pepe");
-                        arrayList.add("asdasdad");
-
                         //getting user logged in
                         FirebaseUser fireBaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -160,7 +158,6 @@ public class CreateEventFragment extends Fragment {
                             databaseEvent.setStart_date(start_date_et.getText().toString());
                             databaseEvent.setEnd_date(end_date_et.getText().toString());
                             databaseEvent.setPriv_pub(dropdown.getSelectedItem().toString());
-                            databaseEvent.setStaff_members(arrayList);
                             databaseEvent.setOwner_id(fireBaseUser.getUid());
                             //set basic thumbnail
                             databaseEvent.setThumbnail("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
@@ -197,7 +194,7 @@ public class CreateEventFragment extends Fragment {
     public void openEvent(DatabaseEvent databaseEvent){
         getActivity().getSupportFragmentManager()
                 .beginTransaction()
-                .replace( R.id.fragment_event_container , new EventFragment(databaseEvent))
+                .replace( R.id.fragment_event_container , new EventFragment(databaseEvent, mUID))
                 .addToBackStack("EventFragment")
                 .commit();
     }

@@ -5,29 +5,29 @@ to work correctly, we also store a layout for other UI elements-->
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/a_e_drawer_layout"
+    android:id="@+id/a_g_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/register_bg"
-    tools:context=".EventActivity">
+    tools:context=".GroupActivity">
 
 
     <!-- Draw your view whatever you want to draw -->
     <FrameLayout
-        android:id="@+id/fragment_event_container"
+        android:id="@+id/fragment_group_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <!--Here we store the other elements of the UI-->
     <RelativeLayout
-        android:id="@+id/activity_event_layout"
+        android:id="@+id/activity_group_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp" >
 
         <!--Search bar-->
         <SearchView
-            android:id="@+id/e_search_bar"
+            android:id="@+id/g_search_bar"
             android:layout_width="400dp"
             android:layout_height="50dp"
             android:background="@drawable/email_bg"
@@ -38,8 +38,8 @@ to work correctly, we also store a layout for other UI elements-->
 
         <!--Recycler view, this displays all the events-->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/e_recycler_view"
-            android:layout_below="@+id/e_search_bar"
+            android:id="@+id/g_recycler_view"
+            android:layout_below="@+id/g_search_bar"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
         </androidx.recyclerview.widget.RecyclerView>
@@ -55,7 +55,7 @@ to work correctly, we also store a layout for other UI elements-->
 
             <!--First image-->
             <ImageView
-                android:id="@+id/a_e_open_group_button"
+                android:id="@+id/a_g_open_event_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/transparent"
@@ -73,7 +73,7 @@ to work correctly, we also store a layout for other UI elements-->
 
             <!--Second image-->
             <ImageView
-                android:id="@+id/a_e_create_event_button"
+                android:id="@+id/a_g_create_group_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/transparent"
@@ -90,6 +90,7 @@ to work correctly, we also store a layout for other UI elements-->
 
             <!--Third image-->
             <ImageView
+                android:id="@+id/a_g_group_code_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/transparent"
@@ -112,7 +113,7 @@ to work correctly, we also store a layout for other UI elements-->
 
     <!--Here we set the navigation view's settings(header, menu)-->
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/a_e_nav_view"
+        android:id="@+id/a_g_nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
