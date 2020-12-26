@@ -52,7 +52,7 @@
                 android:id="@+id/f_g_o_leaveGroupImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/joinleaveevent"
+                android:background="@drawable/levaegroup"
                 />
         </LinearLayout>
 
@@ -81,7 +81,7 @@
                 android:id="@+id/f_g_o_groupEventsImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/joinleaveevent"
+                android:background="@drawable/groupevents"
                 />
         </LinearLayout>
 
@@ -110,7 +110,7 @@
                 android:id="@+id/f_g_o_addKickMembersImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/joinleaveevent"
+                android:background="@drawable/addkickstaff"
                 />
         </LinearLayout>
 
@@ -139,7 +139,7 @@
                 android:id="@+id/f_g_o_closeGroupImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/joinleaveevent"
+                android:background="@drawable/closeevent"
                 />
         </LinearLayout>
 
@@ -168,7 +168,7 @@
                 android:id="@+id/f_g_o_showCodeImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/joinleaveevent"
+                android:background="@drawable/showcode"
                 />
         </LinearLayout>
 
