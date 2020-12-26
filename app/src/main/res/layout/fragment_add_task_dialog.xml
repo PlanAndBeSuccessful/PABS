@@ -29,7 +29,7 @@
             android:background="@drawable/email_bg"
             android:ems="10"
             android:fontFamily="@font/roboto_thin"
-            android:hint="Task"
+            android:hint="task"
             android:inputType="text"
             android:maxLines="1"
             android:padding="15dp"
@@ -44,6 +44,8 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="25dp"
             android:layout_marginRight="40dp"
+            android:textColor="#92129D"
+            android:textAllCaps="false"
             android:background="@drawable/login_button"
             android:text="Confirm"
             android:clickable="true"/>
@@ -56,6 +58,8 @@
             android:layout_alignParentLeft="true"
             android:layout_marginTop="25dp"
             android:layout_marginLeft="40dp"
+            android:textAllCaps="false"
+            android:textColor="#92129D"
             android:background="@drawable/login_button"
             android:text="Cancel"
             android:clickable="true"/>

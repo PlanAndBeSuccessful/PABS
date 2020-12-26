@@ -29,7 +29,7 @@
             android:background="@drawable/email_bg"
             android:ems="10"
             android:fontFamily="@font/roboto_thin"
-            android:hint="group code..."
+            android:hint="group code"
             android:inputType="text"
             android:maxLines="1"
             android:padding="15dp"
