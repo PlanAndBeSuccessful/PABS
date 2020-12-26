@@ -68,7 +68,7 @@ to work correctly, we also store a layout for other UI elements-->
                 android:layout_alignParentLeft="true"
                 android:maxWidth="60dp"
                 android:maxHeight="60dp"
-                app:srcCompat="@drawable/groupeventsbutton"
+                app:srcCompat="@drawable/eventbutton"
                 android:layout_centerVertical="true"/>
 
             <!--Second image-->
@@ -86,7 +86,7 @@ to work correctly, we also store a layout for other UI elements-->
                 android:adjustViewBounds="true"
                 android:maxWidth="100dp"
                 android:maxHeight="100dp"
-                app:srcCompat="@drawable/createeventsbutton" />
+                app:srcCompat="@drawable/newgroupbutton" />
 
             <!--Third image-->
             <ImageView
@@ -104,7 +104,7 @@ to work correctly, we also store a layout for other UI elements-->
                 android:layout_centerVertical="true"
                 android:maxWidth="60dp"
                 android:maxHeight="60dp"
-                app:srcCompat="@drawable/myeventsbutton" />
+                app:srcCompat="@drawable/joingroup" />
 
         </RelativeLayout>
 
