@@ -21,16 +21,15 @@
                 android:id="@+id/c_e_create_event_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="50dp"
+                android:paddingTop="16dp"
                 android:paddingRight="50dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="100dp"
+                android:layout_marginBottom="50dp"
                 android:fontFamily="@font/roboto_thin"
                 android:text="Create Event"
                 android:textColor="#FFFFFF"
                 android:textSize="35sp" />
-
 
 
             <!--Event Name Edit text-->
@@ -130,7 +129,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerHorizontal="true"
                 android:fontFamily="@font/roboto_thin"
-                android:text="Public/Private:"
+                android:text="Visibility"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp" />
 
@@ -138,14 +137,43 @@
             <Spinner
                 android:id="@+id/c_e_public_private_spinner"
                 android:overlapAnchor="false"
+                android:layout_marginLeft="10dp"
+                android:layout_width="110dp"
+                android:layout_height="30dp"
+                android:dropDownWidth="120dp"
+                android:spinnerMode="dropdown"
+               android:background="@drawable/email_bg"
+                android:layout_toRightOf="@+id/c_e_public_private_text"
+                android:layout_below="@+id/c_e_event_start_date_edit"/>
+
+            <!--Public Private Text-->
+            <TextView
+                android:id="@+id/c_e_public_group_text"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/c_e_public_private_spinner"
+                android:layout_alignParentLeft="true"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/roboto_thin"
+                android:text="Select Group"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+
+            <!--Spinner For Selecting public/private-->
+            <Spinner
+                android:id="@+id/c_e_private_group_spinner"
+                android:layout_marginTop="30dp"
+                android:overlapAnchor="false"
                 android:layout_width="110dp"
                 android:layout_height="30dp"
                 android:dropDownWidth="120dp"
                 android:layout_marginRight="50dp"
                 android:spinnerMode="dropdown"
-               android:background="@drawable/email_bg"
-                android:layout_toRightOf="@+id/c_e_public_private_text"
-                android:layout_below="@+id/c_e_event_start_date_edit"/>
+                android:background="@drawable/email_bg"
+                android:layout_toRightOf="@+id/c_e_public_group_text"
+                android:layout_below="@+id/c_e_public_private_spinner"/>
 
             <!--Next Button-->
             <Button

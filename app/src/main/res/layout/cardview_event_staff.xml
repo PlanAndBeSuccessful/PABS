@@ -25,7 +25,6 @@ This will represent the default view of a event-->
             android:layout_height="match_parent"
             android:paddingLeft="20dp"
             android:textColor="@color/white"
-            android:text="Name"
             android:textSize="18sp"/>
 
     </FrameLayout>

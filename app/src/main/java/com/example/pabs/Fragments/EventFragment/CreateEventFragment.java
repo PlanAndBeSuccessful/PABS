@@ -9,13 +9,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.pabs.HelperClass.DateInputMask;
@@ -24,10 +27,14 @@ import com.example.pabs.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
@@ -35,6 +42,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import static android.view.View.GONE;
 
 /**
  * Creates a new event
@@ -52,11 +61,17 @@ public class CreateEventFragment extends Fragment {
     private EditText end_date_et;
     private EditText name_et;
     private Spinner dropdown;
+    private Spinner group_dropdown;
     private EditText location_et;
     private FrameLayout FragmentEventContainer;
 
+    private  ArrayList<String> availableGroups;
+
+    private TextView groupTv;
+
     //firebase
     private DatabaseReference reference = null;
+    private DatabaseReference databaseGroupReference;
 
     private final String mUID;
 
@@ -107,9 +122,14 @@ public class CreateEventFragment extends Fragment {
 
         new DateInputMask(end_date_et);
 
+        availableGroups = new ArrayList<>();
+
         //spinner
         //get the spinner from the xml.
         dropdown = CreateEventView.findViewById(R.id.c_e_public_private_spinner);
+        group_dropdown = CreateEventView.findViewById(R.id.c_e_private_group_spinner);
+        groupTv = CreateEventView.findViewById(R.id.c_e_public_group_text);
+
         //create a list of items for the spinner.
         String[] items = new String[]{"Public", "Private"};
         //create an adapter to describe how the items are displayed, adapters are used in several places in android.
@@ -117,6 +137,78 @@ public class CreateEventFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, items);
         //set the spinners adapter to the previously created one.
         dropdown.setAdapter(adapter);
+
+        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // your code here
+                if(position == 0){
+                    groupTv.setVisibility(View.GONE);
+                    group_dropdown.setVisibility(View.GONE);
+                }else{
+                    groupTv.setVisibility(View.VISIBLE);
+                    group_dropdown.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+        Log.d("KUKA", "ASD");
+
+        final ArrayAdapter<String> groupAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, availableGroups);
+        //set the spinners adapter to the previously created one.
+        group_dropdown.setAdapter(groupAdapter);
+
+        databaseGroupReference = FirebaseDatabase.getInstance().getReference().child("GROUP");
+        databaseGroupReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(final DataSnapshot group : snapshot.getChildren()){
+
+                    //if he is owner
+                    if ((group.child("group_owner").getValue().toString()).equals(mUID)) {
+                        availableGroups.add(group.child("group_name").getValue().toString());
+
+                        groupAdapter.notifyDataSetChanged();
+                    }
+                    else{
+                    //if he is joined in group
+                        group.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for(DataSnapshot user : snapshot.getChildren()) {
+                                    if (user.getValue() != null && group.child("group_name").getValue() != null) {
+                                        if ((user.getValue().toString()).equals(mUID)) {
+                                            availableGroups.add(group.child("group_name").getValue().toString());
+                                            break;
+                                        }
+                                    }
+                                }
+                                groupAdapter.notifyDataSetChanged();
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
         //location
         location_et = CreateEventView.findViewById(R.id.c_e_event_location_edit);
@@ -147,7 +239,7 @@ public class CreateEventFragment extends Fragment {
                         //check for empty fields
                         if (!TextUtils.isEmpty(name_et.getText().toString()) && !TextUtils.isEmpty(start_date_et.getText().toString()) && !TextUtils.isEmpty(end_date_et.getText().toString())) {
                             //new Database created from field contents written in by user
-                            DatabaseEvent databaseEvent = new DatabaseEvent();
+                            final DatabaseEvent databaseEvent = new DatabaseEvent();
                             databaseEvent.setLocation_x(latLng.latitude);
                             databaseEvent.setLocation_y(latLng.longitude);
                             databaseEvent.setEvent_name(name_et.getText().toString());
@@ -157,13 +249,57 @@ public class CreateEventFragment extends Fragment {
                             databaseEvent.setPriv_pub(dropdown.getSelectedItem().toString());
                             databaseEvent.setOwner_id(fireBaseUser.getUid());
                             //set basic thumbnail
-                            databaseEvent.setThumbnail("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
+                            //databaseEvent.setThumbnail("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
 
-                            //pushing databaseEvent to database
-                            reference.push().setValue(databaseEvent);
+                            if(databaseEvent.getPriv_pub().equals("Private")){
+                                databaseGroupReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for(DataSnapshot group : snapshot.getChildren()) {
+                                            if(group.child("group_name").getValue() != null){
+                                                if((group.child("group_name").getValue().toString()).equals(group_dropdown.getSelectedItem().toString())){
+                                                    final ArrayList<String> joined_members = new ArrayList<>();
+                                                    group.child("joined_members").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                            for(DataSnapshot member : snapshot.getChildren()) {
+                                                                joined_members.add(member.getValue().toString());
+                                                            }
+                                                            databaseEvent.setJoined_members(joined_members);
 
-                            //open event
-                            openEvent(databaseEvent);
+                                                            //pushing databaseEvent to database
+                                                            reference.push().setValue(databaseEvent);
+
+                                                            //open event
+                                                            openEvent(databaseEvent);
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                                        }
+                                                    });
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+                            else{
+                                //pushing databaseEvent to database
+                                reference.push().setValue(databaseEvent);
+
+                                //open event
+                                openEvent(databaseEvent);
+                            }
+
+
                         }
 
                         getAddress(latLng.latitude, latLng.longitude);
@@ -253,7 +389,7 @@ public class CreateEventFragment extends Fragment {
     public void onStart() {
         super.onStart();
         //Hiding the activity layout
-        containerView.setVisibility(View.GONE);
+        containerView.setVisibility(GONE);
         Log.d(TAG, "onStart: " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
     }
 
