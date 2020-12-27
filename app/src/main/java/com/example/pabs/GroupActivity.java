@@ -99,7 +99,7 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
         databaseGroupRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                clearEvents();
+                clearGroups();
                 for (DataSnapshot group : snapshot.getChildren()) {
 
                     //Create temporary Group
@@ -278,7 +278,7 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
     /**
      * Clear events inside DataChanged method
      */
-    public void clearEvents() {
+    public void clearGroups() {
         lstGroup.clear();
     }
 
@@ -431,18 +431,13 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
         databaseGroupRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                clearEvents();
+                boolean found = false;
                 for (final DataSnapshot group : snapshot.getChildren()) {
 
                     if ((group.child("invite_code").getValue().toString()).equals(mCode)) {
+                        clearGroups();
                         //Create temporary Group
-                        final Group tempGrp;
-                        tempGrp = new Group();
-
-                        tempGrp.setGroup_name(group.child("group_name").getValue().toString());
-                        tempGrp.setGroup_owner(group.child("group_owner").getValue().toString());
-                        tempGrp.setInvite_code(group.child("invite_code").getValue().toString());
-
+                        found = true;
                         final ArrayList<String> joined_members = new ArrayList<>();
                         group.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -464,6 +459,10 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
                         });
 
                     }
+                }
+
+                if(!found){
+                    Toast.makeText(GroupActivity.this, "Wrong code! Please Try again!", Toast.LENGTH_SHORT).show();
                 }
 
             }

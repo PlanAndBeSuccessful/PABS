@@ -59,4 +59,12 @@ public class Group {
     public void setMember_list(ArrayList<String> member_list) {
         this.member_list = member_list;
     }
+
+    public void addToMemberListEnd(String str) {
+        member_list.add(str);
+    }
+
+    public void deleteMemberListElement(String str) {
+        member_list.remove(str);
+    }
 }

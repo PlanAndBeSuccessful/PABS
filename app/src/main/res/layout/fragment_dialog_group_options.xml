@@ -103,11 +103,11 @@
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_black_italic"
                 android:paddingRight="10dp"
-                android:text="Add/kick members"
+                android:text="Kick members"
                 android:textColor="#720BC2" />
 
             <ImageView
-                android:id="@+id/f_g_o_addKickMembersImg"
+                android:id="@+id/f_g_o_kickMembersImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/addkickstaff"

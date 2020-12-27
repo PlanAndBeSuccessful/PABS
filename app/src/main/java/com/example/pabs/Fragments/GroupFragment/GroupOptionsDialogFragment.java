@@ -31,7 +31,7 @@ public class GroupOptionsDialogFragment extends AppCompatDialogFragment {
     private ImageView exitImg;
 
     private LinearLayout closeGroupLinL;
-    private LinearLayout addKickMembersLinL;
+    private LinearLayout kickMembersLinL;
     private LinearLayout groupEventsLinL;
     private LinearLayout leaveGroupLinL;
     private LinearLayout showCodeLinL;
@@ -55,7 +55,7 @@ public class GroupOptionsDialogFragment extends AppCompatDialogFragment {
         dialog = new Dialog(getActivity(), R.style.MyDialogTheme);
 
         closeGroupImg = view.findViewById(R.id.f_g_o_closeGroupImg);
-        addKickMembersImg = view.findViewById(R.id.f_g_o_addKickMembersImg);
+        addKickMembersImg = view.findViewById(R.id.f_g_o_kickMembersImg);
         groupEventsImg = view.findViewById(R.id.f_g_o_groupEventsImg);
         leaveGroupImg = view.findViewById(R.id.f_g_o_leaveGroupImg);
         showCodeImg = view.findViewById(R.id.f_g_o_showCodeImg);
@@ -64,7 +64,7 @@ public class GroupOptionsDialogFragment extends AppCompatDialogFragment {
 
         showCodeLinL = view.findViewById(R.id.f_g_o_lr5);
         closeGroupLinL = view.findViewById(R.id.f_g_o_lr4);
-        addKickMembersLinL = view.findViewById(R.id.f_g_o_lr3);
+        kickMembersLinL = view.findViewById(R.id.f_g_o_lr3);
         groupEventsLinL = view.findViewById(R.id.f_g_o_lr2);
         leaveGroupLinL = view.findViewById(R.id.f_g_o_lr1);
 
@@ -79,7 +79,7 @@ public class GroupOptionsDialogFragment extends AppCompatDialogFragment {
         addKickMembersImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                groupOptionsDialogListener.AddKickMembers();
+                groupOptionsDialogListener.KickMembers();
                 dialog.dismiss();
             }
         });
@@ -125,7 +125,7 @@ public class GroupOptionsDialogFragment extends AppCompatDialogFragment {
         } else if (mState == 1) {
             //member
             hideCloseGroupImage();
-            hideAddKickMembers();
+            hideKickMembers();
 
         } else {
             Log.d("GODF", "Wrong mState!");
@@ -138,8 +138,8 @@ public class GroupOptionsDialogFragment extends AppCompatDialogFragment {
         closeGroupLinL.setVisibility(GONE);
     }
 
-    void hideAddKickMembers() {
-        addKickMembersLinL.setVisibility(GONE);
+    void hideKickMembers() {
+        kickMembersLinL.setVisibility(GONE);
     }
 
     void hideGroupEvents() {
@@ -160,7 +160,7 @@ public class GroupOptionsDialogFragment extends AppCompatDialogFragment {
     public interface GroupOptionsDialogListener {
         void CloseGroup();
 
-        void AddKickMembers();
+        void KickMembers();
 
         void GroupEvents();
 

@@ -2,6 +2,7 @@ package com.example.pabs.Fragments.GroupFragment;
 
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.pabs.Fragments.EventFragment.EventReminderFragment;
 import com.example.pabs.Models.ChatMessage;
 import com.example.pabs.Models.Group;
 import com.example.pabs.R;
@@ -24,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class GroupFragment extends Fragment implements GroupOptionsDialogFragment.GroupOptionsDialogListener {
@@ -239,12 +242,36 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
 
     @Override
     public void CloseGroup() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        Query applesQuery = ref.child("GROUP").orderByChild("group_name").equalTo(mGroup.getGroup_name());
 
+        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
+                    //delete selected event
+                    appleSnapshot.getRef().removeValue();
+
+                    //clear it from backstack
+                    clearBackstack();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //database failed
+                Log.e("GroupFragment", "onCancelled", databaseError.toException());
+            }
+        });
     }
 
     @Override
-    public void AddKickMembers() {
-
+    public void KickMembers() {
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_group_container, new GroupKickMembersFragment(mGroup))
+                .addToBackStack("GroupKickMembersFragment")
+                .commit();
     }
 
     @Override
@@ -254,7 +281,25 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
 
     @Override
     public void LeaveGroup() {
+        final DatabaseReference refGroup = FirebaseDatabase.getInstance().getReference().child("GROUP");
+        refGroup.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (final DataSnapshot group : snapshot.getChildren()) {
+                    //Loop 1 to go through all child nodes of users
+                    if (group.child("group_name").getValue() == mGroup.getGroup_name()) {
+                            mGroup.deleteMemberListElement(mUID);
+                            group.getRef().child("joined_members").setValue(mGroup.getMember_list());
+                            clearBackstack();
+                    }
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Override
