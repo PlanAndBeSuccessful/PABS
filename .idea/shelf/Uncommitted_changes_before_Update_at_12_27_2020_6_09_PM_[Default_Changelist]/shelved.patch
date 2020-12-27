@@ -1,0 +1,940 @@
+Index: app/src/main/java/com/example/pabs/Fragments/EventFragment/EventFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pabs.Fragments.EventFragment;\r\n\r\nimport android.app.Activity;\r\nimport android.app.ProgressDialog;\r\nimport android.content.ContentResolver;\r\nimport android.content.Intent;\r\nimport android.graphics.Bitmap;\r\nimport android.net.Uri;\r\nimport android.os.Bundle;\r\nimport android.os.Handler;\r\nimport android.provider.MediaStore;\r\nimport android.util.Log;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.webkit.MimeTypeMap;\r\nimport android.widget.Button;\r\nimport android.widget.ImageView;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport com.example.pabs.Models.DatabaseEvent;\r\nimport com.example.pabs.R;\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.MapView;\r\nimport com.google.android.gms.maps.OnMapReadyCallback;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\nimport com.google.android.gms.tasks.Continuation;\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.OnFailureListener;\r\nimport com.google.android.gms.tasks.OnSuccessListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.Query;\r\nimport com.google.firebase.database.ValueEventListener;\r\nimport com.google.firebase.storage.FirebaseStorage;\r\nimport com.google.firebase.storage.StorageReference;\r\nimport com.google.firebase.storage.StorageTask;\r\nimport com.google.firebase.storage.UploadTask;\r\nimport com.squareup.picasso.Picasso;\r\n\r\nimport java.io.FileNotFoundException;\r\nimport java.io.IOException;\r\n\r\n/**\r\n * Handle an event\r\n */\r\n\r\npublic class EventFragment extends Fragment implements OnMapReadyCallback, EventOptionsDialogFragment.EventOptionsDialogListener {\r\n\r\n    public static final int GET_FROM_GALLERY = 3;\r\n    private static final String TAG = \"EventFragment\";\r\n    public Uri imgUri;\r\n    //UI\r\n    private Button back_button;\r\n    private Button plus_button;\r\n    private View containerView;\r\n    private ProgressDialog mDialog = null;\r\n    private MapView mapView;\r\n    private TextView event_name_tv;\r\n    private TextView event_date_start_tv;\r\n    private TextView event_date_end_tv;\r\n    private TextView event_description_tv;\r\n    private TextView location_text_tv;\r\n    //map\r\n    private GoogleMap mMap;\r\n    //database event\r\n    private final DatabaseEvent databaseEvent;\r\n    //image handling\r\n    private ImageView image_view;\r\n    private StorageReference mStorageRef;\r\n    private StorageTask<UploadTask.TaskSnapshot> uploadTask;\r\n\r\n    private final String mUID;\r\n    private int mState;\r\n\r\n    /**\r\n     * Constructor\r\n     */\r\n    public EventFragment(DatabaseEvent dbE, String uID) {\r\n        databaseEvent = dbE;\r\n        mUID = uID;\r\n    }\r\n\r\n    /**\r\n     * On Create\r\n     */\r\n    @Override\r\n    public void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n    }\r\n\r\n    /**\r\n     * On Create View\r\n     */\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, final ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        // Inflate the layout for this fragment\r\n        View view = inflater.inflate(R.layout.fragment_event, container, false);\r\n        containerView = getActivity().findViewById(R.id.activity_event_layout);\r\n\r\n        //init UI\r\n        event_name_tv = view.findViewById(R.id.fe_event_name);\r\n        event_date_start_tv = view.findViewById(R.id.fe_event_date_start);\r\n        event_date_end_tv = view.findViewById(R.id.fe_event_date_end);\r\n        event_description_tv = view.findViewById(R.id.fe_event_description);\r\n        location_text_tv = view.findViewById(R.id.fe_location_text);\r\n        image_view = view.findViewById(R.id.fe_event_image);\r\n\r\n        if (databaseEvent.getThumbnail() != null) {\r\n            //set image if it's not null\r\n            Uri myUri = Uri.parse(databaseEvent.getThumbnail());\r\n\r\n            //Picasso license\r\n            Picasso.get().load(myUri).into(image_view);\r\n        }\r\n\r\n        if (databaseEvent.getDescription() != null) {\r\n            event_description_tv.setText(databaseEvent.getDescription());\r\n        }\r\n\r\n        //setting text in UI with databaseEvent data\r\n        event_name_tv.setText(databaseEvent.getEvent_name());\r\n        event_date_start_tv.setText(databaseEvent.getStart_date());\r\n        event_date_end_tv.setText(databaseEvent.getEnd_date());\r\n        event_description_tv.setText(databaseEvent.getDescription());\r\n        location_text_tv.setText(databaseEvent.getLocation_name());\r\n\r\n        //back button\r\n        back_button = view.findViewById(R.id.fe_back_button);\r\n\r\n        back_button.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //clear all backstack\r\n                clearBackstack();\r\n            }\r\n        });\r\n\r\n        //delete button to delete event\r\n        plus_button = view.findViewById(R.id.fe_plus_button);\r\n\r\n        plus_button.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                openEventOptionsDialogFragment();\r\n            }\r\n        });\r\n\r\n        //get reference to firebase storage \"Images/\" path\r\n        mStorageRef = FirebaseStorage.getInstance().getReference(\"Images\");\r\n\r\n        // Gets the MapView from the XML layout and creates it\r\n        mapView = (MapView) view.findViewById(R.id.fe_map);\r\n        mapView.onCreate(savedInstanceState);\r\n\r\n        //Sync Map View\r\n        mapView.getMapAsync(this);\r\n\r\n        mState = getStatus();\r\n\r\n        return view;\r\n    }\r\n\r\n    private int getStatus() {\r\n        if (mUID.equals(databaseEvent.getOwner_id())) {\r\n            //owner\r\n            return 0;\r\n        } else if (databaseEvent.getJoined_members().contains(mUID)) {\r\n            //member\r\n            return 1;\r\n        } else if (databaseEvent.getStaff_members().contains(mUID)) {\r\n            //staff\r\n            return 2;\r\n        } else {\r\n            //not joined\r\n            return 3;\r\n        }\r\n    }\r\n\r\n    /**\r\n     * open event dialog fragment\r\n     */\r\n    private void openEventOptionsDialogFragment() {\r\n        EventOptionsDialogFragment eventOptionsDialogFragment = new EventOptionsDialogFragment();\r\n        eventOptionsDialogFragment.setListener(EventFragment.this, mState);\r\n        eventOptionsDialogFragment.setCancelable(false);\r\n        eventOptionsDialogFragment.show(getActivity().getSupportFragmentManager(), \"eventDialogFragment\");\r\n    }\r\n\r\n    /**\r\n     * delete Image\r\n     */\r\n    private void deleteImage(DataSnapshot dataSnapshot) {\r\n        //clear image\r\n        if (dataSnapshot.child(\"thumbnail\").getValue() != null) {\r\n            //init firebase storage\r\n            FirebaseStorage mFirebaseStorage = FirebaseStorage.getInstance();\r\n\r\n            //reference to photo shown in this event\r\n            StorageReference photoRef = mFirebaseStorage.getReferenceFromUrl(dataSnapshot.child(\"thumbnail\").getValue().toString());\r\n\r\n            //delete the photo from firebase storage\r\n            photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {\r\n                @Override\r\n                public void onSuccess(Void aVoid) {\r\n                    // File deleted successfully\r\n                    Log.d(TAG, \"onSuccess: deleted file\");\r\n                }\r\n            }).addOnFailureListener(new OnFailureListener() {\r\n                @Override\r\n                public void onFailure(@NonNull Exception exception) {\r\n                    // Uh-oh, an error occurred!\r\n                    Log.d(TAG, \"onFailure: did not delete file\");\r\n                }\r\n            });\r\n        }\r\n    }\r\n\r\n    /**\r\n     * fileUploader\r\n     */\r\n    private String getExtension(Uri uri) {\r\n        ContentResolver cr = getActivity().getContentResolver();\r\n        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();\r\n        return mimeTypeMap.getExtensionFromMimeType(cr.getType(uri));\r\n    }\r\n\r\n    private void fileUploader() {\r\n        //get reference to name\r\n        final StorageReference ref = mStorageRef.child(System.currentTimeMillis() + \".\" + getExtension(imgUri));\r\n\r\n        //set upload task to imgUri\r\n        uploadTask = ref.putFile(imgUri);\r\n\r\n        //dialog on loading\r\n        mDialog = new ProgressDialog(getActivity());\r\n\r\n        mDialog.setMessage(\"Please wait...\");\r\n        mDialog.setCancelable(false);\r\n        mDialog.show();\r\n\r\n        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {\r\n            @Override\r\n            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {\r\n                //start upload\r\n                uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {\r\n                    @Override\r\n                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {\r\n                        if (!task.isSuccessful()) {\r\n                            throw task.getException();\r\n                        }\r\n                        // Continue with the task to get the download URL\r\n                        return ref.getDownloadUrl();\r\n\r\n                    }\r\n                }).addOnCompleteListener(new OnCompleteListener<Uri>() {\r\n                    @Override\r\n                    public void onComplete(@NonNull Task<Uri> task) {\r\n                        if (task.isSuccessful()) {\r\n                            //if image is uploaded\r\n                            Toast.makeText(getActivity(), \"Image uploaded succesfully\", Toast.LENGTH_SHORT).show();\r\n\r\n                            //get download Uri\r\n                            final Uri downloadUri = task.getResult();\r\n                            //reference to EVENT in firebase database\r\n                            final DatabaseReference refEvent = FirebaseDatabase.getInstance().getReference().child(\"EVENT\");\r\n\r\n                            //connect firebase storage with firebase realtime database\r\n                            refEvent.addListenerForSingleValueEvent(new ValueEventListener() {\r\n                                @Override\r\n                                public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                                    for (DataSnapshot event : snapshot.getChildren()) {\r\n                                        //Loop 1 to go through all child nodes of users\r\n                                        if (event.child(\"event_name\").getValue() == databaseEvent.getEvent_name()) {\r\n\r\n                                            if (event.child(\"thumbnail\").getValue() == null) {\r\n                                                //set thumbnail if there is no image\r\n                                                setThumbnail(event.getKey(), refEvent, downloadUri);\r\n                                                databaseEvent.setThumbnail(downloadUri.toString());\r\n                                                Log.d(TAG, \"Nincs kep: \");\r\n                                            } else {\r\n                                                //if there is already and image delete it, and replace it with selected one\r\n                                                deleteImage(event);\r\n\r\n                                                setThumbnail(event.getKey(), refEvent, downloadUri);\r\n                                                databaseEvent.setThumbnail(downloadUri.toString());\r\n                                            }\r\n                                            mDialog.dismiss();\r\n\r\n                                        }\r\n                                    }\r\n                                }\r\n\r\n                                @Override\r\n                                public void onCancelled(@NonNull DatabaseError error) {\r\n                                    //database failed\r\n                                }\r\n                            });\r\n\r\n\r\n                        }\r\n                    }\r\n                });\r\n\r\n            }\r\n        }).addOnFailureListener(new OnFailureListener() {\r\n            @Override\r\n            public void onFailure(@NonNull Exception e) {\r\n                //upload task failed\r\n            }\r\n        });\r\n    }\r\n\r\n    /**\r\n     * set Thumbnail\r\n     */\r\n    private void setThumbnail(String key, DatabaseReference ref, Uri downloadUri) {\r\n        ref.child(key).child(\"thumbnail\").setValue(downloadUri.toString());\r\n    }\r\n\r\n    /**\r\n     * Open Gallery\r\n     */\r\n    private void viewGallery() {\r\n        startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);\r\n    }\r\n\r\n    //called after viewGallery startActivityForResult returned in viewGallery\r\n    @Override\r\n    public void onActivityResult(int requestCode, int resultCode, Intent data) {\r\n        super.onActivityResult(requestCode, resultCode, data);\r\n\r\n        //Detects request codes\r\n        if (requestCode == GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {\r\n            Uri selectedImage = data.getData();\r\n            Bitmap bitmap = null;\r\n            try {\r\n                imgUri = data.getData();\r\n                image_view.setImageURI(imgUri);\r\n\r\n                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);\r\n                Log.d(TAG, \"Image Selected Successfully!\");\r\n            } catch (FileNotFoundException e) {\r\n                e.printStackTrace();\r\n            } catch (IOException e) {\r\n                e.printStackTrace();\r\n            }\r\n        }\r\n    }\r\n\r\n\r\n    /**\r\n     * clearBackstack\r\n     */\r\n    public void clearBackstack() {\r\n        //clear all backstact\r\n        if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 1) {\r\n            getActivity().getSupportFragmentManager().popBackStack(\"EventFragment\", 1);\r\n        } else {\r\n            for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); ++i) {\r\n                getActivity().getSupportFragmentManager().popBackStack();\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * onMapReady\r\n     */\r\n    @Override\r\n    public void onMapReady(GoogleMap googleMap) {\r\n\r\n        //get lat lng from databaseEvent\r\n        LatLng eventLocation = new LatLng(databaseEvent.getLocation_x(), databaseEvent.getLocation_y());\r\n\r\n        //init mMap\r\n        mMap = googleMap;\r\n\r\n        //add marker to map to location from databaseEvent\r\n        mMap.addMarker(new MarkerOptions()\r\n                .position(eventLocation)\r\n                .title(databaseEvent.getLocation_name()));\r\n        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLocation, 10));\r\n\r\n        //set on Map Click Listener\r\n        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {\r\n            @Override\r\n            public void onMapClick(LatLng latLng) {\r\n                Toast.makeText(getActivity(), \"Clicked on map\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n    }\r\n\r\n    /**\r\n     * onStart\r\n     */\r\n    @Override\r\n    public void onStart() {\r\n        super.onStart();\r\n        //Hiding the activity layout\r\n        containerView.setVisibility(View.GONE);\r\n    }\r\n\r\n    /**\r\n     * onStop\r\n     */\r\n    @Override\r\n    public void onStop() {\r\n        super.onStop();\r\n        containerView.setVisibility(View.VISIBLE);\r\n    }\r\n\r\n    /**\r\n     * onResume\r\n     */\r\n    @Override\r\n    public void onResume() {\r\n        mapView.onResume();\r\n        super.onResume();\r\n    }\r\n\r\n    /**\r\n     * on fragment stop\r\n     */\r\n    @Override\r\n    public void onPause() {\r\n        super.onPause();\r\n        mapView.onPause();\r\n    }\r\n\r\n    /**\r\n     * onDestroy\r\n     */\r\n    @Override\r\n    public void onDestroy() {\r\n        super.onDestroy();\r\n        mapView.onDestroy();\r\n    }\r\n\r\n    /**\r\n     * onLowMemory\r\n     */\r\n    @Override\r\n    public void onLowMemory() {\r\n        super.onLowMemory();\r\n        mapView.onLowMemory();\r\n    }\r\n\r\n    @Override\r\n    public void UpCh() {\r\n        viewGallery();\r\n\r\n        final Handler handler = new Handler();\r\n        final int delay = 1000; //milliseconds\r\n\r\n        handler.postDelayed(new Runnable() {\r\n            public void run() {\r\n                if (imgUri != null) {\r\n                    //if we have an image selected\r\n                    if (uploadTask != null && uploadTask.isInProgress()) {\r\n                        //if upload is not finished\r\n                        Toast.makeText(getActivity(), \"Upload in progress\", Toast.LENGTH_SHORT).show();\r\n                    } else {\r\n                        //if upload is not started\r\n                        fileUploader();\r\n                    }\r\n                } else\r\n                    handler.postDelayed(this, delay);\r\n            }\r\n        }, delay);\r\n\r\n    }\r\n\r\n    @Override\r\n    public void Repetition() {\r\n        getActivity().getSupportFragmentManager()\r\n                .beginTransaction()\r\n                .replace(R.id.fragment_event_container, new EventRepetitionFragment(databaseEvent))\r\n                .addToBackStack(\"EventRepetitionFragment\")\r\n                .commit();\r\n    }\r\n\r\n    @Override\r\n    public void AddKickStaff() {\r\n        getActivity().getSupportFragmentManager()\r\n                .beginTransaction()\r\n                .replace(R.id.fragment_event_container, new EventStaffFragment(databaseEvent))\r\n                .addToBackStack(\"EventStaffFragment\")\r\n                .commit();\r\n    }\r\n\r\n    @Override\r\n    public void Reminder() {\r\n        getActivity().getSupportFragmentManager()\r\n                .beginTransaction()\r\n                .replace(R.id.fragment_event_container, new EventReminderFragment(databaseEvent))\r\n                .addToBackStack(\"EventReminderFragment\")\r\n                .commit();\r\n    }\r\n\r\n    @Override\r\n    public void Description() {\r\n        getActivity().getSupportFragmentManager()\r\n                .beginTransaction()\r\n                .replace(R.id.fragment_event_container, new EventDescriptionFragment(databaseEvent))\r\n                .addToBackStack(\"EventDescriptionFragment\")\r\n                .commit();\r\n    }\r\n\r\n    @Override\r\n    public void CloseEvent() {\r\n        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();\r\n        Query applesQuery = ref.child(\"EVENT\").orderByChild(\"event_name\").equalTo(databaseEvent.getEvent_name());\r\n\r\n        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(DataSnapshot dataSnapshot) {\r\n                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {\r\n                    //clear image\r\n                    deleteImage(appleSnapshot);\r\n\r\n                    //delete selected event\r\n                    appleSnapshot.getRef().removeValue();\r\n\r\n                    //clear it from backstack\r\n                    clearBackstack();\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(DatabaseError databaseError) {\r\n                //database failed\r\n                Log.e(\"EventFragment\", \"onCancelled\", databaseError.toException());\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    public void JoinLeaveEvent() {\r\n        final DatabaseReference refEvent = FirebaseDatabase.getInstance().getReference().child(\"EVENT\");\r\n        refEvent.addListenerForSingleValueEvent(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                for (final DataSnapshot event : snapshot.getChildren()) {\r\n                    //Loop 1 to go through all child nodes of users\r\n                    if (event.child(\"event_name\").getValue() == databaseEvent.getEvent_name()) {\r\n                        if (mState == 3) {\r\n                            databaseEvent.addToJoinedListEnd(mUID);\r\n                            event.getRef().child(\"joined_members\").setValue(databaseEvent.getJoined_members());\r\n                            mState = 1;\r\n                        } else {\r\n                            databaseEvent.deleteJoinedListElement(mUID);\r\n                            event.getRef().child(\"joined_members\").setValue(databaseEvent.getJoined_members());\r\n                            mState = 3;\r\n                        }\r\n\r\n                    }\r\n                }\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n\r\n\r\n    }\r\n\r\n    @Override\r\n    public void ToDo() {\r\n\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/Fragments/EventFragment/EventFragment.java	(revision 5338fc911f7d72ce1aabc2a5933a6a760b7081fb)
++++ app/src/main/java/com/example/pabs/Fragments/EventFragment/EventFragment.java	(date 1609078707815)
+@@ -579,6 +579,10 @@
+ 
+     @Override
+     public void ToDo() {
+-
++        getActivity().getSupportFragmentManager()
++                .beginTransaction()
++                .replace(R.id.fragment_event_container, new EventToDoFragment())
++                .addToBackStack("EventToDoFragment")
++                .commit();
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/pabs/Adapters/ToDoRecyclerViewAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pabs.Adapters;\r\n\r\nimport android.util.Log;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Button;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.example.pabs.HelperClass.ToDoList;\r\nimport com.example.pabs.R;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.List;\r\n\r\n/**\r\n * Creates an array of card elements\r\n */\r\n\r\npublic class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerViewAdapter.MyToDoViewHolder>{\r\n\r\n    private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();\r\n    private List<ToDoList> toDoList;\r\n\r\n    public ToDoRecyclerViewAdapter(List<ToDoList> toDoList) {\r\n        this.toDoList = toDoList;\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public MyToDoViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i)\r\n    {\r\n        // Here we inflate the corresponding\r\n        // layout of the parent item\r\n        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.mytodo_list_row, viewGroup, false);\r\n\r\n        return new MyToDoViewHolder(view);\r\n    }\r\n\r\n    @Override\r\n    public void onBindViewHolder(@NonNull final MyToDoViewHolder parentViewHolder, int position)\r\n    {\r\n        //firebase\r\n        final DatabaseReference referenceDB = FirebaseDatabase.getInstance().getReference().child(\"TODO\");\r\n\r\n        // Create an instance of the ParentItem\r\n        // class for the given position\r\n        ToDoList todolist = toDoList.get(position);\r\n\r\n        // For the created instance,\r\n        // get the title and set it\r\n        // as the text for the TextView\r\n        parentViewHolder.toDoListTitle.setText(todolist.getToDoListTitle());\r\n        parentViewHolder.delete_btn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                referenceDB.addListenerForSingleValueEvent(new ValueEventListener() {\r\n                    @Override\r\n                    public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                        int i=0;\r\n                        for(DataSnapshot todo : snapshot.getChildren()){\r\n                            if(i == parentViewHolder.getAdapterPosition()){\r\n                               todo.getRef().child(\"taskList\").removeValue();\r\n                            }\r\n                            ++i;\r\n                        }\r\n                    }\r\n\r\n                    @Override\r\n                    public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                    }\r\n                });\r\n            }\r\n        });\r\n\r\n        // Create a layout manager\r\n        // to assign a layout\r\n        // to the RecyclerView.\r\n\r\n        // Here we have assigned the layout\r\n        // as LinearLayout with vertical orientation\r\n        LinearLayoutManager layoutManager = new LinearLayoutManager(parentViewHolder.childRecyclerView.getContext(), LinearLayoutManager.VERTICAL, false);\r\n\r\n        // Since this is a nested layout, so\r\n        // to define how many child items\r\n        // should be prefetched when the\r\n        // child RecyclerView is nested\r\n        // inside the parent RecyclerView,\r\n        // we use the following method\r\n        layoutManager.setInitialPrefetchItemCount(todolist.getTaskList().size());\r\n\r\n        // Create an instance of the child\r\n        // item view adapter and set its\r\n        // adapter, layout manager and RecyclerViewPool\r\n        TaskRecyclerViewAdapter childItemAdapter = new TaskRecyclerViewAdapter(todolist.getTaskList());\r\n        parentViewHolder.childRecyclerView.setLayoutManager(layoutManager);\r\n        parentViewHolder.childRecyclerView.setAdapter(childItemAdapter);\r\n        parentViewHolder.childRecyclerView.setRecycledViewPool(viewPool);\r\n    }\r\n\r\n    @Override\r\n    public int getItemCount() {\r\n        return toDoList.size();\r\n    }\r\n\r\n    // This class is to initialize\r\n    // the Views present in\r\n    // the parent RecyclerView\r\n    class MyToDoViewHolder extends RecyclerView.ViewHolder {\r\n\r\n        private TextView toDoListTitle;\r\n        private Button delete_btn;\r\n        private RecyclerView childRecyclerView;\r\n\r\n        MyToDoViewHolder(final View itemView)\r\n        {\r\n            super(itemView);\r\n\r\n            toDoListTitle = itemView.findViewById(R.id.belong);\r\n            delete_btn = itemView.findViewById(R.id.todo_delete_btn);\r\n            childRecyclerView = itemView.findViewById(R.id.task_list);\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/Adapters/ToDoRecyclerViewAdapter.java	(revision 5338fc911f7d72ce1aabc2a5933a6a760b7081fb)
++++ app/src/main/java/com/example/pabs/Adapters/ToDoRecyclerViewAdapter.java	(date 1609023638768)
+@@ -29,11 +29,13 @@
+ 
+ public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerViewAdapter.MyToDoViewHolder>{
+ 
+-    private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
+-    private List<ToDoList> toDoList;
++    private final RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
++    private final List<ToDoList> toDoList;
++    private final String uID;
+ 
+-    public ToDoRecyclerViewAdapter(List<ToDoList> toDoList) {
++    public ToDoRecyclerViewAdapter(List<ToDoList> toDoList, String uid) {
+         this.toDoList = toDoList;
++        this.uID = uid;
+     }
+ 
+     @NonNull
+@@ -51,7 +53,7 @@
+     public void onBindViewHolder(@NonNull final MyToDoViewHolder parentViewHolder, int position)
+     {
+         //firebase
+-        final DatabaseReference referenceDB = FirebaseDatabase.getInstance().getReference().child("TODO");
++        final DatabaseReference referenceDB = FirebaseDatabase.getInstance().getReference().child("TODO").child(uID);
+ 
+         // Create an instance of the ParentItem
+         // class for the given position
+@@ -103,7 +105,7 @@
+         // Create an instance of the child
+         // item view adapter and set its
+         // adapter, layout manager and RecyclerViewPool
+-        TaskRecyclerViewAdapter childItemAdapter = new TaskRecyclerViewAdapter(todolist.getTaskList());
++        TaskRecyclerViewAdapter childItemAdapter = new TaskRecyclerViewAdapter(todolist.getTaskList(), uID);
+         parentViewHolder.childRecyclerView.setLayoutManager(layoutManager);
+         parentViewHolder.childRecyclerView.setAdapter(childItemAdapter);
+         parentViewHolder.childRecyclerView.setRecycledViewPool(viewPool);
+@@ -119,9 +121,9 @@
+     // the parent RecyclerView
+     class MyToDoViewHolder extends RecyclerView.ViewHolder {
+ 
+-        private TextView toDoListTitle;
+-        private Button delete_btn;
+-        private RecyclerView childRecyclerView;
++        private final TextView toDoListTitle;
++        private final Button delete_btn;
++        private final RecyclerView childRecyclerView;
+ 
+         MyToDoViewHolder(final View itemView)
+         {
+Index: app/src/main/java/com/example/pabs/Adapters/TaskRecyclerViewAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pabs.Adapters;\r\n\r\nimport android.util.Log;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.CheckBox;\r\nimport android.widget.CompoundButton;\r\nimport android.widget.RadioGroup;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.example.pabs.HelperClass.TaskList;\r\nimport com.example.pabs.R;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.List;\r\n\r\npublic class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerViewAdapter.MyTaskViewHolder> {\r\n\r\n    private List<TaskList> taskList;\r\n\r\n    // Constuctor\r\n    TaskRecyclerViewAdapter(List<TaskList> taskList)\r\n    {\r\n        this.taskList = taskList;\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public MyTaskViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i)\r\n    {\r\n\r\n        // Here we inflate the corresponding\r\n        // layout of the child item\r\n        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.mytodo_task_row, viewGroup, false);\r\n\r\n        return new MyTaskViewHolder(view);\r\n    }\r\n\r\n    @Override\r\n    public void onBindViewHolder(@NonNull final MyTaskViewHolder childViewHolder, int position)\r\n    {\r\n        final DatabaseReference referenceDB = FirebaseDatabase.getInstance().getReference().child(\"TODO\");\r\n        // Create an instance of the ChildItem\r\n        // class for the given position\r\n        TaskList childItem = taskList.get(position);\r\n\r\n        // For the created instance, set title.\r\n        // No need to set the image for\r\n        // the ImageViews because we have\r\n        // provided the source for the images\r\n        // in the layout file itself\r\n        childViewHolder.taskTitle.setText(childItem.getTaskTitle());\r\n\r\n        Log.d(\"Espania\", \"onBindViewHolder: Ifen kivül vagyok! \" + childViewHolder.taskCB);\r\n        if((taskList.get(childViewHolder.getAdapterPosition()).getTaskCB())){\r\n            childViewHolder.taskCB.setChecked(true);\r\n            Log.d(\"Espania\", \"onBindViewHolder: Ifben vagyok! \" + childViewHolder.taskCB);\r\n        }\r\n        else{\r\n            childViewHolder.taskCB.setChecked(false);\r\n        }\r\n\r\n        childViewHolder.taskCB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {\r\n            @Override\r\n            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {\r\n                //set your object's last status\r\n                taskList.get(childViewHolder.getAdapterPosition()).setTaskCB(isChecked);\r\n                referenceDB.addListenerForSingleValueEvent(new ValueEventListener() {\r\n                    @Override\r\n                    public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                        for(DataSnapshot todo : snapshot.getChildren()){\r\n                            if(todo.getKey().equals(taskList.get(childViewHolder.getAdapterPosition()).getReferenceTo())){\r\n                                todo.getRef().child(\"taskList\").addListenerForSingleValueEvent(new ValueEventListener() {\r\n                                    @Override\r\n                                    public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                                        for(DataSnapshot task : snapshot.getChildren()){\r\n                                            if(task.child(\"taskTitle\").getValue().toString().equals(taskList.get(childViewHolder.getAdapterPosition()).getTaskTitle())){\r\n                                                task.child(\"taskCB\").getRef().setValue(isChecked);\r\n                                            }\r\n                                        }\r\n                                    }\r\n\r\n                                    @Override\r\n                                    public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                                    }\r\n                                });\r\n                            }\r\n                        }\r\n                    }\r\n\r\n                    @Override\r\n                    public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                    }\r\n                });\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    public int getItemCount()\r\n    {\r\n        // This method returns the number\r\n        // of items we have added\r\n        // in the ChildItemList\r\n        // i.e. the number of instances\r\n        // of the ChildItemList\r\n        // that have been created\r\n        return taskList.size();\r\n    }\r\n\r\n    // This class is to initialize\r\n    // the Views present\r\n    // in the child RecyclerView\r\n    class MyTaskViewHolder extends RecyclerView.ViewHolder {\r\n        TextView taskTitle;\r\n        CheckBox taskCB;\r\n\r\n        MyTaskViewHolder(View itemView)\r\n        {\r\n            super(itemView);\r\n            taskTitle = itemView.findViewById(R.id.task_task);\r\n            taskCB = itemView.findViewById(R.id.task_cb);\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/Adapters/TaskRecyclerViewAdapter.java	(revision 5338fc911f7d72ce1aabc2a5933a6a760b7081fb)
++++ app/src/main/java/com/example/pabs/Adapters/TaskRecyclerViewAdapter.java	(date 1609023720961)
+@@ -25,11 +25,13 @@
+ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerViewAdapter.MyTaskViewHolder> {
+ 
+     private List<TaskList> taskList;
++    private String uID;
+ 
+     // Constuctor
+-    TaskRecyclerViewAdapter(List<TaskList> taskList)
++    TaskRecyclerViewAdapter(List<TaskList> taskList, String uid)
+     {
+         this.taskList = taskList;
++        this.uID = uid;
+     }
+ 
+     @NonNull
+@@ -47,10 +49,11 @@
+     @Override
+     public void onBindViewHolder(@NonNull final MyTaskViewHolder childViewHolder, int position)
+     {
+-        final DatabaseReference referenceDB = FirebaseDatabase.getInstance().getReference().child("TODO");
++        final DatabaseReference referenceDB = FirebaseDatabase.getInstance().getReference().child("TODO").child(uID);
++        Log.d("DBREF", "DatabaseReference: " + referenceDB);
+         // Create an instance of the ChildItem
+         // class for the given position
+-        TaskList childItem = taskList.get(position);
++        final TaskList childItem = taskList.get(position);
+ 
+         // For the created instance, set title.
+         // No need to set the image for
+@@ -60,7 +63,7 @@
+         childViewHolder.taskTitle.setText(childItem.getTaskTitle());
+ 
+         Log.d("Espania", "onBindViewHolder: Ifen kivül vagyok! " + childViewHolder.taskCB);
+-        if((taskList.get(childViewHolder.getAdapterPosition()).getTaskCB())){
++        if(childItem.getTaskCB()){
+             childViewHolder.taskCB.setChecked(true);
+             Log.d("Espania", "onBindViewHolder: Ifben vagyok! " + childViewHolder.taskCB);
+         }
+@@ -72,17 +75,20 @@
+             @Override
+             public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                 //set your object's last status
+-                taskList.get(childViewHolder.getAdapterPosition()).setTaskCB(isChecked);
++                Log.d("Elipszis", "onDataChangeTaskListreference: "+ taskList.get(childViewHolder.getAdapterPosition()));
++                childItem.setTaskCB(isChecked);
+                 referenceDB.addListenerForSingleValueEvent(new ValueEventListener() {
+                     @Override
+                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                         for(DataSnapshot todo : snapshot.getChildren()){
+-                            if(todo.getKey().equals(taskList.get(childViewHolder.getAdapterPosition()).getReferenceTo())){
++                            Log.d("DBREF", "onDataChangeTask: " + todo.getKey() );
++                            Log.d("Elipszis", "onDataChangeTask: " + todo.getKey() + ", " + childItem.getReferenceTo() );
++                            if(!todo.getKey().equals("Type")){
+                                 todo.getRef().child("taskList").addListenerForSingleValueEvent(new ValueEventListener() {
+                                     @Override
+                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                         for(DataSnapshot task : snapshot.getChildren()){
+-                                            if(task.child("taskTitle").getValue().toString().equals(taskList.get(childViewHolder.getAdapterPosition()).getTaskTitle())){
++                                            if(task.child("taskTitle").getValue().toString().equals(childItem.getTaskTitle())){
+                                                 task.child("taskCB").getRef().setValue(isChecked);
+                                             }
+                                         }
+Index: app/src/main/java/com/example/pabs/Fragments/MyToDoFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pabs.Fragments;\r\n\r\nimport android.graphics.Color;\r\nimport android.os.Bundle;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.os.Handler;\r\nimport android.util.Log;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Button;\r\n\r\nimport com.example.pabs.Adapters.CalendarRecyclerViewAdapter;\r\nimport com.example.pabs.Adapters.ToDoRecyclerViewAdapter;\r\nimport com.example.pabs.HelperClass.TaskList;\r\nimport com.example.pabs.HelperClass.ToDoList;\r\nimport com.example.pabs.Models.DatabaseEvent;\r\nimport com.example.pabs.R;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\nimport sun.bob.mcalendarview.MarkStyle;\r\nimport sun.bob.mcalendarview.listeners.OnDateClickListener;\r\nimport sun.bob.mcalendarview.vo.DateData;\r\n\r\npublic class MyToDoFragment extends Fragment implements AddTaskDialogFragment.AddTaskDialogListener {\r\n\r\n    private View listView;\r\n    List<ToDoList> itemList;\r\n    List<ToDoList> lstToDo;\r\n    //firebase\r\n    private DatabaseReference reference = null;\r\n    private String uID;\r\n\r\n    //dialog fragment\r\n    private String task_text;\r\n\r\n    @Override\r\n    public void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n    }\r\n\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {\r\n        //get uid of logged in user\r\n        uID = getActivity().getIntent().getStringExtra(\"USER\");\r\n\r\n        // Inflate the layout for this fragment\r\n        View myToDoview = inflater.inflate(R.layout.fragment_my_to_do, container, false);\r\n\r\n        //firebase database -> get reference to USER table\r\n        reference = FirebaseDatabase.getInstance().getReference().child(\"TODO\");\r\n\r\n        listView = getActivity().findViewById(R.id.activity_event_layout);\r\n        itemList = new ArrayList<>();\r\n        List<TaskList> tasks = new ArrayList<>();\r\n        ToDoList mytodos = new ToDoList(\"My ToDos\", tasks, uID, \"\");\r\n        itemList.add(mytodos);\r\n        final RecyclerView ParentRecyclerViewItem = myToDoview.findViewById(R.id.todo_rec_view);\r\n\r\n        // Initialise the Linear layout manager\r\n        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());\r\n\r\n        //set data for events example\r\n        lstToDo = new ArrayList<>();\r\n\r\n        //Getting events from database and setting them to recyclerview\r\n        final DatabaseReference databaseTodoRef;\r\n        databaseTodoRef= FirebaseDatabase.getInstance().getReference().child(\"TODO\");\r\n\r\n        //databaseEvents.addValueEventListener(new ValueEventListener() {\r\n        databaseTodoRef.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                lstToDo.clear();\r\n                for (final DataSnapshot todo : snapshot.getChildren()) {\r\n                    final ToDoList tempTD = new ToDoList();\r\n\r\n                    //Loop 1 to go through all child nodes of events\r\n                    final List<TaskList> tasks =  new ArrayList<>();\r\n                    todo.getRef().child(\"taskList\").addListenerForSingleValueEvent(new ValueEventListener() {\r\n                        @Override\r\n                        public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                            for (DataSnapshot task : snapshot.getChildren()) {\r\n                                //Loop 1 to go through all child nodes of joined members\r\n                                TaskList task_temp = new TaskList();\r\n                                task_temp.setBelongTo(task.child(\"belongTo\").getValue().toString());\r\n                                if(task_temp.getBelongTo().equals(uID)){\r\n                                    task_temp.setTaskTitle(task.child(\"taskTitle\").getValue().toString());\r\n                                    task_temp.setReferenceTo(task.child(\"referenceTo\").getValue().toString());\r\n                                    String CB = task.child(\"taskCB\").getValue().toString();\r\n                                    boolean cb = false;\r\n                                    if(CB.equals(\"true\")){\r\n                                        cb = true;\r\n                                        Log.d(\"Espania\", \"onDataChange: Ifben vagyok! \" + cb);\r\n                                    }\r\n                                    task_temp.setTaskCB(cb);\r\n                                    Log.d(\"WTF\", \"onDataChange: \" + task_temp.getTaskTitle());\r\n                                    tasks.add(task_temp);\r\n                                }\r\n                            }\r\n\r\n\r\n                            final Handler handler = new Handler();\r\n                            final int delay = 1000; //milliseconds\r\n\r\n                            Log.d(\"WTF\", \"run: Here is Jimmi!\" + tasks.size());\r\n                            handler.postDelayed(new Runnable(){\r\n                                public void run(){\r\n                                    if(!tasks.isEmpty())//checking if the data is loaded or not\r\n                                    {\r\n                                        Log.d(\"WTF\", \"run: Here is Johnny!\");\r\n                                        String td_title = todo.child(\"toDoListTitle\").getValue().toString();\r\n                                        tempTD.setToDoListTitle(td_title);\r\n                                        String td_owner = todo.child(\"owner\").getValue().toString();\r\n                                        tempTD.setOwner(td_owner);\r\n\r\n                                        tempTD.setTaskList(tasks);\r\n\r\n\r\n                                        //pushing the temporary event object into an arraylist\r\n                                        lstToDo.add(tempTD);\r\n                                        // Pass the arguments\r\n                                        // to the parentItemAdapter.\r\n                                        // These arguments are passed\r\n                                        // using a method ParentItemList()\r\n                                        ToDoRecyclerViewAdapter parentItemAdapter = new ToDoRecyclerViewAdapter(lstToDo);\r\n\r\n                                        // Set the layout manager\r\n                                        // and adapter for items\r\n                                        // of the parent recyclerview\r\n                                        ParentRecyclerViewItem.setAdapter(parentItemAdapter);\r\n                                        ParentRecyclerViewItem.setLayoutManager(layoutManager);\r\n                                    }\r\n                                    else\r\n                                        handler.postDelayed(this, delay);\r\n                                }\r\n                            }, delay);\r\n\r\n                        }\r\n\r\n                        @Override\r\n                        public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                        }\r\n                    });\r\n\r\n\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n\r\n        Button todo_btn = myToDoview.findViewById(R.id.todo_button);\r\n        todo_btn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                inviteDialogFragment();\r\n                Log.d(\"Espania\", \"onClick: Heyho\");\r\n            }\r\n        });\r\n        return myToDoview;\r\n    }\r\n\r\n    /*private List<ToDoList> toDoList()\r\n    {\r\n        List<ToDoList> itemList = new ArrayList<>();\r\n\r\n        ToDoList item = new ToDoList(\"Title 1\", ChildItemList());\r\n        itemList.add(item);\r\n        ToDoList item1 = new ToDoList(\"Title 2\", ChildItemList());\r\n        itemList.add(item1);\r\n        ToDoList item2 = new ToDoList(\"Title 3\", ChildItemList());\r\n        itemList.add(item2);\r\n        ToDoList item3 = new ToDoList(\"Title 4\", ChildItemList());\r\n        itemList.add(item3);\r\n\r\n        return itemList;\r\n    }\r\n\r\n    // Method to pass the arguments\r\n    // for the elements\r\n    // of child RecyclerView\r\n    private List<TaskList> ChildItemList()\r\n    {\r\n        List<TaskList> ChildItemList = new ArrayList<>();\r\n\r\n        ChildItemList.add(new TaskList(\"Card 1\"));\r\n        ChildItemList.add(new TaskList(\"Card 2\"));\r\n        ChildItemList.add(new TaskList(\"Card 3\"));\r\n        ChildItemList.add(new TaskList(\"Card 4\"));\r\n\r\n        return ChildItemList;\r\n    }*/\r\n\r\n    /*private void addtomyToDoList(List<ToDoList> todos){\r\n        todos.get(0).addToTaskList(new TaskList(\"Elso task\",uID));\r\n    }*/\r\n\r\n    private void pushInMyToDoList(final DatabaseReference reference){\r\n        reference.addListenerForSingleValueEvent(new ValueEventListener() {\r\n            int ok = 0;\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                for(DataSnapshot todo: snapshot.getChildren()){\r\n                    if(todo.child(\"owner\").getValue().toString().equals(uID) && todo.child(\"toDoListTitle\").getValue().toString().equals(\"My ToDos\")) {\r\n                        ok=1;\r\n                        Log.d(\"Espania\", \"onDataChange: Ifben\");\r\n                        if(todo.child(\"ID\").getValue() == null){\r\n                            todo.child(\"ID\").getRef().setValue(todo.getKey());\r\n                        }\r\n                        Log.d(\"Espania\", \"onDataChange: Itt vagyok!\");\r\n                        todo.child(\"taskList\").getRef().push().setValue(new TaskList(task_text,uID,todo.getKey()));\r\n                    }\r\n                }\r\n                if(ok == 0){\r\n                    ToDoList temp_todo = new ToDoList();\r\n                    temp_todo.setToDoListTitle(\"My ToDos\");\r\n                    temp_todo.setOwner(uID);\r\n                    snapshot.getRef().push().setValue(temp_todo);\r\n                    Log.d(\"Espania\", \"onDataChange: Elseben\");\r\n                    for(DataSnapshot todo: snapshot.getChildren()){\r\n                        if(todo.child(\"owner\").getValue().toString().equals(uID) && todo.child(\"toDoListTitle\").getValue().toString().equals(\"My ToDos\")) {\r\n                            if(todo.child(\"ID\").getValue() == null){\r\n                                todo.child(\"ID\").getRef().setValue(todo.getKey());\r\n                            }\r\n                            Log.d(\"Espania\", \"onDataChange: Itt vagyok!\");\r\n                            todo.child(\"taskList\").getRef().push().setValue(new TaskList(task_text,uID,todo.getKey()));\r\n                        }\r\n                    }\r\n                }\r\n                //Log.d(\"Espania\", \"onDataChange: itt vagyok1!\");\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    public void onStart() {\r\n        super.onStart();\r\n        //Hiding the activity layout\r\n        listView.setVisibility(View.GONE);\r\n    }\r\n\r\n    @Override\r\n    public void onStop() {\r\n        super.onStop();\r\n        listView.setVisibility(View.VISIBLE);\r\n    }\r\n\r\n    public void clearList(){\r\n        lstToDo.clear();\r\n    }\r\n\r\n    @Override\r\n    public void applyText(String taskname) {\r\n        task_text = taskname;\r\n        Log.d(\"Espania\", \"applyText: \" + reference);\r\n        pushInMyToDoList(reference);\r\n    }\r\n\r\n    public void inviteDialogFragment(){\r\n        AddTaskDialogFragment addTaskDialogFragment = new AddTaskDialogFragment();\r\n        addTaskDialogFragment.setListener(MyToDoFragment.this);\r\n        addTaskDialogFragment.setCancelable(true);\r\n        addTaskDialogFragment.show(getActivity().getSupportFragmentManager(),\"AddTaskDialogFragment\");\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/Fragments/MyToDoFragment.java	(revision 5338fc911f7d72ce1aabc2a5933a6a760b7081fb)
++++ app/src/main/java/com/example/pabs/Fragments/MyToDoFragment.java	(date 1609024294122)
+@@ -60,7 +60,7 @@
+         View myToDoview = inflater.inflate(R.layout.fragment_my_to_do, container, false);
+ 
+         //firebase database -> get reference to USER table
+-        reference = FirebaseDatabase.getInstance().getReference().child("TODO");
++        reference = FirebaseDatabase.getInstance().getReference().child("TODO").child(uID);
+ 
+         listView = getActivity().findViewById(R.id.activity_event_layout);
+         itemList = new ArrayList<>();
+@@ -77,7 +77,7 @@
+ 
+         //Getting events from database and setting them to recyclerview
+         final DatabaseReference databaseTodoRef;
+-        databaseTodoRef= FirebaseDatabase.getInstance().getReference().child("TODO");
++        databaseTodoRef= FirebaseDatabase.getInstance().getReference().child("TODO").child(uID);
+ 
+         //databaseEvents.addValueEventListener(new ValueEventListener() {
+         databaseTodoRef.addValueEventListener(new ValueEventListener() {
+@@ -94,11 +94,10 @@
+                         public void onDataChange(@NonNull DataSnapshot snapshot) {
+                             for (DataSnapshot task : snapshot.getChildren()) {
+                                 //Loop 1 to go through all child nodes of joined members
+-                                TaskList task_temp = new TaskList();
+-                                task_temp.setBelongTo(task.child("belongTo").getValue().toString());
+-                                if(task_temp.getBelongTo().equals(uID)){
++                                if(!task.getValue().equals("Type")){
++                                    TaskList task_temp = new TaskList();
++                                    task_temp.setBelongTo(task.child("belongTo").getValue().toString());
+                                     task_temp.setTaskTitle(task.child("taskTitle").getValue().toString());
+-                                    task_temp.setReferenceTo(task.child("referenceTo").getValue().toString());
+                                     String CB = task.child("taskCB").getValue().toString();
+                                     boolean cb = false;
+                                     if(CB.equals("true")){
+@@ -106,7 +105,6 @@
+                                         Log.d("Espania", "onDataChange: Ifben vagyok! " + cb);
+                                     }
+                                     task_temp.setTaskCB(cb);
+-                                    Log.d("WTF", "onDataChange: " + task_temp.getTaskTitle());
+                                     tasks.add(task_temp);
+                                 }
+                             }
+@@ -135,7 +133,7 @@
+                                         // to the parentItemAdapter.
+                                         // These arguments are passed
+                                         // using a method ParentItemList()
+-                                        ToDoRecyclerViewAdapter parentItemAdapter = new ToDoRecyclerViewAdapter(lstToDo);
++                                        ToDoRecyclerViewAdapter parentItemAdapter = new ToDoRecyclerViewAdapter(lstToDo,uID);
+ 
+                                         // Set the layout manager
+                                         // and adapter for items
+@@ -166,6 +164,7 @@
+             }
+         });
+ 
++
+         Button todo_btn = myToDoview.findViewById(R.id.todo_button);
+         todo_btn.setOnClickListener(new View.OnClickListener() {
+             @Override
+@@ -177,74 +176,23 @@
+         return myToDoview;
+     }
+ 
+-    /*private List<ToDoList> toDoList()
+-    {
+-        List<ToDoList> itemList = new ArrayList<>();
+-
+-        ToDoList item = new ToDoList("Title 1", ChildItemList());
+-        itemList.add(item);
+-        ToDoList item1 = new ToDoList("Title 2", ChildItemList());
+-        itemList.add(item1);
+-        ToDoList item2 = new ToDoList("Title 3", ChildItemList());
+-        itemList.add(item2);
+-        ToDoList item3 = new ToDoList("Title 4", ChildItemList());
+-        itemList.add(item3);
+-
+-        return itemList;
+-    }
+-
+-    // Method to pass the arguments
+-    // for the elements
+-    // of child RecyclerView
+-    private List<TaskList> ChildItemList()
+-    {
+-        List<TaskList> ChildItemList = new ArrayList<>();
+-
+-        ChildItemList.add(new TaskList("Card 1"));
+-        ChildItemList.add(new TaskList("Card 2"));
+-        ChildItemList.add(new TaskList("Card 3"));
+-        ChildItemList.add(new TaskList("Card 4"));
+-
+-        return ChildItemList;
+-    }*/
+-
+-    /*private void addtomyToDoList(List<ToDoList> todos){
+-        todos.get(0).addToTaskList(new TaskList("Elso task",uID));
+-    }*/
+-
+     private void pushInMyToDoList(final DatabaseReference reference){
+         reference.addListenerForSingleValueEvent(new ValueEventListener() {
+             int ok = 0;
+             @Override
+             public void onDataChange(@NonNull DataSnapshot snapshot) {
+-                for(DataSnapshot todo: snapshot.getChildren()){
+-                    if(todo.child("owner").getValue().toString().equals(uID) && todo.child("toDoListTitle").getValue().toString().equals("My ToDos")) {
+-                        ok=1;
+-                        Log.d("Espania", "onDataChange: Ifben");
+-                        if(todo.child("ID").getValue() == null){
+-                            todo.child("ID").getRef().setValue(todo.getKey());
+-                        }
+-                        Log.d("Espania", "onDataChange: Itt vagyok!");
+-                        todo.child("taskList").getRef().push().setValue(new TaskList(task_text,uID,todo.getKey()));
+-                    }
+-                }
+-                if(ok == 0){
+-                    ToDoList temp_todo = new ToDoList();
+-                    temp_todo.setToDoListTitle("My ToDos");
+-                    temp_todo.setOwner(uID);
+-                    snapshot.getRef().push().setValue(temp_todo);
+-                    Log.d("Espania", "onDataChange: Elseben");
+-                    for(DataSnapshot todo: snapshot.getChildren()){
+-                        if(todo.child("owner").getValue().toString().equals(uID) && todo.child("toDoListTitle").getValue().toString().equals("My ToDos")) {
+-                            if(todo.child("ID").getValue() == null){
+-                                todo.child("ID").getRef().setValue(todo.getKey());
+-                            }
+-                            Log.d("Espania", "onDataChange: Itt vagyok!");
+-                            todo.child("taskList").getRef().push().setValue(new TaskList(task_text,uID,todo.getKey()));
++                for(DataSnapshot todo: snapshot.getChildren()) {
++                    if (todo.child("toDoListTitle").getValue() != null) {
++                        if (todo.child("toDoListTitle").getValue().toString().equals("My ToDos")) {
++                            ok = 1;
++                            if (todo.child("ID").getValue() == null) {
++                                todo.child("ID").getRef().setValue(todo.getKey());
++                            }
++                            todo.child("taskList").getRef().push().setValue(new TaskList(task_text, uID, todo.getKey()));
+                         }
+                     }
++
+                 }
+-                //Log.d("Espania", "onDataChange: itt vagyok1!");
+             }
+ 
+             @Override
+@@ -267,10 +215,6 @@
+         listView.setVisibility(View.VISIBLE);
+     }
+ 
+-    public void clearList(){
+-        lstToDo.clear();
+-    }
+-
+     @Override
+     public void applyText(String taskname) {
+         task_text = taskname;
+Index: app/src/main/java/com/example/pabs/Fragments/EventFragment/CreateEventFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pabs.Fragments.EventFragment;\r\n\r\nimport android.content.Context;\r\nimport android.location.Address;\r\nimport android.location.Geocoder;\r\nimport android.os.Bundle;\r\nimport android.text.TextUtils;\r\nimport android.util.Log;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ArrayAdapter;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.FrameLayout;\r\nimport android.widget.Spinner;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport com.example.pabs.HelperClass.DateInputMask;\r\nimport com.example.pabs.Models.DatabaseEvent;\r\nimport com.example.pabs.R;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\n\r\nimport java.io.IOException;\r\nimport java.util.List;\r\nimport java.util.Locale;\r\nimport java.util.concurrent.Callable;\r\nimport java.util.concurrent.ExecutionException;\r\nimport java.util.concurrent.ExecutorService;\r\nimport java.util.concurrent.Executors;\r\nimport java.util.concurrent.Future;\r\n\r\n/**\r\n * Creates a new event\r\n */\r\n\r\npublic class CreateEventFragment extends Fragment {\r\n\r\n    private static final String TAG = \"CreateEventFragment\";\r\n\r\n    //UI\r\n    private View containerView;\r\n    private Button back_button;\r\n    private Button next_button;\r\n    private EditText start_date_et;\r\n    private EditText end_date_et;\r\n    private EditText name_et;\r\n    private Spinner dropdown;\r\n    private EditText location_et;\r\n    private FrameLayout FragmentEventContainer;\r\n\r\n    //firebase\r\n    private DatabaseReference reference = null;\r\n\r\n    private final String mUID;\r\n\r\n    public CreateEventFragment(String uID) {\r\n        mUID = uID;\r\n    }\r\n\r\n    /**\r\n     * on fragment created\r\n     */\r\n    @Override\r\n    public void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n\r\n    }\r\n\r\n    /**\r\n     * on view created\r\n     */\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        // Inflate the layout for this fragment\r\n        View CreateEventView = inflater.inflate(R.layout.fragment_create_event, container, false);\r\n        containerView = getActivity().findViewById(R.id.activity_event_layout);\r\n        //\r\n        FragmentEventContainer = getActivity().findViewById(R.id.fragment_event_container);\r\n\r\n        //back button\r\n        back_button = CreateEventView.findViewById(R.id.c_e_back_button);\r\n\r\n\r\n        back_button.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                getActivity().getSupportFragmentManager().popBackStack(\"CreateEventFragment\", 1);\r\n            }\r\n        });\r\n\r\n        //date edit text\r\n        //start date\r\n        start_date_et = CreateEventView.findViewById(R.id.c_e_event_start_date_edit);\r\n\r\n        new DateInputMask(start_date_et);\r\n\r\n        //end date\r\n        end_date_et = CreateEventView.findViewById(R.id.c_e_event_end_date_edit);\r\n\r\n        new DateInputMask(end_date_et);\r\n\r\n        //spinner\r\n        //get the spinner from the xml.\r\n        dropdown = CreateEventView.findViewById(R.id.c_e_public_private_spinner);\r\n        //create a list of items for the spinner.\r\n        String[] items = new String[]{\"Public\", \"Private\"};\r\n        //create an adapter to describe how the items are displayed, adapters are used in several places in android.\r\n        //There are multiple variations of this, but this is the basic variant.\r\n        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, items);\r\n        //set the spinners adapter to the previously created one.\r\n        dropdown.setAdapter(adapter);\r\n\r\n        //location\r\n        location_et = CreateEventView.findViewById(R.id.c_e_event_location_edit);\r\n\r\n        //event name\r\n        name_et = CreateEventView.findViewById(R.id.c_e_event_name_edit);\r\n\r\n        //firebase database -> get reference to USER table\r\n        reference = FirebaseDatabase.getInstance().getReference().child(\"EVENT\");\r\n\r\n        //next button\r\n        next_button = CreateEventView.findViewById(R.id.c_e_next_button);\r\n        next_button.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n\r\n                if (!TextUtils.isEmpty(location_et.getText().toString())) {\r\n                    //if location field is not empty\r\n\r\n                    //getting lat and lng from location\r\n                    LatLng latLng = getLocationFromAddress(getActivity(), location_et.getText().toString());\r\n\r\n                    //if location is found\r\n                    if (latLng != null) {\r\n                        //getting user logged in\r\n                        FirebaseUser fireBaseUser = FirebaseAuth.getInstance().getCurrentUser();\r\n\r\n                        //check for empty fields\r\n                        if (!TextUtils.isEmpty(name_et.getText().toString()) && !TextUtils.isEmpty(start_date_et.getText().toString()) && !TextUtils.isEmpty(end_date_et.getText().toString())) {\r\n                            //new Database created from field contents written in by user\r\n                            DatabaseEvent databaseEvent = new DatabaseEvent();\r\n                            databaseEvent.setLocation_x(latLng.latitude);\r\n                            databaseEvent.setLocation_y(latLng.longitude);\r\n                            databaseEvent.setEvent_name(name_et.getText().toString());\r\n                            databaseEvent.setLocation_name(location_et.getText().toString());\r\n                            databaseEvent.setStart_date(start_date_et.getText().toString());\r\n                            databaseEvent.setEnd_date(end_date_et.getText().toString());\r\n                            databaseEvent.setPriv_pub(dropdown.getSelectedItem().toString());\r\n                            databaseEvent.setOwner_id(fireBaseUser.getUid());\r\n                            //set basic thumbnail\r\n                            databaseEvent.setThumbnail(\"https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351\");\r\n\r\n                            //pushing databaseEvent to database\r\n                            reference.push().setValue(databaseEvent);\r\n\r\n                            //open event\r\n                            openEvent(databaseEvent);\r\n                        }\r\n\r\n                        getAddress(latLng.latitude, latLng.longitude);\r\n\r\n                    } else {\r\n                        //if location is not found\r\n                        Toast.makeText(getActivity(), \"Wrong location!\", Toast.LENGTH_SHORT).show();\r\n                    }\r\n                } else {\r\n                    //if fields are empty\r\n                    Toast.makeText(getActivity(), \"Empty Fields!\", Toast.LENGTH_SHORT).show();\r\n                }\r\n            }\r\n        });\r\n\r\n        //return view\r\n        return CreateEventView;\r\n    }\r\n\r\n\r\n    /**\r\n     * open EventFragment with Data of created event\r\n     */\r\n    public void openEvent(DatabaseEvent databaseEvent) {\r\n        getActivity().getSupportFragmentManager()\r\n                .beginTransaction()\r\n                .replace(R.id.fragment_event_container, new EventFragment(databaseEvent, mUID))\r\n                .addToBackStack(\"EventFragment\")\r\n                .commit();\r\n    }\r\n\r\n\r\n    /**\r\n     * Get Address from location\r\n     */\r\n    public void getAddress(double lat, double lng) {\r\n        try {\r\n            //init\r\n            Geocoder geo = new Geocoder(getActivity().getApplicationContext(), Locale.getDefault());\r\n            //get location address from lat lng\r\n            List<Address> addresses = geo.getFromLocation(lat, lng, 5);\r\n            if (addresses.isEmpty()) {\r\n                Log.d(TAG, \"Waiting for Location\");\r\n            } else {\r\n                if (addresses.size() > 0) {\r\n                    //if location from lat lng was found write address\r\n                    Log.d(TAG, addresses.get(0).getAddressLine(0) + \", \" + addresses.get(0).getFeatureName() + \", \" + addresses.get(0).getLocality() + \", \" + addresses.get(0).getAdminArea() + \", \" + addresses.get(0).getCountryName());\r\n                }\r\n            }\r\n        } catch (Exception e) {\r\n            //if location lat lng was not found\r\n            Log.d(TAG, \"No Location Name Found\");\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Get Location From Address\r\n     */\r\n    public LatLng getLocationFromAddress(Context context, String strAddress) {\r\n\r\n        //init\r\n        Geocoder coder = new Geocoder(context);\r\n        //get executer\r\n        ExecutorService service = Executors.newSingleThreadExecutor();\r\n        //creating new thread\r\n        MyThread myThread = new MyThread(strAddress, coder);\r\n        //future variable to get the value after thread completed\r\n        Future<LatLng> future = service.submit(myThread);\r\n        //init p1\r\n        LatLng p1 = null;\r\n        try {\r\n            //get LatLng result and give it to p1\r\n            p1 = future.get();\r\n        } catch (ExecutionException e) {\r\n            e.printStackTrace();\r\n        } catch (InterruptedException e) {\r\n            e.printStackTrace();\r\n        }\r\n        //return lat lng of location\r\n        return p1;\r\n    }\r\n\r\n    /**\r\n     * on fragment start\r\n     */\r\n    @Override\r\n    public void onStart() {\r\n        super.onStart();\r\n        //Hiding the activity layout\r\n        containerView.setVisibility(View.GONE);\r\n        Log.d(TAG, \"onStart: \" + getActivity().getSupportFragmentManager().getBackStackEntryCount());\r\n    }\r\n\r\n    /**\r\n     * on fragment stop\r\n     */\r\n    @Override\r\n    public void onStop() {\r\n        super.onStop();\r\n        containerView.setVisibility(View.VISIBLE);\r\n    }\r\n\r\n    /**\r\n     * Thread for handling the location search, to avoid UI failure\r\n     */\r\n    public class MyThread implements Callable<LatLng> {\r\n\r\n        private final String strAddress;\r\n        private final Geocoder coder;\r\n\r\n        public MyThread(String strAddress, Geocoder coder) {\r\n            this.strAddress = strAddress;\r\n            this.coder = coder;\r\n        }\r\n\r\n        @Override\r\n        public LatLng call() {\r\n            LatLng p1 = null;\r\n            List<Address> address;\r\n            try {\r\n                // May throw an IOException\r\n\r\n                //getting first 5 results of address\r\n                address = coder.getFromLocationName(strAddress, 5);\r\n                if (address == null) {\r\n                    return null;\r\n                }\r\n\r\n                if (address.size() < 1) {\r\n                    //if location not found\r\n                    //Toast.makeText(context, \"Invalid Location\", Toast.LENGTH_SHORT).show();\r\n                } else {\r\n                    //get lat lng from location\r\n                    Address location = address.get(0);\r\n                    p1 = new LatLng(location.getLatitude(), location.getLongitude());\r\n                }\r\n\r\n\r\n            } catch (IOException ex) {\r\n\r\n                ex.printStackTrace();\r\n            }\r\n            return p1;\r\n        }\r\n\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/Fragments/EventFragment/CreateEventFragment.java	(revision 5338fc911f7d72ce1aabc2a5933a6a760b7081fb)
++++ app/src/main/java/com/example/pabs/Fragments/EventFragment/CreateEventFragment.java	(date 1609026121935)
+@@ -19,6 +19,7 @@
+ import androidx.fragment.app.Fragment;
+ 
+ import com.example.pabs.HelperClass.DateInputMask;
++import com.example.pabs.HelperClass.ToDoList;
+ import com.example.pabs.Models.DatabaseEvent;
+ import com.example.pabs.R;
+ import com.google.android.gms.maps.model.LatLng;
+@@ -57,8 +58,10 @@
+ 
+     //firebase
+     private DatabaseReference reference = null;
++    private DatabaseReference referenceToDo = null;
+ 
+     private final String mUID;
++    private String eventID;
+ 
+     public CreateEventFragment(String uID) {
+         mUID = uID;
+@@ -126,6 +129,7 @@
+ 
+         //firebase database -> get reference to USER table
+         reference = FirebaseDatabase.getInstance().getReference().child("EVENT");
++        referenceToDo = FirebaseDatabase.getInstance().getReference().child("TODO");
+ 
+         //next button
+         next_button = CreateEventView.findViewById(R.id.c_e_next_button);
+@@ -160,8 +164,9 @@
+                             databaseEvent.setThumbnail("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
+ 
+                             //pushing databaseEvent to database
+-                            reference.push().setValue(databaseEvent);
+-
++                            eventID = reference.push().getKey();
++                            reference.child(eventID).setValue(databaseEvent);
++                            createMyToDo(databaseEvent);
+                             //open event
+                             openEvent(databaseEvent);
+                         }
+@@ -266,6 +271,15 @@
+         containerView.setVisibility(View.VISIBLE);
+     }
+ 
++    private void createMyToDo(DatabaseEvent dbEvent){
++        ToDoList temp = new ToDoList();
++        temp.setToDoListTitle(dbEvent.getEvent_name());
++        temp.setOwner(eventID);
++        Log.d("Elipszis", "createMyToDo: " + eventID + ", " + temp.getToDoListTitle());
++        referenceToDo.child(eventID).push().setValue(temp);
++        referenceToDo.child(eventID).child("Type").setValue("G");
++    }
++
+     /**
+      * Thread for handling the location search, to avoid UI failure
+      */
+Index: app/src/main/java/com/example/pabs/Fragments/EventFragment/EventToDoFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/Fragments/EventFragment/EventToDoFragment.java	(date 1609085147440)
++++ app/src/main/java/com/example/pabs/Fragments/EventFragment/EventToDoFragment.java	(date 1609085147440)
+@@ -0,0 +1,255 @@
++package com.example.pabs.Fragments.EventFragment;
++
++import android.graphics.Color;
++import android.os.Bundle;
++
++import androidx.annotation.NonNull;
++import androidx.fragment.app.Fragment;
++import androidx.recyclerview.widget.LinearLayoutManager;
++import androidx.recyclerview.widget.RecyclerView;
++
++import android.os.Handler;
++import android.util.Log;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.widget.Button;
++
++import com.example.pabs.Adapters.CalendarRecyclerViewAdapter;
++import com.example.pabs.Adapters.ToDoRecyclerViewAdapter;
++import com.example.pabs.Fragments.AddTaskDialogFragment;
++import com.example.pabs.HelperClass.TaskList;
++import com.example.pabs.HelperClass.ToDoList;
++import com.example.pabs.Models.DatabaseEvent;
++import com.example.pabs.R;
++import com.google.firebase.database.DataSnapshot;
++import com.google.firebase.database.DatabaseError;
++import com.google.firebase.database.DatabaseReference;
++import com.google.firebase.database.FirebaseDatabase;
++import com.google.firebase.database.ValueEventListener;
++
++import java.util.ArrayList;
++import java.util.List;
++
++import sun.bob.mcalendarview.MarkStyle;
++import sun.bob.mcalendarview.listeners.OnDateClickListener;
++import sun.bob.mcalendarview.vo.DateData;
++
++public class EventToDoFragment extends Fragment implements AddTaskDialogFragment.AddTaskDialogListener {
++
++    private View listView;
++    List<ToDoList> itemList;
++    List<TaskList> lstTasks;
++    //firebase
++    private DatabaseReference reference = null;
++    private String EventID;
++
++    //dialog fragment
++    private String task_text;
++
++    //Event id
++    DatabaseEvent event_obj;
++
++    public EventToDoFragment(DatabaseEvent event) {
++        this.event_obj = event;
++    }
++
++    @Override
++    public void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++    }
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
++        DatabaseReference referenceEvent = FirebaseDatabase.getInstance().getReference().child("EVENT");
++        referenceEvent.addListenerForSingleValueEvent(new ValueEventListener() {
++            @Override
++            public void onDataChange(@NonNull DataSnapshot snapshot) {
++                for(DataSnapshot event : snapshot.getChildren()){
++                    if(event.child("event_name").getValue() != null) {
++                        if (event.child("event_name").getValue().toString().equals(event_obj.getEvent_name())){
++                            EventID = event.getKey();
++                        }
++                    }
++                }
++            }
++
++            @Override
++            public void onCancelled(@NonNull DatabaseError error) {
++
++            }
++        });
++
++        Log.d("EventId", "onCreateView: " + EventID);
++        // Inflate the layout for this fragment
++        View myToDoview = inflater.inflate(R.layout.fragment_my_to_do, container, false);
++
++        //firebase database -> get reference to TODO table
++        reference = FirebaseDatabase.getInstance().getReference().child("TODO").child(EventID);
++
++        listView = getActivity().findViewById(R.id.activity_event_layout);
++        itemList = new ArrayList<>();
++        List<TaskList> tasks = new ArrayList<>();
++
++        final RecyclerView RecyclerViewItem = myToDoview.findViewById(R.id.ev_todo_rec_view);
++
++        // Initialise the Linear layout manager
++        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
++
++        //set data for events example
++        lstTasks = new ArrayList<>();
++
++        //Getting events from database and setting them to recyclerview
++        final DatabaseReference databaseTodoRef;
++        databaseTodoRef= FirebaseDatabase.getInstance().getReference().child("TODO").child(EventID);
++
++        //databaseEvents.addValueEventListener(new ValueEventListener() {
++        databaseTodoRef.addValueEventListener(new ValueEventListener() {
++            @Override
++            public void onDataChange(@NonNull DataSnapshot snapshot) {
++                lstTasks.clear();
++                for (final DataSnapshot todo : snapshot.getChildren()) {
++                    final ToDoList tempTD = new ToDoList();
++
++                    //Loop 1 to go through all child nodes of events
++                    final List<TaskList> tasks =  new ArrayList<>();
++                    todo.getRef().child("taskList").addListenerForSingleValueEvent(new ValueEventListener() {
++                        @Override
++                        public void onDataChange(@NonNull DataSnapshot snapshot) {
++                            for (DataSnapshot task : snapshot.getChildren()) {
++                                //Loop 1 to go through all child nodes of joined members
++                                if(!task.getValue().equals("Type")){
++                                    TaskList task_temp = new TaskList();
++                                    task_temp.setBelongTo(task.child("belongTo").getValue().toString());
++                                    task_temp.setTaskTitle(task.child("taskTitle").getValue().toString());
++                                    String CB = task.child("taskCB").getValue().toString();
++                                    boolean cb = false;
++                                    if(CB.equals("true")){
++                                        cb = true;
++                                        Log.d("Espania", "onDataChange: Ifben vagyok! " + cb);
++                                    }
++                                    task_temp.setTaskCB(cb);
++                                    tasks.add(task_temp);
++                                }
++                            }
++
++
++                            final Handler handler = new Handler();
++                            final int delay = 1000; //milliseconds
++
++                            Log.d("WTF", "run: Here is Jimmi!" + tasks.size());
++                            handler.postDelayed(new Runnable(){
++                                public void run(){
++                                    if(!tasks.isEmpty())//checking if the data is loaded or not
++                                    {
++                                        Log.d("WTF", "run: Here is Johnny!");
++                                        String td_title = todo.child("toDoListTitle").getValue().toString();
++                                        tempTD.setToDoListTitle(td_title);
++                                        String td_owner = todo.child("owner").getValue().toString();
++                                        tempTD.setOwner(td_owner);
++
++                                        tempTD.setTaskList(tasks);
++
++
++                                        //pushing the temporary event object into an arraylist
++                                        lstToDo.add(tempTD);
++                                        // Pass the arguments
++                                        // to the parentItemAdapter.
++                                        // These arguments are passed
++                                        // using a method ParentItemList()
++                                        ToDoRecyclerViewAdapter parentItemAdapter = new ToDoRecyclerViewAdapter(lstToDo,uID);
++
++                                        // Set the layout manager
++                                        // and adapter for items
++                                        // of the parent recyclerview
++                                        ParentRecyclerViewItem.setAdapter(parentItemAdapter);
++                                        ParentRecyclerViewItem.setLayoutManager(layoutManager);
++                                    }
++                                    else
++                                        handler.postDelayed(this, delay);
++                                }
++                            }, delay);
++
++                        }
++
++                        @Override
++                        public void onCancelled(@NonNull DatabaseError error) {
++
++                        }
++                    });
++
++
++                }
++            }
++
++            @Override
++            public void onCancelled(@NonNull DatabaseError error) {
++
++            }
++        });
++
++
++        Button todo_btn = myToDoview.findViewById(R.id.todo_button);
++        todo_btn.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                inviteDialogFragment();
++                Log.d("Espania", "onClick: Heyho");
++            }
++        });
++        return myToDoview;
++    }
++
++    private void pushInMyToDoList(final DatabaseReference reference){
++        reference.addListenerForSingleValueEvent(new ValueEventListener() {
++            int ok = 0;
++            @Override
++            public void onDataChange(@NonNull DataSnapshot snapshot) {
++                for(DataSnapshot todo: snapshot.getChildren()) {
++                    if (todo.child("toDoListTitle").getValue() != null) {
++                        if (todo.child("toDoListTitle").getValue().toString().equals("My ToDos")) {
++                            ok = 1;
++                            if (todo.child("ID").getValue() == null) {
++                                todo.child("ID").getRef().setValue(todo.getKey());
++                            }
++                            todo.child("taskList").getRef().push().setValue(new TaskList(task_text, uID, todo.getKey()));
++                        }
++                    }
++
++                }
++            }
++
++            @Override
++            public void onCancelled(@NonNull DatabaseError error) {
++
++            }
++        });
++    }
++
++    @Override
++    public void onStart() {
++        super.onStart();
++        //Hiding the activity layout
++        listView.setVisibility(View.GONE);
++    }
++
++    @Override
++    public void onStop() {
++        super.onStop();
++        listView.setVisibility(View.VISIBLE);
++    }
++
++    @Override
++    public void applyText(String taskname) {
++        task_text = taskname;
++        Log.d("Espania", "applyText: " + reference);
++        pushInMyToDoList(reference);
++    }
++
++    public void inviteDialogFragment(){
++        AddTaskDialogFragment addTaskDialogFragment = new AddTaskDialogFragment();
++        addTaskDialogFragment.setListener(EventToDoFragment.this);
++        addTaskDialogFragment.setCancelable(true);
++        addTaskDialogFragment.show(getActivity().getSupportFragmentManager(),"AddTaskDialogFragment");
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/pabs/Adapters/EventTodoRecyclerViewAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/Adapters/EventTodoRecyclerViewAdapter.java	(date 1609074037903)
++++ app/src/main/java/com/example/pabs/Adapters/EventTodoRecyclerViewAdapter.java	(date 1609074037903)
+@@ -0,0 +1,120 @@
++package com.example.pabs.Adapters;
++
++import android.content.Context;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.widget.Button;
++import android.widget.CheckBox;
++import android.widget.CompoundButton;
++import android.widget.ImageView;
++import android.widget.TextView;
++import android.widget.Toast;
++
++import androidx.annotation.NonNull;
++import androidx.recyclerview.widget.RecyclerView;
++
++import com.example.pabs.HelperClass.TaskList;
++import com.example.pabs.Models.DatabaseEvent;
++import com.example.pabs.R;
++
++import java.util.List;
++
++import static com.facebook.FacebookSdk.getApplicationContext;
++
++/**
++ * Creates an array of card elements
++ */
++
++public class EventTodoRecyclerViewAdapter extends RecyclerView.Adapter<EventTodoRecyclerViewAdapter.ViewHolder> {
++
++    //Store a member variable for the events
++    private final List<TaskList> tasks;
++
++    //Pass-in the contact array into the constructor
++    public EventTodoRecyclerViewAdapter(List<TaskList> lstTask) {
++        tasks = lstTask;
++    }
++
++    @NonNull
++    @Override
++    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
++        Context context = parent.getContext();
++        LayoutInflater inflater = LayoutInflater.from(context);
++
++        //inflate custom layout
++        View eventtodo_listview = inflater.inflate(R.layout.fragment_event_todo_listrow, parent, false);
++        //Return a new holder instance
++        ViewHolder viewHolder = new ViewHolder(eventtodo_listview );
++        return viewHolder;
++    }
++
++    @Override
++    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
++        //Get the data model based on position
++        TaskList task = tasks.get(position);
++
++        //set item views based on views and data model
++        TextView textView = holder.task_textview;
++        textView.setText(task.getTaskTitle());
++        //Waits for delete button to be clicked
++        Button delete = holder.delete_btn;
++        delete.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                Toast.makeText(getApplicationContext(), "Delete button clikced", Toast.LENGTH_SHORT).show();
++            }
++        });
++        //Waits for pick task button to be clicked
++        Button pick = holder.pick_btn;
++        pick.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                Toast.makeText(getApplicationContext(), "PickTask button clikced", Toast.LENGTH_SHORT).show();
++            }
++        });
++        //Waits for checkbox to be checked or unchecked
++        CheckBox cb = holder.ev_todo_cb;
++        cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
++            @Override
++            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
++                if(isChecked){
++                    Toast.makeText(getApplicationContext(), "CheckBox checked", Toast.LENGTH_SHORT).show();
++                }
++                else
++                {
++                    Toast.makeText(getApplicationContext(), "CheckBox unchecked", Toast.LENGTH_SHORT).show();
++                }
++            }
++        });
++    }
++
++    @Override
++    public int getItemCount() {
++        return tasks.size();
++    }
++
++    // Provide a direct reference to each of the views within a data item
++    // Used to cache the views within the item layout for fast access
++    public class ViewHolder extends RecyclerView.ViewHolder {
++        // Your holder should contain a member variable
++        // for any view that will be set as you render a row
++        public TextView task_textview;
++        public Button delete_btn;
++        public Button pick_btn;
++        public CheckBox ev_todo_cb;
++
++        // We also create a constructor that accepts the entire item row
++        // and does the view lookups to find each subview
++        public ViewHolder(View itemView) {
++            // Stores the itemView in a public final member variable that can be used
++            // to access the context from any ViewHolder instance.
++            super(itemView);
++
++            task_textview = (TextView) itemView.findViewById(R.id.ev_rec_task);
++            delete_btn = (Button) itemView.findViewById(R.id.ev_todo_delete_btn);
++            pick_btn = (Button) itemView.findViewById(R.id.ev_todo_import_btn);
++            ev_todo_cb = (CheckBox) itemView.findViewById(R.id.ev_todo_cb);
++        }
++    }
++}
+Index: app/src/main/res/layout/fragment_event_todo.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_event_todo.xml	(date 1609085146847)
++++ app/src/main/res/layout/fragment_event_todo.xml	(date 1609085146847)
+@@ -0,0 +1,38 @@
++<?xml version="1.0" encoding="utf-8"?>
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context=".Fragments.MyToDoFragment"
++    android:background="@color/white">
++
++    <RelativeLayout
++        android:layout_width="match_parent"
++        android:layout_height="match_parent">
++
++        <TextView
++            android:id="@+id/e_todo_title"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:text="TODOs"
++            android:textSize="32dp"
++            android:textAlignment="center"/>
++
++        <androidx.recyclerview.widget.RecyclerView
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_below="@+id/e_todo_title"
++            android:id="@+id/ev_todo_rec_view"/>
++
++        <!--<Button
++            android:id="@+id/todo_button"
++            android:layout_width="60dp"
++            android:layout_height="60dp"
++            android:layout_alignParentRight="true"
++            android:layout_alignParentBottom="true"
++            android:layout_marginRight="40dp"
++            android:layout_marginBottom="20dp"
++            android:background="@color/black" />-->
++    </RelativeLayout>
++
++</FrameLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_event_todo_listrow.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_event_todo_listrow.xml	(date 1609073826030)
++++ app/src/main/res/layout/fragment_event_todo_listrow.xml	(date 1609073826030)
+@@ -0,0 +1,48 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="wrap_content"
++    xmlns:app="http://schemas.android.com/apk/res-auto">
++
++    <RelativeLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:background="@color/grey">
++        <LinearLayout
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:weightSum="4"
++            android:id="@+id/titlebar">
++            <TextView
++                android:id="@+id/ev_rec_task"
++                android:layout_width="0dp"
++                android:layout_height="wrap_content"
++                android:layout_weight="3.7"
++                android:layout_marginLeft="10dp"
++                android:text="HaHa"
++                android:textSize="24dp"
++                android:layout_gravity="center_vertical"/>
++            <Button
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:layout_weight="0.1"
++                android:text="Delete"
++                android:layout_gravity="center_vertical"
++                android:id="@+id/ev_todo_delete_btn"/>
++            <Button
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:layout_weight="0.1"
++                android:text="Pick Task"
++                android:layout_gravity="center_vertical"
++                android:id="@+id/ev_todo_import_btn"/>
++            <CheckBox
++                android:layout_width="35dp"
++                android:layout_height="35dp"
++                android:id="@+id/ev_todo_cb"
++                android:layout_gravity="center_vertical"/>
++        </LinearLayout>
++    </RelativeLayout>
++
++
++</LinearLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/pabs/RegisterActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pabs;\r\n\r\nimport android.app.ProgressDialog;\r\nimport android.os.Bundle;\r\nimport android.text.TextUtils;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport com.example.pabs.Models.User;\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.firebase.auth.AuthResult;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.messaging.FirebaseMessaging;\r\n\r\nimport static com.example.pabs.R.layout.activity_register;\r\n\r\n/**\r\n * Handles Register for users\r\n */\r\n\r\npublic class RegisterActivity extends AppCompatActivity {\r\n\r\n    //firebase\r\n    DatabaseReference reference;\r\n    //UI\r\n    private EditText name_et = null, password_et = null, email_et = null;\r\n    private Button register_btn = null, back_to_login = null;\r\n    private FirebaseAuth currAuth;\r\n    private ProgressDialog mDialog = null;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(activity_register);\r\n\r\n        //edittext\r\n        name_et = findViewById(R.id.r_username);\r\n        password_et = findViewById(R.id.r_password);\r\n        email_et = findViewById(R.id.r_email);\r\n\r\n        //button\r\n        register_btn = findViewById(R.id.r_signup_button);\r\n\r\n        back_to_login = findViewById(R.id.r_existing_account);\r\n\r\n        //open login\r\n        back_to_login.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                finish();\r\n            }\r\n        });\r\n\r\n        //firebase database -> get reference to USER table\r\n        reference = FirebaseDatabase.getInstance().getReference().child(\"USER\");\r\n\r\n        register_btn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                //dialog on loading\r\n                mDialog = new ProgressDialog(RegisterActivity.this);\r\n\r\n                mDialog.setMessage(\"Please wait...\");\r\n                mDialog.setCancelable(false);\r\n                mDialog.show();\r\n\r\n                register();\r\n            }\r\n        });\r\n    }\r\n\r\n    private void register() {\r\n\r\n        //getting user credentials\r\n        String name = name_et.getText().toString();\r\n        String email = email_et.getText().toString();\r\n        final String password = password_et.getText().toString();\r\n\r\n        if (!TextUtils.isEmpty(email_et.getText().toString()) && !TextUtils.isEmpty(password_et.getText().toString()) && !TextUtils.isEmpty(name_et.getText().toString())) {\r\n\r\n            //creating a user type object\r\n            final User user = new User(\"\", email, \"\", name, \"false\");\r\n\r\n            //getting an instance of firebase authentication token\r\n            currAuth = FirebaseAuth.getInstance();\r\n            currAuth.createUserWithEmailAndPassword(email, password)\r\n                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {\r\n                        @Override\r\n                        public void onComplete(@NonNull Task<AuthResult> task) {\r\n                            if (task.isSuccessful()) {\r\n\r\n                                FirebaseMessaging.getInstance().deleteToken();\r\n\r\n                                reference.child(currAuth.getUid()).setValue(user);\r\n                                FirebaseAuth.getInstance().signOut();\r\n                                mDialog.dismiss();\r\n                                Toast.makeText(RegisterActivity.this, \"Succesfully registered!\", Toast.LENGTH_SHORT).show();\r\n                                finish();\r\n                            } else {\r\n                                if (password.length() < 6) {\r\n                                    Toast.makeText(RegisterActivity.this, \"The given password is too short \\nIt needs to be at least 6 characters!\", Toast.LENGTH_SHORT).show();\r\n                                    mDialog.dismiss();\r\n                                } else {\r\n                                    Toast.makeText(RegisterActivity.this, \"The given E-mail may contain errors!\", Toast.LENGTH_SHORT).show();\r\n                                    mDialog.dismiss();\r\n                                }\r\n                            }\r\n                        }\r\n                    });\r\n        } else {\r\n            Toast.makeText(RegisterActivity.this, \"Fields are empty!.\", Toast.LENGTH_SHORT).show();\r\n            mDialog.dismiss();\r\n        }\r\n\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pabs/RegisterActivity.java	(revision 5338fc911f7d72ce1aabc2a5933a6a760b7081fb)
++++ app/src/main/java/com/example/pabs/RegisterActivity.java	(date 1608995553645)
+@@ -3,6 +3,7 @@
+ import android.app.ProgressDialog;
+ import android.os.Bundle;
+ import android.text.TextUtils;
++import android.util.Log;
+ import android.view.View;
+ import android.widget.Button;
+ import android.widget.EditText;
+@@ -11,6 +12,7 @@
+ import androidx.annotation.NonNull;
+ import androidx.appcompat.app.AppCompatActivity;
+ 
++import com.example.pabs.HelperClass.ToDoList;
+ import com.example.pabs.Models.User;
+ import com.google.android.gms.tasks.OnCompleteListener;
+ import com.google.android.gms.tasks.Task;
+@@ -30,9 +32,10 @@
+ 
+     //firebase
+     DatabaseReference reference;
++    DatabaseReference referenceToDO;
+     //UI
+     private EditText name_et = null, password_et = null, email_et = null;
+-    private Button register_btn = null, back_to_login = null;
++    private Button register_btn, back_to_login;
+     private FirebaseAuth currAuth;
+     private ProgressDialog mDialog = null;
+ 
+@@ -75,6 +78,8 @@
+                 register();
+             }
+         });
++
++        referenceToDO = FirebaseDatabase.getInstance().getReference().child("TODO");
+     }
+ 
+     private void register() {
+@@ -100,6 +105,7 @@
+                                 FirebaseMessaging.getInstance().deleteToken();
+ 
+                                 reference.child(currAuth.getUid()).setValue(user);
++                                createMyToDo();
+                                 FirebaseAuth.getInstance().signOut();
+                                 mDialog.dismiss();
+                                 Toast.makeText(RegisterActivity.this, "Succesfully registered!", Toast.LENGTH_SHORT).show();
+@@ -122,4 +128,12 @@
+ 
+     }
+ 
++    private void createMyToDo(){
++        ToDoList temp = new ToDoList();
++        temp.setToDoListTitle("My ToDos");
++        temp.setOwner(currAuth.getUid());
++        Log.d("Elipszis", "createMyToDo: " + currAuth.getUid() + ", " + temp.getToDoListTitle());
++        referenceToDO.child(currAuth.getUid()).push().setValue(temp);
++        referenceToDO.child(currAuth.getUid()).child("Type").setValue("U");
++    }
+ }
+\ No newline at end of file

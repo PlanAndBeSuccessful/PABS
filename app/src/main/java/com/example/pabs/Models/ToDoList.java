@@ -1,4 +1,4 @@
-package com.example.pabs.HelperClass;
+package com.example.pabs.Models;
 
 import java.util.List;
 

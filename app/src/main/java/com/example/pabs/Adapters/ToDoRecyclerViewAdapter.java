@@ -1,19 +1,16 @@
 package com.example.pabs.Adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.pabs.HelperClass.ToDoList;
+import com.example.pabs.Models.ToDoList;
 import com.example.pabs.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,11 +26,13 @@ import java.util.List;
 
 public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerViewAdapter.MyToDoViewHolder>{
 
-    private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
-    private List<ToDoList> toDoList;
+    private final RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
+    private final List<ToDoList> toDoList;
+    private final String uID;
 
-    public ToDoRecyclerViewAdapter(List<ToDoList> toDoList) {
+    public ToDoRecyclerViewAdapter(List<ToDoList> toDoList, String uid) {
         this.toDoList = toDoList;
+        this.uID = uid;
     }
 
     @NonNull
@@ -51,7 +50,7 @@ public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerVi
     public void onBindViewHolder(@NonNull final MyToDoViewHolder parentViewHolder, int position)
     {
         //firebase
-        final DatabaseReference referenceDB = FirebaseDatabase.getInstance().getReference().child("TODO");
+        final DatabaseReference referenceDB = FirebaseDatabase.getInstance().getReference().child("TODO").child(uID);
 
         // Create an instance of the ParentItem
         // class for the given position
@@ -103,7 +102,7 @@ public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerVi
         // Create an instance of the child
         // item view adapter and set its
         // adapter, layout manager and RecyclerViewPool
-        TaskRecyclerViewAdapter childItemAdapter = new TaskRecyclerViewAdapter(todolist.getTaskList());
+        TaskRecyclerViewAdapter childItemAdapter = new TaskRecyclerViewAdapter(todolist.getTaskList(), uID);
         parentViewHolder.childRecyclerView.setLayoutManager(layoutManager);
         parentViewHolder.childRecyclerView.setAdapter(childItemAdapter);
         parentViewHolder.childRecyclerView.setRecycledViewPool(viewPool);
@@ -119,9 +118,9 @@ public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerVi
     // the parent RecyclerView
     class MyToDoViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView toDoListTitle;
-        private Button delete_btn;
-        private RecyclerView childRecyclerView;
+        private final TextView toDoListTitle;
+        private final Button delete_btn;
+        private final RecyclerView childRecyclerView;
 
         MyToDoViewHolder(final View itemView)
         {

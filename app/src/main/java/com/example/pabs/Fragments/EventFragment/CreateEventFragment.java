@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.pabs.HelperClass.DateInputMask;
+import com.example.pabs.Models.ToDoList;
 import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.R;
 import com.google.android.gms.maps.model.LatLng;
@@ -34,7 +35,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -75,8 +75,10 @@ public class CreateEventFragment extends Fragment {
     //firebase
     private DatabaseReference reference = null;
     private DatabaseReference databaseGroupReference;
+    private DatabaseReference  referenceToDO;
 
     private final String mUID;
+    private String eventID;
 
     public CreateEventFragment(String uID) {
         mUID = uID;
@@ -165,6 +167,8 @@ public class CreateEventFragment extends Fragment {
         //set the spinners adapter to the previously created one.
         group_dropdown.setAdapter(groupAdapter);
 
+        referenceToDO = FirebaseDatabase.getInstance().getReference().child("TODO");
+
         databaseGroupReference = FirebaseDatabase.getInstance().getReference().child("GROUP");
         databaseGroupReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -178,7 +182,7 @@ public class CreateEventFragment extends Fragment {
                         groupAdapter.notifyDataSetChanged();
                     }
                     else{
-                    //if he is joined in group
+                        //if he is joined in group
                         group.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -270,8 +274,9 @@ public class CreateEventFragment extends Fragment {
                                                                 databaseEvent.setJoined_members(joined_members);
 
                                                                 //pushing databaseEvent to database
-                                                                reference.push().setValue(databaseEvent);
-
+                                                                eventID = reference.push().getKey();
+                                                                reference.child(eventID).setValue(databaseEvent);
+                                                                createMyToDo(databaseEvent);
                                                                 //open event
                                                                 openEvent(databaseEvent);
                                                             }
@@ -300,7 +305,7 @@ public class CreateEventFragment extends Fragment {
                                     openEvent(databaseEvent);
                                 }
 
-                        }else{
+                            }else{
                                 //if starting date > ending date
                                 Toast.makeText(getActivity(), "Wrong date!", Toast.LENGTH_SHORT).show();
                             }
@@ -425,6 +430,15 @@ public class CreateEventFragment extends Fragment {
     public void onStop() {
         super.onStop();
         containerView.setVisibility(View.VISIBLE);
+    }
+
+    private void createMyToDo(DatabaseEvent dbEv){
+        ToDoList temp = new ToDoList();
+        temp.setToDoListTitle(dbEv.getEvent_name());
+        temp.setOwner(eventID);
+        Log.d("Elipszis", "createMyToDo: " + eventID + ", " + temp.getToDoListTitle());
+        referenceToDO.child(eventID).push().setValue(temp);
+        referenceToDO.child(eventID).child("Type").setValue("G");
     }
 
     /**

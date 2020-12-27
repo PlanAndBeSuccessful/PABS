@@ -582,6 +582,10 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
 
     @Override
     public void ToDo() {
-
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_event_container, new EventToDoFragment(databaseEvent))
+                .addToBackStack("EventToDoFragment")
+                .commit();
     }
 }

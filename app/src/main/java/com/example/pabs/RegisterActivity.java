@@ -3,6 +3,7 @@ package com.example.pabs;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.pabs.Models.ToDoList;
 import com.example.pabs.Models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,9 +32,10 @@ public class RegisterActivity extends AppCompatActivity {
 
     //firebase
     DatabaseReference reference;
+    DatabaseReference referenceToDO;
     //UI
     private EditText name_et = null, password_et = null, email_et = null;
-    private Button register_btn = null, back_to_login = null;
+    private Button register_btn, back_to_login;
     private FirebaseAuth currAuth;
     private ProgressDialog mDialog = null;
 
@@ -75,6 +78,8 @@ public class RegisterActivity extends AppCompatActivity {
                 register();
             }
         });
+
+        referenceToDO = FirebaseDatabase.getInstance().getReference().child("TODO");
     }
 
     private void register() {
@@ -100,6 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 FirebaseMessaging.getInstance().deleteToken();
 
                                 reference.child(currAuth.getUid()).setValue(user);
+                                createMyToDo();
                                 FirebaseAuth.getInstance().signOut();
                                 mDialog.dismiss();
                                 Toast.makeText(RegisterActivity.this, "Succesfully registered!", Toast.LENGTH_SHORT).show();
@@ -122,4 +128,12 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
+    private void createMyToDo(){
+        ToDoList temp = new ToDoList();
+        temp.setToDoListTitle("My ToDos");
+        temp.setOwner(currAuth.getUid());
+        Log.d("Elipszis", "createMyToDo: " + currAuth.getUid() + ", " + temp.getToDoListTitle());
+        referenceToDO.child(currAuth.getUid()).push().setValue(temp);
+        referenceToDO.child(currAuth.getUid()).child("Type").setValue("U");
+    }
 }

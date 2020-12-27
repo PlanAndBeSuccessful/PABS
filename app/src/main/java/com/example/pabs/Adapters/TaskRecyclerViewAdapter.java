@@ -6,13 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.pabs.HelperClass.TaskList;
+import com.example.pabs.Models.TaskList;
 import com.example.pabs.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,11 +24,13 @@ import java.util.List;
 public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerViewAdapter.MyTaskViewHolder> {
 
     private List<TaskList> taskList;
+    private String uID;
 
     // Constuctor
-    TaskRecyclerViewAdapter(List<TaskList> taskList)
+    TaskRecyclerViewAdapter(List<TaskList> taskList, String uid)
     {
         this.taskList = taskList;
+        this.uID = uid;
     }
 
     @NonNull
@@ -47,10 +48,11 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
     @Override
     public void onBindViewHolder(@NonNull final MyTaskViewHolder childViewHolder, int position)
     {
-        final DatabaseReference referenceDB = FirebaseDatabase.getInstance().getReference().child("TODO");
+        final DatabaseReference referenceDB = FirebaseDatabase.getInstance().getReference().child("TODO").child(uID);
+        Log.d("DBREF", "DatabaseReference: " + referenceDB);
         // Create an instance of the ChildItem
         // class for the given position
-        TaskList childItem = taskList.get(position);
+        final TaskList childItem = taskList.get(position);
 
         // For the created instance, set title.
         // No need to set the image for
@@ -60,7 +62,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
         childViewHolder.taskTitle.setText(childItem.getTaskTitle());
 
         Log.d("Espania", "onBindViewHolder: Ifen kivül vagyok! " + childViewHolder.taskCB);
-        if((taskList.get(childViewHolder.getAdapterPosition()).getTaskCB())){
+        if(childItem.getTaskCB()){
             childViewHolder.taskCB.setChecked(true);
             Log.d("Espania", "onBindViewHolder: Ifben vagyok! " + childViewHolder.taskCB);
         }
@@ -72,17 +74,20 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
             @Override
             public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
                 //set your object's last status
-                taskList.get(childViewHolder.getAdapterPosition()).setTaskCB(isChecked);
+                Log.d("Elipszis", "onDataChangeTaskListreference: "+ taskList.get(childViewHolder.getAdapterPosition()));
+                childItem.setTaskCB(isChecked);
                 referenceDB.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for(DataSnapshot todo : snapshot.getChildren()){
-                            if(todo.getKey().equals(taskList.get(childViewHolder.getAdapterPosition()).getReferenceTo())){
+                            Log.d("DBREF", "onDataChangeTask: " + todo.getKey() );
+                            Log.d("Elipszis", "onDataChangeTask: " + todo.getKey() + ", " + childItem.getReferenceTo() );
+                            if(!todo.getKey().equals("Type")){
                                 todo.getRef().child("taskList").addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         for(DataSnapshot task : snapshot.getChildren()){
-                                            if(task.child("taskTitle").getValue().toString().equals(taskList.get(childViewHolder.getAdapterPosition()).getTaskTitle())){
+                                            if(task.child("taskTitle").getValue().toString().equals(childItem.getTaskTitle())){
                                                 task.child("taskCB").getRef().setValue(isChecked);
                                             }
                                         }
