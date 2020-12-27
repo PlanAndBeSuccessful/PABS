@@ -49,6 +49,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     //UI
     private ImageView create_event_img_btn;
     private ImageView open_group_button;
+    private ImageView open_todo_button;
 
     //firebase
     private DatabaseReference reference;
@@ -220,13 +221,11 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
 
         //create event button
         create_event_img_btn = findViewById(R.id.a_e_create_event_button);
-        create_event_img_btn.setOnTouchListener(new View.OnTouchListener() {
+        create_event_img_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    openCreateEventFragment();
-                }
-                return false;
+            public void onClick(View view) {
+                clearBackstack();
+                openCreateEventFragment();
             }
         });
         //
@@ -234,7 +233,18 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         open_group_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                clearBackstack();
                 openGroupActivity();
+            }
+        });
+
+        //
+        open_todo_button = findViewById(R.id.a_e_open_todo_button);
+        open_todo_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clearBackstack();
+                openMyToDoFragment();
             }
         });
 
@@ -327,36 +337,40 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.nav_events:
-                for(int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); ++i) {
-                    getSupportFragmentManager().popBackStack();
-                }
+                clearBackstack();
                 Toast.makeText(this, "nav_events", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_calendar:
+                clearBackstack();
                 openCalendarFragment();
                 Toast.makeText(this, "nav_calendar", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_groups:
+                clearBackstack();
                 openGroupActivity();
                 Toast.makeText(this, "nav_groups", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_profile:
+                clearBackstack();
                 Toast.makeText(this, "nav_profile", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_settings:
+                clearBackstack();
                 Toast.makeText(this, "nav_settings", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_todo:
+                clearBackstack();
                 openMyToDoFragment();
                 Toast.makeText(this, "nav_todo", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_logout:
+                clearBackstack();
                 Toast.makeText(this, "nav_logout", Toast.LENGTH_SHORT).show();
                 reference.child(uID).child("online").setValue("false");
                 finish();
@@ -370,6 +384,13 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         //close drawer on item clicked
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+    private void clearBackstack() {
+        for (int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); ++i) {
+            getSupportFragmentManager().popBackStack();
+        }
     }
 
 

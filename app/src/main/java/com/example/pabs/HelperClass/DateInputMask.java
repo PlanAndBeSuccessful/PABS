@@ -57,7 +57,8 @@ public class DateInputMask implements TextWatcher {
 
             mon = mon < 1 ? 1 : Math.min(mon, 12);
             cal.set(Calendar.MONTH, mon - 1);
-            year = (year < 1900) ? 1900 : Math.min(year, 2100);
+
+            year = (year < Calendar.getInstance().get(Calendar.YEAR)) ? Calendar.getInstance().get(Calendar.YEAR) : Math.min(year, 2100);
             cal.set(Calendar.YEAR, year);
             // ^ first set year for the line below to work correctly
             //with leap years - otherwise, date e.g. 29/02/2012

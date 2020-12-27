@@ -24,6 +24,7 @@ import com.example.pabs.Adapters.GroupRecyclerViewAdapter;
 import com.example.pabs.Fragments.CalendarFragment;
 import com.example.pabs.Fragments.GroupFragment.CodeDialogFragment;
 import com.example.pabs.Fragments.GroupFragment.CreateGroupFragment;
+import com.example.pabs.Fragments.MyToDoFragment;
 import com.example.pabs.Models.Group;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
@@ -315,18 +316,28 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
                 break;
 
             case R.id.nav_groups:
+                clearBackstack();
                 Toast.makeText(this, "nav_groups", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_profile:
+                clearBackstack();
                 Toast.makeText(this, "nav_profile", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_settings:
+                clearBackstack();
                 Toast.makeText(this, "nav_settings", Toast.LENGTH_SHORT).show();
                 break;
 
+            case R.id.nav_todo:
+                clearBackstack();
+                openMyToDoFragment();
+                Toast.makeText(this, "nav_todo", Toast.LENGTH_SHORT).show();
+                break;
+
             case R.id.nav_logout:
+                clearBackstack();
                 Toast.makeText(this, "nav_logout", Toast.LENGTH_SHORT).show();
                 reference.child(uID).child("online").setValue("false");
                 finish();
@@ -346,6 +357,17 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
         for (int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); ++i) {
             getSupportFragmentManager().popBackStack();
         }
+    }
+
+    /**
+     * open MyToDo event fragment
+     */
+    private void openMyToDoFragment(){
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_event_container, new MyToDoFragment())
+                .addToBackStack("MyToDoFragment")
+                .commit();
     }
 
     /**
