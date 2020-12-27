@@ -117,6 +117,8 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
             }
         });
 
+
+
         fab = (FloatingActionButton) view.findViewById(R.id.f_g_rlChat_sendBtn);
 
         fab.setOnClickListener(new View.OnClickListener() {

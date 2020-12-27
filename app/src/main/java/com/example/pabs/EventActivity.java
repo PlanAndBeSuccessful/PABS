@@ -49,7 +49,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     //UI
     private ImageView create_event_img_btn;
     private ImageView open_group_button;
-    private ImageView open_todo_button;
+    private ImageView show_my_events_button;
 
     //firebase
     private DatabaseReference reference;
@@ -66,6 +66,9 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     //
     private SearchView sw;
     private EventRecyclerViewAdapter myAdapter;
+
+    //
+    private int mState = 0;
 
     /**
      * On create
@@ -86,16 +89,21 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         lstEvent = new ArrayList<>();
 
         //Getting events from database and setting them to recyclerview
-        DatabaseReference databaseEvents;
-        databaseEvents = FirebaseDatabase.getInstance().getReference().child("EVENT");
+        DatabaseReference databaseEventsRef;
+        databaseEventsRef = FirebaseDatabase.getInstance().getReference().child("EVENT");
 
-        databaseEvents.addValueEventListener(new ValueEventListener() {
+        setEvents();
+
+        databaseEventsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 clearEvents();
                 for (final DataSnapshot event : snapshot.getChildren()) {
                     //Loop 1 to go through all child nodes of events
-                    String temp = event.child("event_name").getValue().toString();
+
+                    if (!event.getKey().equals("test")){
+
+                        String temp = event.child("event_name").getValue().toString();
 
                     Uri myUri = null;
                     String UriStr = null;
@@ -127,37 +135,36 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                         tempEv.setThumbnail(myUri);
                     }
 
-
-                    if((event.child("priv_pub").getValue().toString()).equals("Public")){
-                        //add events to array
-                        addToEventsArray(tempEv);
-                    }
-                    else if((event.child("owner_id").getValue().toString()).equals(uID)){
-                        addToEventsArray(tempEv);
-                    }
-                    else{
-                        event.child("joined_members").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for(DataSnapshot member : snapshot.getChildren()){
-                                    if(member.getValue().toString().equals(uID)){
-                                        addToEventsArray(tempEv);
-                                        break;
+                        if ((event.child("priv_pub").getValue().toString()).equals("Public") && mState == 0) {
+                            //add events to array
+                            addToEventsArray(tempEv);
+                        } else if ((event.child("owner_id").getValue().toString()).equals(uID)) {
+                            addToEventsArray(tempEv);
+                        } else {
+                            if(mState == 1) {
+                                event.child("joined_members").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot member : snapshot.getChildren()) {
+                                            if (member.getValue().toString().equals(uID)) {
+                                                addToEventsArray(tempEv);
+                                                break;
+                                            }
+                                        }
                                     }
-                                }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
                             }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-                    }
-
+                        }
+                }
                 }
 
                 //Set and show events on main screen
-                setEvents();
+                myAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -239,12 +246,26 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
         });
 
         //
-        open_todo_button = findViewById(R.id.a_e_open_todo_button);
-        open_todo_button.setOnClickListener(new View.OnClickListener() {
+        show_my_events_button = findViewById(R.id.a_e_show_my_events_button);
+        show_my_events_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                clearBackstack();
-                openMyToDoFragment();
+                if(mState == 0){
+                    //if public events are shown and want to update to private events
+                    mState = 1;
+                    updateDatabase();
+                    //Todo: Change ICON
+                    show_my_events_button.setImageResource(R.drawable.circle);
+                    return;
+                }
+                if(mState == 1){
+                    //if private events are shown and want to update to public events
+                    mState = 0;
+                    updateDatabase();
+                    //Todo: Change ICON
+                    show_my_events_button.setImageResource(R.drawable.myeventsbutton);
+                    return;
+                }
             }
         });
 
@@ -275,6 +296,88 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
             }
         });
 
+    }
+
+    private void updateDatabase(){
+        DatabaseReference databaseEventsRef;
+        databaseEventsRef = FirebaseDatabase.getInstance().getReference().child("EVENT");
+        databaseEventsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                clearEvents();
+                for (final DataSnapshot event : snapshot.getChildren()) {
+                    //Loop 1 to go through all child nodes of events
+                        String temp = event.child("event_name").getValue().toString();
+
+                        Uri myUri = null;
+                        String UriStr = null;
+
+                        //if the event has a thumbnail, get Uri
+                        if (event.child("thumbnail").getValue() != null) {
+                            UriStr = event.child("thumbnail").getValue().toString();
+                            myUri = Uri.parse(UriStr);
+                        }
+
+                        //get no image Uri
+                        Uri testUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
+
+                        //Create temporary Event
+                        final Event tempEv;
+
+                        //if Event has no thumbnail
+                        if (UriStr == null) {
+                            //Give the event, the no image thumbnail
+                            tempEv = new Event();
+                            tempEv.setTitle(temp);
+                            tempEv.setThumbnail(testUri);
+                        }
+                        //if Event has thumbnail
+                        else {
+                            //Set thumbnail of event
+                            tempEv = new Event();
+                            tempEv.setTitle(temp);
+                            tempEv.setThumbnail(myUri);
+                        }
+
+                        if ((event.child("priv_pub").getValue().toString()).equals("Public") && mState == 0) {
+                            //add events to array
+                            addToEventsArray(tempEv);
+                        } else if ((event.child("owner_id").getValue().toString()).equals(uID)) {
+                            addToEventsArray(tempEv);
+                        } else {
+                            if(mState == 1) {
+                                event.child("joined_members").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot member : snapshot.getChildren()) {
+                                            if (member.getValue().toString().equals(uID)) {
+                                                Log.d("ASDASD", "PRIVATE_JOINED: " + tempEv.getTitle());
+                                                addToEventsArray(tempEv);
+                                                //Set and show events on main screen
+                                                myAdapter.notifyDataSetChanged();
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+                        }
+                    //Set and show events on main screen
+                    myAdapter.notifyDataSetChanged();
+                    }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     public static void hideKeyboard(Activity activity) {

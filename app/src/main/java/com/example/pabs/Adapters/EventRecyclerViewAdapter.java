@@ -38,6 +38,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
     private final List<Event> mDataCopy;
     private final FragmentManager mFragment;
     private final String mUID;
+    private int mState = 0;
 
     /**
      * Constructor of EventRecyclerViewAdapter
@@ -211,11 +212,15 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                 } else {
                     holder.tv_title.setVisibility(View.VISIBLE);
 
+                    //Todo: Fix delays changing between public/myEvents
+
+                    int delay = 3000;
+
                     holder.tv_title.postDelayed(new Runnable() {
                         public void run() {
                             holder.tv_title.setVisibility(View.GONE);
                         }
-                    }, 3000);
+                    }, delay);
                 }
 
 
