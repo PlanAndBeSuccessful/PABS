@@ -92,7 +92,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 clearEvents();
-                for (DataSnapshot event : snapshot.getChildren()) {
+                for (final DataSnapshot event : snapshot.getChildren()) {
                     //Loop 1 to go through all child nodes of events
                     String temp = event.child("event_name").getValue().toString();
 
@@ -109,7 +109,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                     Uri testUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
 
                     //Create temporary Event
-                    Event tempEv;
+                    final Event tempEv;
 
                     //if Event has no thumbnail
                     if (UriStr == null) {
@@ -126,8 +126,33 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                         tempEv.setThumbnail(myUri);
                     }
 
-                    //add events to array
-                    addToEventsArray(tempEv);
+
+                    if((event.child("priv_pub").getValue().toString()).equals("Public")){
+                        //add events to array
+                        addToEventsArray(tempEv);
+                    }
+                    else if((event.child("owner_id").getValue().toString()).equals(uID)){
+                        addToEventsArray(tempEv);
+                    }
+                    else{
+                        event.child("joined_members").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for(DataSnapshot member : snapshot.getChildren()){
+                                    if(member.getValue().toString().equals(uID)){
+                                        addToEventsArray(tempEv);
+                                        break;
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+
                 }
 
                 //Set and show events on main screen

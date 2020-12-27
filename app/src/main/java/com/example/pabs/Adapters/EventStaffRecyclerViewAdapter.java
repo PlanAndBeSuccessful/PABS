@@ -85,7 +85,13 @@ public class EventStaffRecyclerViewAdapter extends RecyclerView.Adapter<EventSta
      */
     @Override
     public int getItemCount() {
-        return mData.size();
+        if(mData == null){
+            return 0;
+        }
+        else{
+            return mData.size();
+        }
+
     }
 
     /**

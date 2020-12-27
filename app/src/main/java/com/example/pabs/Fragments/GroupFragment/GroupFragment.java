@@ -40,7 +40,7 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
     private final String mUID;
     private int mState;
     private String nickname;
-    private String group_owner_username;
+    private String group_owner_nickname;
 
     private EditText input_et;
 
@@ -100,9 +100,10 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
                     if ((user.getKey()).equals(mUID)) {
                         nickname = user.child("nickname").getValue().toString();
                     }
+                    //nickname of group owner
                     if ((user.getKey()).equals(mGroup.getGroup_owner())) {
-                        group_owner_username = user.child("user_name").getValue().toString();
-                        group_owner_tv.setText(group_owner_username);
+                        group_owner_nickname = user.child("nickname").getValue().toString();
+                        group_owner_tv.setText(group_owner_nickname);
                     }
                 }
             }
