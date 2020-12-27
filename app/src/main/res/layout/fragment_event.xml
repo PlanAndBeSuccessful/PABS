@@ -42,13 +42,13 @@
             <TextView
                 android:id="@+id/fe_event_name"
                 android:layout_width="222dp"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:fontFamily="@font/roboto_medium_italic"
                 android:gravity="center_horizontal"
                 android:text="Event Name"
                 android:textAlignment="center"
                 android:textColor="#92129D"
-                android:textSize="35sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/fe_event_date_start"
@@ -100,16 +100,18 @@
                 android:id="@+id/fe_event_description"
                 android:layout_width="396dp"
                 android:layout_height="164dp"
-                android:layout_below="@+id/fe_event_date_start"
+                android:layout_below="@+id/fe_description_text"
+                android:layout_above="@+id/fe_description_text"
                 android:layout_alignParentBottom="true"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginBottom="106dp"
                 android:fontFamily="@font/roboto_thin"
                 android:gravity="top|start"
                 android:paddingRight="5dp"
-                android:text="Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello"
+                android:text="Hello Hello Hello Hello HHello Hello Hello Hello HHello Hello Hello Hello HHello Hello Hello Hello HHello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello"
                 android:textColor="@color/black"
                 android:textSize="22sp"
+                android:scrollbars = "vertical"
                 tools:ignore="RtlCompat" />
 
             <!--Map Container-->

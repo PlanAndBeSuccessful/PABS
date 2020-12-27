@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,6 +116,8 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
         event_description_tv = view.findViewById(R.id.fe_event_description);
         location_text_tv = view.findViewById(R.id.fe_location_text);
         image_view = view.findViewById(R.id.fe_event_image);
+
+        event_description_tv.setMovementMethod(new ScrollingMovementMethod());
 
         if (databaseEvent.getThumbnail() != null) {
             //set image if it's not null
