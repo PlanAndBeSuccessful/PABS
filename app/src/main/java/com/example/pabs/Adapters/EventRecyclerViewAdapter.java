@@ -1,6 +1,7 @@
 package com.example.pabs.Adapters;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
     private final List<Event> mDataCopy;
     private final FragmentManager mFragment;
     private final String mUID;
-    private int mState = 0;
+    private Handler handler;
 
     /**
      * Constructor of EventRecyclerViewAdapter
@@ -216,11 +217,13 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
 
                     int delay = 3000;
 
-                    holder.tv_title.postDelayed(new Runnable() {
+                    handler = new Handler();
+                    handler.postDelayed(new Runnable() {
                         public void run() {
                             holder.tv_title.setVisibility(View.GONE);
                         }
                     }, delay);
+
                 }
 
 

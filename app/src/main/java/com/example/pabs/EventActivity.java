@@ -253,6 +253,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                     //if public events are shown and want to update to private events
                     mState = 1;
                     updateDatabase();
+                    setEvents();
                     //Todo: Change ICON
                     show_my_events_button.setImageResource(R.drawable.circle);
                     return;
@@ -261,6 +262,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                     //if private events are shown and want to update to public events
                     mState = 0;
                     updateDatabase();
+                    setEvents();
                     //Todo: Change ICON
                     show_my_events_button.setImageResource(R.drawable.myeventsbutton);
                     return;
