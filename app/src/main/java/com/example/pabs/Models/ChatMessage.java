@@ -2,6 +2,10 @@ package com.example.pabs.Models;
 
 import java.util.Date;
 
+/**
+ * Class to store messages from Firebase Database
+ */
+
 public class ChatMessage {
 
     private String messageText;

@@ -1,27 +1,19 @@
 package com.example.pabs.Fragments;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.fragment.app.Fragment;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.pabs.Fragments.EventFragment.EventOptionsDialogFragment;
+import androidx.appcompat.app.AppCompatDialogFragment;
+
 import com.example.pabs.R;
 
 /**
@@ -47,7 +39,7 @@ public class AddTaskDialogFragment extends AppCompatDialogFragment {
      * When the dialog is created
      */
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState){
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         //setting view
         Log.d("Espania", "onCreateDialog: AddaTaskDialogFragment");
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -67,8 +59,7 @@ public class AddTaskDialogFragment extends AppCompatDialogFragment {
                     //calling interface to set the nickname
                     addTaskDialogListener.applyText(task);
                     dialog.dismiss();
-                }
-                else{
+                } else {
                     Toast.makeText(getActivity(), "Please fill the textdialog with a Task name!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -93,7 +84,7 @@ public class AddTaskDialogFragment extends AppCompatDialogFragment {
     /**
      * interface to set the nickname
      */
-    public interface AddTaskDialogListener{
+    public interface AddTaskDialogListener {
         void applyText(String taskname);
     }
 }

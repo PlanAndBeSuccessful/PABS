@@ -24,7 +24,7 @@ import java.util.List;
  * Creates an array of card elements
  */
 
-public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerViewAdapter.MyToDoViewHolder>{
+public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerViewAdapter.MyToDoViewHolder> {
 
     private final RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
     private final List<ToDoList> toDoList;
@@ -37,8 +37,7 @@ public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerVi
 
     @NonNull
     @Override
-    public MyToDoViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i)
-    {
+    public MyToDoViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         // Here we inflate the corresponding
         // layout of the parent item
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.mytodo_list_row, viewGroup, false);
@@ -47,8 +46,7 @@ public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerVi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final MyToDoViewHolder parentViewHolder, int position)
-    {
+    public void onBindViewHolder(@NonNull final MyToDoViewHolder parentViewHolder, int position) {
         //firebase
         final DatabaseReference referenceDB = FirebaseDatabase.getInstance().getReference().child("TODO").child(uID);
 
@@ -66,10 +64,10 @@ public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerVi
                 referenceDB.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        int i=0;
-                        for(DataSnapshot todo : snapshot.getChildren()){
-                            if(i == parentViewHolder.getAdapterPosition()){
-                               todo.getRef().child("taskList").removeValue();
+                        int i = 0;
+                        for (DataSnapshot todo : snapshot.getChildren()) {
+                            if (i == parentViewHolder.getAdapterPosition()) {
+                                todo.getRef().child("taskList").removeValue();
                             }
                             ++i;
                         }
@@ -122,8 +120,7 @@ public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerVi
         private final Button delete_btn;
         private final RecyclerView childRecyclerView;
 
-        MyToDoViewHolder(final View itemView)
-        {
+        MyToDoViewHolder(final View itemView) {
             super(itemView);
 
             toDoListTitle = itemView.findViewById(R.id.belong);

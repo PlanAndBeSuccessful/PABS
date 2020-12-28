@@ -1,17 +1,10 @@
 package com.example.pabs.Fragments.GroupFragment;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -19,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pabs.Adapters.GroupEventsRecyclerVewAdapter;
-import com.example.pabs.Adapters.GroupMemberRecyclerViewAdapter;
 import com.example.pabs.Models.Group;
 import com.example.pabs.R;
 import com.google.firebase.database.DataSnapshot;
@@ -30,93 +22,68 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * View Events where all group members are joined
+ */
+
 public class GroupEventsFragment extends Fragment {
-    private View containerView;
-
-    private ImageView iv;
-
-    private GroupEventsRecyclerVewAdapter myAdapter;
-    //database event
+    //data
     private final Group mGroup;
-
+    //UI
+    private View containerView;
+    private ImageView iv;
+    private GroupEventsRecyclerVewAdapter myAdapter;
     private ArrayList<String> all_members;
     private ArrayList<String> events;
 
+    /**
+     * Constructor
+     */
     GroupEventsFragment(Group grp) {
         mGroup = grp;
     }
 
+    /**
+     * onCreate
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * onCreateView
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_group_events, container, false);
+
+        //container to replace view of activity layout with fragment layout
         containerView = getActivity().findViewById(R.id.activity_group_layout);
 
-        if(mGroup.getMember_list() == null){
+        //check if member list of group is empty or not
+        if (mGroup.getMember_list() == null) {
             ArrayList<String> temp = new ArrayList<>();
             mGroup.setMember_list(temp);
         }
 
+        //init UI
+        iv = view.findViewById(R.id.f_g_e_backImg);
+
+        //init arrays
         all_members = new ArrayList<>();
         events = new ArrayList<>();
 
-        iv = view.findViewById(R.id.f_g_e_backImg);
-
+        //add group members + owner to all members
         all_members.add(mGroup.getGroup_owner());
         all_members.addAll(mGroup.getMember_list());
 
-        for(String x : all_members){
-            Log.d("ASDASDASD", "all_members: " + x);
-        }
 
-        final DatabaseReference refEvent = FirebaseDatabase.getInstance().getReference().child("EVENT");
-        refEvent.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (final DataSnapshot event : snapshot.getChildren()) {
-                    final ArrayList<String> event_all_members = new ArrayList<>();
+        findEventsOfThisGroupFromDatabase();
 
-                    event_all_members.add(event.child("owner_id").getValue().toString());
-
-                    event.child("joined_members").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            for (DataSnapshot member : snapshot.getChildren()) {
-                                event_all_members.add(member.getValue().toString());
-                            }
-
-                            for(String x : event_all_members){
-                                Log.d("ASDASD", "event_all_members: " + x);
-                            }
-
-                            if(event_all_members.containsAll(all_members)){
-                                Log.d("ASDASD", "event.getKey(): " + event.getKey());
-                                events.add(event.getKey());
-                                myAdapter.notifyDataSetChanged();
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                //database failed
-            }
-        });
-
+        //exit image click listener
         iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,6 +103,54 @@ public class GroupEventsFragment extends Fragment {
         myAdapter.notifyDataSetChanged();
 
         return view;
+    }
+
+    /**
+     * find events where all members of current group are members of it
+     */
+    private void findEventsOfThisGroupFromDatabase() {
+        //reference to EVENT table in database
+        final DatabaseReference refEvent = FirebaseDatabase.getInstance().getReference().child("EVENT");
+        refEvent.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (final DataSnapshot event : snapshot.getChildren()) {
+                    final ArrayList<String> event_all_members = new ArrayList<>();
+
+                    //add owner to event all members
+                    event_all_members.add(event.child("owner_id").getValue().toString());
+
+                    event.child("joined_members").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot member : snapshot.getChildren()) {
+                                //get all members from event
+                                event_all_members.add(member.getValue().toString());
+                            }
+
+                            if (event_all_members.containsAll(all_members)) {
+                                //if event members + owner contains everyone from the group, add this event to events array
+                                events.add(event.getKey());
+                                myAdapter.notifyDataSetChanged();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            //canceled
+                            System.err.println("Listener was cancelled");
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                //canceled
+                System.err.println("Listener was cancelled");
+            }
+        });
     }
 
     /**

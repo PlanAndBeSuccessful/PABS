@@ -17,20 +17,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Creates an array of card elements
  */
 
-public class GroupEventsRecyclerVewAdapter extends RecyclerView.Adapter<GroupEventsRecyclerVewAdapter.MyViewHolder>{
+public class GroupEventsRecyclerVewAdapter extends RecyclerView.Adapter<GroupEventsRecyclerVewAdapter.MyViewHolder> {
+    //UI
     private final Context mContext;
-    private final List<String> mData;
+    //List
+    private final ArrayList<String> mData;
 
     /**
      * Constructor of EventRecyclerViewAdapter
      */
-    public GroupEventsRecyclerVewAdapter(Context mContext, List<String> mData) {
+    public GroupEventsRecyclerVewAdapter(Context mContext, ArrayList<String> mData) {
         this.mContext = mContext;
         this.mData = mData;
     }
@@ -53,13 +55,17 @@ public class GroupEventsRecyclerVewAdapter extends RecyclerView.Adapter<GroupEve
      */
     @Override
     public void onBindViewHolder(@NonNull final GroupEventsRecyclerVewAdapter.MyViewHolder holder, final int position) {
-        //set data
+        //get reference to database
         final DatabaseReference refEvent = FirebaseDatabase.getInstance().getReference().child("EVENT");
+        //add listener for single value event
         refEvent.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //go through children of EVENT table
                 for (DataSnapshot event : snapshot.getChildren()) {
+                    //if id of event matches with id in mData
                     if (event.getKey().equals(mData.get(position))) {
+                        //set text of text view of holder
                         holder.tv_name.setText(event.child("event_name").getValue().toString());
                     }
                 }
@@ -84,10 +90,9 @@ public class GroupEventsRecyclerVewAdapter extends RecyclerView.Adapter<GroupEve
      */
     @Override
     public int getItemCount() {
-        if(mData == null){
+        if (mData == null) {
             return 0;
-        }
-        else{
+        } else {
             return mData.size();
         }
 

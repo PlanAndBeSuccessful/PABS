@@ -2,6 +2,10 @@ package com.example.pabs.Models;
 
 import java.util.ArrayList;
 
+/**
+ * Class to store groups from Firebase Database
+ */
+
 public class Group {
     String group_name;
     String group_owner;

@@ -17,15 +17,20 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.pabs.R;
 
+/**
+ * Show code of group
+ */
 public class ShowCodeDialogFragment extends AppCompatDialogFragment {
-    //edittext
-    private TextView code_tv;
-    //
-    private Dialog dialog;
-    //
-    private Button cancel_bt;
+    //helper variables
     private final String codeText;
+    //UI
+    private TextView code_tv;
+    private Dialog dialog;
+    private Button cancel_bt;
 
+    /**
+     * Constructor
+     */
     ShowCodeDialogFragment(String codeText) {
         this.codeText = codeText;
     }
@@ -39,24 +44,25 @@ public class ShowCodeDialogFragment extends AppCompatDialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_dialog_show_code, null);
 
+        //create new dialog with custom theme
         dialog = new Dialog(getActivity(), R.style.MyDialogTheme);
 
+        //init UI
         code_tv = view.findViewById(R.id.d_s_c_code);
+        cancel_bt = (Button) view.findViewById(R.id.d_s_c_close);
 
+        //set code to TextView
         code_tv.setText(codeText);
 
+        //set click listener to text view to copy code to clipboard
         code_tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("code text", codeText);
-                clipboard.setPrimaryClip(clip);
-                Toast.makeText(getActivity(), "Code copied to clipboard!", Toast.LENGTH_SHORT).show();
+                copyCodeToClipboard();
             }
         });
 
-        cancel_bt = (Button) view.findViewById(R.id.d_s_c_close);
-
+        //set click listener for  cancel button
         cancel_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,13 +70,25 @@ public class ShowCodeDialogFragment extends AppCompatDialogFragment {
             }
         });
 
+        //when clicked outside dialog it won't cancel
         setCancelable(false);
 
+        //set content view
         dialog.setContentView(view);
 
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         return dialog;
+    }
+
+    /**
+     * Copy code to clipboard
+     */
+    private void copyCodeToClipboard() {
+        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("code text", codeText);
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(getActivity(), "Code copied to clipboard!", Toast.LENGTH_SHORT).show();
     }
 
 }

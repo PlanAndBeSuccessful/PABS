@@ -57,9 +57,13 @@ import java.io.IOException;
 
 public class EventFragment extends Fragment implements OnMapReadyCallback, EventOptionsDialogFragment.EventOptionsDialogListener {
 
+    //static codes
     public static final int GET_FROM_GALLERY = 3;
     private static final String TAG = "EventFragment";
-    public Uri imgUri;
+    //database event
+    private final DatabaseEvent databaseEvent;
+    //helepr variables
+    private final String mUID;
     //UI
     private Button back_button;
     private Button plus_button;
@@ -73,14 +77,11 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
     private TextView location_text_tv;
     //map
     private GoogleMap mMap;
-    //database event
-    private final DatabaseEvent databaseEvent;
     //image handling
     private ImageView image_view;
     private StorageReference mStorageRef;
     private StorageTask<UploadTask.TaskSnapshot> uploadTask;
-
-    private final String mUID;
+    private Uri imgUri;
     private int mState;
 
     /**
@@ -117,16 +118,18 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
         location_text_tv = view.findViewById(R.id.fe_location_text);
         image_view = view.findViewById(R.id.fe_event_image);
 
+        //set text view scrollable
         event_description_tv.setMovementMethod(new ScrollingMovementMethod());
 
         if (databaseEvent.getThumbnail() != null) {
             //set image if it's not null
             Uri myUri = Uri.parse(databaseEvent.getThumbnail());
 
-            //Picasso license
+            //Picasso loads URI image into image view
             Picasso.get().load(myUri).into(image_view);
         }
 
+        //set description if it's not null
         if (databaseEvent.getDescription() != null) {
             event_description_tv.setText(databaseEvent.getDescription());
         }
@@ -169,6 +172,7 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
         //Sync Map View
         mapView.getMapAsync(this);
 
+        //get state of user
         mState = getStatus();
 
         return view;
@@ -458,6 +462,9 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
         mapView.onLowMemory();
     }
 
+    /**
+     * Upload/Change image
+     */
     @Override
     public void UpCh() {
         viewGallery();
@@ -483,6 +490,9 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
 
     }
 
+    /**
+     * open EventRepetitionFragment
+     */
     @Override
     public void Repetition() {
         getActivity().getSupportFragmentManager()
@@ -492,6 +502,9 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
                 .commit();
     }
 
+    /**
+     * open EventStaffFragment
+     */
     @Override
     public void AddKickStaff() {
         getActivity().getSupportFragmentManager()
@@ -501,6 +514,9 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
                 .commit();
     }
 
+    /**
+     * open EventReminderFragment
+     */
     @Override
     public void Reminder() {
         getActivity().getSupportFragmentManager()
@@ -510,6 +526,9 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
                 .commit();
     }
 
+    /**
+     * open EventDescriptionFragment
+     */
     @Override
     public void Description() {
         getActivity().getSupportFragmentManager()
@@ -519,6 +538,9 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
                 .commit();
     }
 
+    /**
+     * delete event from database and return to eventActivity
+     */
     @Override
     public void CloseEvent() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
@@ -527,7 +549,7 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
         applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
                         //clear image
                         deleteImage(appleSnapshot);
@@ -538,8 +560,7 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
                         //clear it from backstack
                         clearBackstack();
                     }
-                }
-                else {
+                } else {
                     Toast.makeText(getActivity(), "Event has been deleted!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -552,13 +573,17 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
         });
     }
 
+
+    /**
+     * Join or Leave to/from event
+     */
     @Override
     public void JoinLeaveEvent() {
         final DatabaseReference refEvent = FirebaseDatabase.getInstance().getReference().child("EVENT");
         refEvent.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
+                if (snapshot.exists()) {
                     for (final DataSnapshot event : snapshot.getChildren()) {
                         //Loop 1 to go through all child nodes of users
                         if (event.child("event_name").getValue() == databaseEvent.getEvent_name()) {
@@ -567,15 +592,23 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
                                 event.getRef().child("joined_members").setValue(databaseEvent.getJoined_members());
                                 mState = 1;
                             } else {
-                                databaseEvent.deleteJoinedListElement(mUID);
-                                event.getRef().child("joined_members").setValue(databaseEvent.getJoined_members());
-                                mState = 3;
+                                if (mState == 1) {
+                                    databaseEvent.deleteJoinedListElement(mUID);
+                                    event.getRef().child("joined_members").setValue(databaseEvent.getJoined_members());
+                                    mState = 3;
+                                }
+                                if (mState == 2) {
+                                    databaseEvent.deleteJoinedListElement(mUID);
+                                    event.getRef().child("joined_members").setValue(databaseEvent.getJoined_members());
+                                    databaseEvent.deleteStaffListElement(mUID);
+                                    event.getRef().child("staff_members").setValue(databaseEvent.getStaff_members());
+                                    mState = 3;
+                                }
                             }
 
                         }
                     }
-                }
-                else{
+                } else {
                     Toast.makeText(getActivity(), "Event has been deleted!", Toast.LENGTH_SHORT).show();
                 }
 
@@ -590,6 +623,9 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
 
     }
 
+    /**
+     * Open EventToDoFragment
+     */
     @Override
     public void ToDo() {
         getActivity().getSupportFragmentManager()

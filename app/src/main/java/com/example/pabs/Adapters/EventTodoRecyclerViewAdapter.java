@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,8 +22,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Creates an array of card elements
@@ -84,12 +81,7 @@ public class EventTodoRecyclerViewAdapter extends RecyclerView.Adapter<EventTodo
         });
         //Waits for checkbox to be checked or unchecked
         CheckBox cb = holder.ev_todo_cb;
-        if(task.getTaskCB()){
-            holder.ev_todo_cb.setChecked(true);
-        }
-        else{
-            holder.ev_todo_cb.setChecked(false);
-        }
+        holder.ev_todo_cb.setChecked(task.getTaskCB());
 
         cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -98,13 +90,13 @@ public class EventTodoRecyclerViewAdapter extends RecyclerView.Adapter<EventTodo
                 referenceDB.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for(DataSnapshot todo : snapshot.getChildren()){
-                            if(!todo.getKey().equals("Type")){
+                        for (DataSnapshot todo : snapshot.getChildren()) {
+                            if (!todo.getKey().equals("Type")) {
                                 todo.getRef().child("taskList").addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        for(DataSnapshot tasks : snapshot.getChildren()){
-                                            if(tasks.child("taskTitle").getValue().toString().equals(task.getTaskTitle())){
+                                        for (DataSnapshot tasks : snapshot.getChildren()) {
+                                            if (tasks.child("taskTitle").getValue().toString().equals(task.getTaskTitle())) {
                                                 tasks.child("taskCB").getRef().setValue(isChecked);
                                             }
                                         }

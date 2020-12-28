@@ -1,7 +1,7 @@
 package com.example.pabs.Models;
 
 /**
- * User from database
+ * Class to store Users from Firebase Database
  */
 
 public class User {

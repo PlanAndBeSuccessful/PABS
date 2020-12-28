@@ -28,12 +28,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Handles login for users
@@ -259,8 +257,10 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
         reference.child(user.getUid()).child("online").setValue("true");
         reference.child(user.getUid()).child("token").setValue(token);
 
+        //delete outDated events
         deleteOutDatedEvents();
 
+        //open event activity
         openEventActivity();
     }
 
@@ -268,19 +268,25 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
      * Delete outDated Events
      */
     private void deleteOutDatedEvents() {
+        //init
         DatabaseReference databaseReferenceEvents;
+
+        //get reference to EVENT table for database
         databaseReferenceEvents = FirebaseDatabase.getInstance().getReference().child("EVENT");
 
         Date date = new Date();
-        //This method returns the time in millis
+        //This method returns the current time in millis
         final long timeMilli = date.getTime();
 
         databaseReferenceEvents.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot event: snapshot.getChildren()) {
-                    if(event.child("timestamp").getValue(Long.class) != null){
-                        if(event.child("timestamp").getValue(Long.class) < timeMilli){
+                for (DataSnapshot event : snapshot.getChildren()) {
+                    //if timestamp is not null
+                    if (event.child("timestamp").getValue(Long.class) != null) {
+                        //if event's timestamp is outdated
+                        if (event.child("timestamp").getValue(Long.class) < timeMilli) {
+                            //remove event
                             event.getRef().removeValue();
                         }
                     }
@@ -289,6 +295,8 @@ public class LoginActivity extends AppCompatActivity implements NicknameDialogFr
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                //canceled
+                System.err.println("Listener was cancelled");
             }
         });
     }

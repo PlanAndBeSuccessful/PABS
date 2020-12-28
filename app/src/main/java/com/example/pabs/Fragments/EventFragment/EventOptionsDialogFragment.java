@@ -18,12 +18,12 @@ import com.example.pabs.R;
 import static android.view.View.GONE;
 
 /**
- * Sets Nickname for new Users
+ * Connects UI with different images in EventFragment
  */
 
 public class EventOptionsDialogFragment extends AppCompatDialogFragment {
 
-    //edittext
+    //listener
     private EventOptionsDialogListener eventOptionsDialogListener;
     //dialog
     private Dialog dialog;
@@ -38,6 +38,7 @@ public class EventOptionsDialogFragment extends AppCompatDialogFragment {
     private ImageView joinLeaveEventImg;
     private ImageView exitImg;
 
+    //LinearLayout
     private LinearLayout upChLinL;
     private LinearLayout repetitionLinL;
     private LinearLayout addKickStaffLinL;
@@ -48,8 +49,12 @@ public class EventOptionsDialogFragment extends AppCompatDialogFragment {
     private LinearLayout joinLeaveEventLinL;
     private TextView joinLeaveEventTv;
 
+    //helper variables
     private int mState;
 
+    /**
+     * Set listener
+     */
     public void setListener(EventOptionsDialogListener eventOptionsDialogListener, int state) {
         this.eventOptionsDialogListener = eventOptionsDialogListener;
         this.mState = state;
@@ -64,8 +69,10 @@ public class EventOptionsDialogFragment extends AppCompatDialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_dialog_event_options, null);
 
+        //create new dialog with custom theme
         dialog = new Dialog(getActivity(), R.style.MyDialogTheme);
 
+        //init images
         upChImg = view.findViewById(R.id.f_e_o_UpChImg);
         repetitionImg = view.findViewById(R.id.f_e_o_RepetitionImg);
         addKickStaffImg = view.findViewById(R.id.f_e_o_AddKickStaffImg);
@@ -76,6 +83,7 @@ public class EventOptionsDialogFragment extends AppCompatDialogFragment {
         joinLeaveEventImg = view.findViewById(R.id.f_e_o_JoinLeaveEventImg);
         exitImg = view.findViewById(R.id.f_e_o_exitImg);
 
+        //init linearLayouts
         upChLinL = view.findViewById(R.id.f_e_o_lr8);
         repetitionLinL = view.findViewById(R.id.f_e_o_lr7);
         addKickStaffLinL = view.findViewById(R.id.f_e_o_lr6);
@@ -85,8 +93,10 @@ public class EventOptionsDialogFragment extends AppCompatDialogFragment {
         toDoLinL = view.findViewById(R.id.f_e_o_lr2);
         joinLeaveEventLinL = view.findViewById(R.id.f_e_o_lr1);
 
+        //init TextView
         joinLeaveEventTv = view.findViewById(R.id.f_e_o_lr1_tv);
 
+        //set Click listeners to images
         upChImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -158,10 +168,13 @@ public class EventOptionsDialogFragment extends AppCompatDialogFragment {
             }
         });
 
+        //set content view
         dialog.setContentView(view);
+        //set Background
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
 
+        //set visibility
         if (mState == 0) {
             //owner
             hideJoinLeaveEvent();

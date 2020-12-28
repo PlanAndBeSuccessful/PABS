@@ -17,20 +17,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Creates an array of card elements
  */
 
-public class GroupMemberRecyclerViewAdapter extends RecyclerView.Adapter<GroupMemberRecyclerViewAdapter.MyViewHolder>{
+public class GroupMemberRecyclerViewAdapter extends RecyclerView.Adapter<GroupMemberRecyclerViewAdapter.MyViewHolder> {
+
+    //UI
     private final Context mContext;
-    private final List<String> mData;
+
+    //List
+    private final ArrayList<String> mData;
 
     /**
      * Constructor of EventRecyclerViewAdapter
      */
-    public GroupMemberRecyclerViewAdapter(Context mContext, List<String> mData) {
+    public GroupMemberRecyclerViewAdapter(Context mContext, ArrayList<String> mData) {
         this.mContext = mContext;
         this.mData = mData;
     }
@@ -53,13 +57,17 @@ public class GroupMemberRecyclerViewAdapter extends RecyclerView.Adapter<GroupMe
      */
     @Override
     public void onBindViewHolder(@NonNull final GroupMemberRecyclerViewAdapter.MyViewHolder holder, final int position) {
-        //set data
+        //get reference to database
         final DatabaseReference refUsers = FirebaseDatabase.getInstance().getReference().child("USER");
+        //add listener for single value event
         refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //go through children of USER table
                 for (DataSnapshot user : snapshot.getChildren()) {
+                    //if id of user matches with id in mData
                     if (user.getKey().equals(mData.get(position))) {
+                        //set text of text view of holder
                         holder.tv_name.setText(user.child("user_name").getValue().toString());
                     }
                 }
@@ -84,10 +92,9 @@ public class GroupMemberRecyclerViewAdapter extends RecyclerView.Adapter<GroupMe
      */
     @Override
     public int getItemCount() {
-        if(mData == null){
+        if (mData == null) {
             return 0;
-        }
-        else{
+        } else {
             return mData.size();
         }
 

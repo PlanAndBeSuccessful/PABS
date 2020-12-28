@@ -35,6 +35,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Show groups handle buttons/fragments
+ */
+
 public class GroupActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, CodeDialogFragment.CodeDialogListener {
 
     //UI
@@ -92,6 +96,127 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
         //firebase database -> get reference to USER table
         reference = FirebaseDatabase.getInstance().getReference().child("USER");
 
+        //update list of groups from database whenever a change occurs in it
+        updateGroupListFromDatabaseOnChange();
+
+        //nav view and drawer
+        navigationView = findViewById(R.id.a_g_nav_view);
+        drawer = findViewById(R.id.a_g_drawer_layout);
+
+        //handle navigation drawer open/close with toggle
+        navigationView.setNavigationItemSelectedListener(this);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            /**
+             * Called when a drawer has settled in a completely closed state.
+             */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                for (int i = 0; i < navigationView.getMenu().size(); ++i)
+                    navigationView.getMenu().getItem(i).setChecked(false);
+            }
+
+            /**
+             * Called when a drawer has settled in a completely open state.
+             */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        //add toggle to drawer
+        drawer.addDrawerListener(toggle);
+
+        //sync toggle
+        toggle.syncState();
+
+        // Write a string to database when this client loses connection
+        reference.child(uID).child("online").onDisconnect().setValue("false");
+
+        // Get reference to database so we can now if client is still connected
+        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+        connectedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                boolean connected = snapshot.getValue(Boolean.class);
+                if (connected) {
+                    //user is connected
+                } else {
+                    //user disconnected
+                    reference.child(uID).child("online").onDisconnect().setValue("false");
+                    openLoginActivity();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.err.println("Listener was cancelled");
+            }
+        });
+
+        //create group image button + click listener
+        create_group_img_btn = findViewById(R.id.a_g_create_group_button);
+        create_group_img_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    openCreateGroupFragment();
+                }
+                return false;
+            }
+        });
+        //open event image button  + click listener
+        open_event_img_btn = findViewById(R.id.a_g_open_event_button);
+        open_event_img_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clearBackstack();
+                openEventActivity();
+            }
+        });
+
+        //show group code image + click listener
+        group_code_img_btn = findViewById(R.id.a_g_group_code_button);
+        group_code_img_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openCodeDialogFragment();
+            }
+        });
+
+        //search view
+        sw = findViewById(R.id.g_search_bar);
+        sw.setQueryHint("Search group name...");
+
+        sw.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                hideKeyboard(GroupActivity.this);
+                return false;
+            }
+        });
+
+        //when something is being typed in search bar
+        sw.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                myGroupAdapter.filter(query);
+                hideKeyboard(GroupActivity.this);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                myGroupAdapter.filter(newText);
+                return true;
+            }
+        });
+
+    }
+
+    /**
+     * Called when Event is database is changed/updated
+     */
+    private void updateGroupListFromDatabaseOnChange() {
         //Getting groups from database and setting them to recyclerview
         DatabaseReference databaseGroupRef;
         databaseGroupRef = FirebaseDatabase.getInstance().getReference().child("GROUP");
@@ -133,7 +258,8 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-
+                            //canceled
+                            System.err.println("Listener was cancelled");
                         }
                     });
 
@@ -143,126 +269,24 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        //nav view and drawer
-        navigationView = findViewById(R.id.a_g_nav_view);
-        drawer = findViewById(R.id.a_g_drawer_layout);
-
-        //handle navigation drawer open/close with toggle
-        navigationView.setNavigationItemSelectedListener(this);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            /**
-             * Called when a drawer has settled in a completely closed state.
-             */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                for (int i = 0; i < navigationView.getMenu().size(); ++i)
-                    navigationView.getMenu().getItem(i).setChecked(false);
-            }
-
-            /**
-             * Called when a drawer has settled in a completely open state.
-             */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-            }
-        };
-
-        //add toggle to drawer
-        drawer.addDrawerListener(toggle);
-
-        //sync toggle
-        toggle.syncState();
-
-        // Write a string to database when this client loses connection
-        reference.child(uID).child("online").onDisconnect().setValue("false");
-
-        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
-        connectedRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                boolean connected = snapshot.getValue(Boolean.class);
-                if (connected) {
-                    //user is connected
-                } else {
-                    //user disconnected
-                    reference.child(uID).child("online").onDisconnect().setValue("false");
-                    openLoginActivity();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
+                //canceled
                 System.err.println("Listener was cancelled");
             }
         });
-
-        //create event button
-        create_group_img_btn = findViewById(R.id.a_g_create_group_button);
-        create_group_img_btn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    openCreateGroupFragment();
-                }
-                return false;
-            }
-        });
-        //
-        open_event_img_btn = findViewById(R.id.a_g_open_event_button);
-        open_event_img_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clearBackstack();
-                openEventActivity();
-            }
-        });
-
-        group_code_img_btn = findViewById(R.id.a_g_group_code_button);
-        group_code_img_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openCodeDialogFragment();
-            }
-        });
-
-        //search view
-        sw = findViewById(R.id.g_search_bar);
-        sw.setQueryHint("Search group name...");
-
-        sw.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                hideKeyboard(GroupActivity.this);
-                return false;
-            }
-        });
-
-        sw.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                myGroupAdapter.filter(query);
-                hideKeyboard(GroupActivity.this);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                myGroupAdapter.filter(newText);
-                return true;
-            }
-        });
-
     }
 
+
+    /**
+     * openLoginActivity
+     */
     private void openLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * openCodeDialogFragment
+     */
     private void openCodeDialogFragment() {
         CodeDialogFragment codeDialogFragment = new CodeDialogFragment();
         codeDialogFragment.show(getSupportFragmentManager(), "codeDialogFragment");
@@ -353,6 +377,9 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
         return true;
     }
 
+    /**
+     * clear Backstack
+     */
     private void clearBackstack() {
         for (int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); ++i) {
             getSupportFragmentManager().popBackStack();
@@ -362,7 +389,7 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
     /**
      * open MyToDo event fragment
      */
-    private void openMyToDoFragment(){
+    private void openMyToDoFragment() {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_event_container, new MyToDoFragment())
@@ -420,6 +447,9 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
         super.onStart();
     }
 
+    /**
+     * apply code, called when code was updated in dialog
+     */
     @Override
     public void applyCode(String code) {
         mCode = code;
@@ -461,7 +491,7 @@ public class GroupActivity extends AppCompatActivity implements NavigationView.O
                     }
                 }
 
-                if(!found){
+                if (!found) {
                     Toast.makeText(GroupActivity.this, "Wrong code! Please Try again!", Toast.LENGTH_SHORT).show();
                 }
 

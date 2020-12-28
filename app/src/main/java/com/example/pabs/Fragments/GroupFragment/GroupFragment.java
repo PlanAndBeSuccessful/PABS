@@ -16,7 +16,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.pabs.Fragments.EventFragment.EventReminderFragment;
 import com.example.pabs.Models.ChatMessage;
 import com.example.pabs.Models.Group;
 import com.example.pabs.R;
@@ -29,8 +28,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+/**
+ * Handle group, OptionDialogFragment to access UI and override the functions in it, show/send text messages
+ */
+
 public class GroupFragment extends Fragment implements GroupOptionsDialogFragment.GroupOptionsDialogListener {
+
+    //Static code
     private static final String TAG = "GroupFragment";
+    //helper variables
+    private final Group mGroup;
+    private final String mUID;
     //UI
     private Button back_button;
     private Button plus_button;
@@ -38,15 +46,12 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
     private TextView group_name_tv;
     private TextView group_owner_tv;
     private FloatingActionButton fab;
-
-    private final Group mGroup;
-    private final String mUID;
+    private EditText input_et;
     private int mState;
     private String nickname;
     private String group_owner_nickname;
 
-    private EditText input_et;
-
+    //firebase
     private FirebaseListAdapter<ChatMessage> adapter;
 
     /**
@@ -57,6 +62,9 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
         mUID = uID;
     }
 
+    /**
+     * get status of current user
+     */
     private int getStatus() {
         if (mUID.equals(mGroup.getGroup_owner())) {
             //owner
@@ -83,16 +91,119 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_group, container, false);
+
+        //container to replace view of activity layout with fragment layout
         containerView = getActivity().findViewById(R.id.activity_group_layout);
 
         //init UI
         group_name_tv = view.findViewById(R.id.f_g_group_name);
         group_owner_tv = view.findViewById(R.id.f_g_owner_name);
         input_et = (EditText) view.findViewById(R.id.f_g_rlChat_et);
+        fab = (FloatingActionButton) view.findViewById(R.id.f_g_rlChat_sendBtn);
+        ListView listOfMessages = (ListView) view.findViewById(R.id.f_g_rlChat_lv);
+        back_button = view.findViewById(R.id.f_g_back_button);
+        plus_button = view.findViewById(R.id.f_g_plus_button);
 
+        //get status of current user
         mState = getStatus();
 
-        //Getting events from database and setting them to recyclerview
+        //set nickname of current user from database
+        setCurrentUserNicknameFromDatabase();
+
+        //floating button click listener, send message to database
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMessageToDatabase();
+            }
+        });
+
+        //trigger send button on pressing next
+        input_et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_GO) {
+                    //Perform your Actions here.
+                    fab.performClick();
+                }
+                return handled;
+            }
+        });
+
+        //set adapter for messages incoming
+        receiveMessagesInAdapter();
+
+        //set adapter for list of messages
+        listOfMessages.setAdapter(adapter);
+
+        //setting text in UI with Group data
+        group_name_tv.setText(mGroup.getGroup_name());
+
+        //back button
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //clear all backstack
+                clearBackstack();
+            }
+        });
+
+        //plus button to open more options
+        plus_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openGroupOptionsDialogFragment();
+            }
+        });
+
+        return view;
+    }
+
+    /**
+     * Receive messages in adapter
+     */
+    private void receiveMessagesInAdapter() {
+        adapter = new FirebaseListAdapter<ChatMessage>(getActivity(), ChatMessage.class,
+                R.layout.message, FirebaseDatabase.getInstance().getReference().child("CHAT").child(mGroup.getGroup_id())) {
+            @Override
+            protected void populateView(View v, ChatMessage model, int position) {
+                // Get references to the views of message.xml
+                TextView messageText = (TextView) v.findViewById(R.id.message_text);
+                TextView messageUser = (TextView) v.findViewById(R.id.message_user);
+                TextView messageTime = (TextView) v.findViewById(R.id.message_time);
+
+                // Set their text
+                messageText.setText(model.getMessageText());
+                messageUser.setText(model.getMessageUser());
+
+                // Format the date before showing it
+                messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
+                        model.getMessageTime()));
+            }
+        };
+    }
+
+    /**
+     * Send ChatMessage type to database and store it as a message for this group
+     */
+    private void sendMessageToDatabase() {
+        // Read the input field and push a new instance
+        // of ChatMessage to the Firebase database
+        FirebaseDatabase.getInstance()
+                .getReference().child("CHAT").child(mGroup.getGroup_id())
+                .push()
+                .setValue(new ChatMessage(input_et.getText().toString(), nickname)
+                );
+
+        // Clear the input
+        input_et.setText("");
+    }
+
+    /**
+     * Set current user nickname from database
+     */
+    private void setCurrentUserNicknameFromDatabase() {
         DatabaseReference databaseUserRef;
         databaseUserRef = FirebaseDatabase.getInstance().getReference().child("USER");
 
@@ -113,91 +224,12 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                //canceled
+                System.err.println("Listener was cancelled");
             }
         });
-
-
-
-        fab = (FloatingActionButton) view.findViewById(R.id.f_g_rlChat_sendBtn);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Read the input field and push a new instance
-                // of ChatMessage to the Firebase database
-                FirebaseDatabase.getInstance()
-                        .getReference().child("CHAT").child(mGroup.getGroup_id())
-                        .push()
-                        .setValue(new ChatMessage(input_et.getText().toString(), nickname)
-                        );
-
-                // Clear the input
-                input_et.setText("");
-            }
-        });
-
-        input_et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_GO) {
-                    //Perform your Actions here.
-                    fab.performClick();
-                }
-                return handled;
-            }
-        });
-
-        ListView listOfMessages = (ListView) view.findViewById(R.id.f_g_rlChat_lv);
-
-        adapter = new FirebaseListAdapter<ChatMessage>(getActivity(), ChatMessage.class,
-                R.layout.message, FirebaseDatabase.getInstance().getReference().child("CHAT").child(mGroup.getGroup_id())) {
-            @Override
-            protected void populateView(View v, ChatMessage model, int position) {
-                // Get references to the views of message.xml
-                TextView messageText = (TextView) v.findViewById(R.id.message_text);
-                TextView messageUser = (TextView) v.findViewById(R.id.message_user);
-                TextView messageTime = (TextView) v.findViewById(R.id.message_time);
-
-                // Set their text
-                messageText.setText(model.getMessageText());
-                messageUser.setText(model.getMessageUser());
-
-                // Format the date before showing it
-                messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
-                        model.getMessageTime()));
-            }
-        };
-
-        listOfMessages.setAdapter(adapter);
-
-        //setting text in UI with Group data
-        group_name_tv.setText(mGroup.getGroup_name());
-
-        //back button
-        back_button = view.findViewById(R.id.f_g_back_button);
-
-        back_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //clear all backstack
-                clearBackstack();
-            }
-        });
-
-        //plus button to open more options
-        plus_button = view.findViewById(R.id.f_g_plus_button);
-
-        plus_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openGroupOptionsDialogFragment();
-            }
-        });
-
-        return view;
     }
+
 
     /**
      * clearBackstack
@@ -242,6 +274,9 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
         containerView.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * delete Group from database
+     */
     @Override
     public void CloseGroup() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
@@ -267,6 +302,9 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
         });
     }
 
+    /**
+     * kick members from group
+     */
     @Override
     public void KickMembers() {
         getActivity().getSupportFragmentManager()
@@ -276,6 +314,9 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
                 .commit();
     }
 
+    /**
+     * show events where are group members are joined
+     */
     @Override
     public void GroupEvents() {
         getActivity().getSupportFragmentManager()
@@ -285,6 +326,9 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
                 .commit();
     }
 
+    /**
+     * leave from group
+     */
     @Override
     public void LeaveGroup() {
         final DatabaseReference refGroup = FirebaseDatabase.getInstance().getReference().child("GROUP");
@@ -294,20 +338,24 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
                 for (final DataSnapshot group : snapshot.getChildren()) {
                     //Loop 1 to go through all child nodes of users
                     if (group.child("group_name").getValue() == mGroup.getGroup_name()) {
-                            mGroup.deleteMemberListElement(mUID);
-                            group.getRef().child("joined_members").setValue(mGroup.getMember_list());
-                            clearBackstack();
+                        mGroup.deleteMemberListElement(mUID);
+                        group.getRef().child("joined_members").setValue(mGroup.getMember_list());
+                        clearBackstack();
                     }
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                //canceled
+                System.err.println("Listener was cancelled");
             }
         });
     }
 
+    /**
+     * show code to send to others who want to join
+     */
     @Override
     public void ShowCode() {
         ShowCodeDialogFragment showCodeDialogFragment = new ShowCodeDialogFragment(mGroup.getInvite_code());

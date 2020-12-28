@@ -1,7 +1,6 @@
 package com.example.pabs.Fragments.EventFragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,28 +20,40 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+/**
+ * Sets description of event
+ */
+
 public class EventDescriptionFragment extends Fragment {
 
+    //database event
+    private final DatabaseEvent databaseEvent;
+    //UI
     private View containerView;
-
     private TextView tv;
     private EditText et;
     private ImageView iv;
     private Button setDescBtn;
 
-    //database event
-    private final DatabaseEvent databaseEvent;
-
+    /**
+     * Constructor
+     */
     EventDescriptionFragment(DatabaseEvent dE) {
         databaseEvent = dE;
     }
 
+    /**
+     * onCreate
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
 
+    /**
+     * onCreateView
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,15 +61,18 @@ public class EventDescriptionFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_event_description, container, false);
         containerView = getActivity().findViewById(R.id.activity_event_layout);
 
+        //init view
         tv = view.findViewById(R.id.f_e_d_tv);
         et = view.findViewById(R.id.f_e_d_et);
         iv = view.findViewById(R.id.f_e_d_backImg);
         setDescBtn = view.findViewById(R.id.f_e_d_setDescBtn);
 
+        //if description is not null in databaseEvent
         if (databaseEvent.getDescription() != null) {
             et.setText(databaseEvent.getDescription());
         }
 
+        //set click listener to exit image
         iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,32 +80,47 @@ public class EventDescriptionFragment extends Fragment {
             }
         });
 
+        //set Description-set click listener
         setDescBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final DatabaseReference refEvent = FirebaseDatabase.getInstance().getReference().child("EVENT");
-                refEvent.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot event : snapshot.getChildren()) {
-                            //Loop 1 to go through all child nodes of users
-                            if (event.child("event_name").getValue() == databaseEvent.getEvent_name()) {
-                                databaseEvent.setDescription(et.getText().toString());
-                                refEvent.child(event.getKey()).child("description").setValue(databaseEvent.getDescription());
-                                Log.d("EDF", "onDataChange: Successful");
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        //database failed
-                    }
-                });
+                //set description
+                setDescriptionInDatabase();
             }
         });
 
         return view;
+    }
+
+    /**
+     * Change description of event in database
+     */
+    private void setDescriptionInDatabase() {
+        //reference to CHILD table in database
+        final DatabaseReference refEvent = FirebaseDatabase.getInstance().getReference().child("EVENT");
+        //add single value event listener
+        refEvent.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //loop through events
+                for (DataSnapshot event : snapshot.getChildren()) {
+                    //if current event is found
+                    if (event.child("event_name").getValue() == databaseEvent.getEvent_name()) {
+                        //set description to databaseEvent
+                        databaseEvent.setDescription(et.getText().toString());
+
+                        //set description in database
+                        refEvent.child(event.getKey()).child("description").setValue(databaseEvent.getDescription());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                //canceled
+                System.err.println("Listener was cancelled");
+            }
+        });
     }
 
     /**

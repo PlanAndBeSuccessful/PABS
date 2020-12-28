@@ -1,12 +1,6 @@
 package com.example.pabs.Fragments.EventFragment;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,11 +8,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.pabs.Adapters.EventTodoRecyclerViewAdapter;
 import com.example.pabs.Fragments.AddTaskDialogFragment;
+import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.Models.TaskList;
 import com.example.pabs.Models.ToDoList;
-import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,27 +30,24 @@ import java.util.List;
 
 public class EventToDoFragment extends Fragment implements AddTaskDialogFragment.AddTaskDialogListener {
 
+    //Event object
+    DatabaseEvent event_obj;
+    ToDoList tD;
+    EventTodoRecyclerViewAdapter parentItemAdapter;
     private String uID;
     private View listView;
     //firebase
     private DatabaseReference reference = null;
     private String EventID;
-
     //dialog fragment
     private String task_text;
 
-    //Event object
-    DatabaseEvent event_obj;
-
-    ToDoList tD;
-
-    EventTodoRecyclerViewAdapter parentItemAdapter;
-    public void setEventID(String id){
-        EventID = id;
-    }
-
     public EventToDoFragment(DatabaseEvent event) {
         this.event_obj = event;
+    }
+
+    public void setEventID(String id) {
+        EventID = id;
     }
 
     @Override
@@ -80,10 +76,10 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
         referenceEvent.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot event : snapshot.getChildren()){
-                    if(event.child("event_name").getValue() != null) {
-                        if (event.child("event_name").getValue().toString().equals(event_obj.getEvent_name())){
-                           //setEventID(event.getKey());
+                for (DataSnapshot event : snapshot.getChildren()) {
+                    if (event.child("event_name").getValue() != null) {
+                        if (event.child("event_name").getValue().toString().equals(event_obj.getEvent_name())) {
+                            //setEventID(event.getKey());
                             //firebase database -> get reference to TODO table
                             EventID = event.getKey();
                             reference = FirebaseDatabase.getInstance().getReference().child("TODO").child(EventID);
@@ -102,17 +98,17 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                     for (DataSnapshot task : snapshot.getChildren()) {
                                                         //Loop 1 to go through all child nodes of joined members
-                                                            TaskList task_temp = new TaskList();
-                                                            task_temp.setBelongTo(task.child("belongTo").getValue().toString());
-                                                            task_temp.setTaskTitle(task.child("taskTitle").getValue().toString());
-                                                            String CB = task.child("taskCB").getValue().toString();
-                                                            boolean cb = false;
-                                                            if (CB.equals("true")) {
-                                                                cb = true;
-                                                                Log.d("Espania", "onDataChange: Ifben vagyok! " + cb);
-                                                            }
-                                                            task_temp.setTaskCB(cb);
-                                                            tasks.add(task_temp);
+                                                        TaskList task_temp = new TaskList();
+                                                        task_temp.setBelongTo(task.child("belongTo").getValue().toString());
+                                                        task_temp.setTaskTitle(task.child("taskTitle").getValue().toString());
+                                                        String CB = task.child("taskCB").getValue().toString();
+                                                        boolean cb = false;
+                                                        if (CB.equals("true")) {
+                                                            cb = true;
+                                                            Log.d("Espania", "onDataChange: Ifben vagyok! " + cb);
+                                                        }
+                                                        task_temp.setTaskCB(cb);
+                                                        tasks.add(task_temp);
                                                     }
 
 
@@ -138,7 +134,7 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
                                                                 // to the parentItemAdapter.
                                                                 // These arguments are passed
                                                                 // using a method ParentItemList()
-                                                                parentItemAdapter = new EventTodoRecyclerViewAdapter(tasks,EventID);
+                                                                parentItemAdapter = new EventTodoRecyclerViewAdapter(tasks, EventID);
                                                                 // Set the layout manager
                                                                 // and adapter for items
                                                                 // of the parent recyclerview
@@ -183,7 +179,7 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
             @Override
             public void onClick(View v) {
                 inviteDialogFragment();
-                if(parentItemAdapter != null){
+                if (parentItemAdapter != null) {
                     parentItemAdapter.notifyDataSetChanged();
                 }
 
@@ -193,12 +189,12 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
         return myToDoview;
     }
 
-    private void pushInMyToDoList(final DatabaseReference reference){
+    private void pushInMyToDoList(final DatabaseReference reference) {
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot todo: snapshot.getChildren()) {
-                    if(!todo.getKey().equals("Type")) {
+                for (DataSnapshot todo : snapshot.getChildren()) {
+                    if (!todo.getKey().equals("Type")) {
                         todo.child("taskList").getRef().push().setValue(new TaskList(task_text, uID, todo.getKey()));
                     }
                 }
@@ -231,10 +227,10 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
         pushInMyToDoList(reference);
     }
 
-    public void inviteDialogFragment(){
+    public void inviteDialogFragment() {
         AddTaskDialogFragment addTaskDialogFragment = new AddTaskDialogFragment();
         addTaskDialogFragment.setListener(EventToDoFragment.this);
         addTaskDialogFragment.setCancelable(true);
-        addTaskDialogFragment.show(getActivity().getSupportFragmentManager(),"AddTaskDialogFragment");
+        addTaskDialogFragment.show(getActivity().getSupportFragmentManager(), "AddTaskDialogFragment");
     }
 }

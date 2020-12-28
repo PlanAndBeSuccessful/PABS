@@ -16,28 +16,39 @@ import com.example.pabs.R;
 
 import static android.view.View.GONE;
 
+/**
+ * Connects UI with different images in GroupFragment
+ */
+
 public class GroupOptionsDialogFragment extends AppCompatDialogFragment {
-    //edittext
+
+    //listener
     private GroupOptionsDialogFragment.GroupOptionsDialogListener groupOptionsDialogListener;
+
     //dialog
     private Dialog dialog;
+
     //ImageView
     private ImageView closeGroupImg;
     private ImageView addKickMembersImg;
     private ImageView groupEventsImg;
     private ImageView leaveGroupImg;
     private ImageView showCodeImg;
-
     private ImageView exitImg;
 
+    //LinearLayout
     private LinearLayout closeGroupLinL;
     private LinearLayout kickMembersLinL;
     private LinearLayout groupEventsLinL;
     private LinearLayout leaveGroupLinL;
     private LinearLayout showCodeLinL;
 
+    //helper variables
     private int mState;
 
+    /**
+     * Set listener
+     */
     public void setListener(GroupOptionsDialogFragment.GroupOptionsDialogListener groupOptionsDialogListener, int state) {
         this.groupOptionsDialogListener = groupOptionsDialogListener;
         this.mState = state;
@@ -52,22 +63,25 @@ public class GroupOptionsDialogFragment extends AppCompatDialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_dialog_group_options, null);
 
+        //create new dialog with custom theme
         dialog = new Dialog(getActivity(), R.style.MyDialogTheme);
 
+        //init images
         closeGroupImg = view.findViewById(R.id.f_g_o_closeGroupImg);
         addKickMembersImg = view.findViewById(R.id.f_g_o_kickMembersImg);
         groupEventsImg = view.findViewById(R.id.f_g_o_groupEventsImg);
         leaveGroupImg = view.findViewById(R.id.f_g_o_leaveGroupImg);
         showCodeImg = view.findViewById(R.id.f_g_o_showCodeImg);
-
         exitImg = view.findViewById(R.id.f_g_o_exitImg);
 
+        //init linearLayouts
         showCodeLinL = view.findViewById(R.id.f_g_o_lr5);
         closeGroupLinL = view.findViewById(R.id.f_g_o_lr4);
         kickMembersLinL = view.findViewById(R.id.f_g_o_lr3);
         groupEventsLinL = view.findViewById(R.id.f_g_o_lr2);
         leaveGroupLinL = view.findViewById(R.id.f_g_o_lr1);
 
+        //set Click listeners to images
         closeGroupImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,10 +122,6 @@ public class GroupOptionsDialogFragment extends AppCompatDialogFragment {
             }
         });
 
-
-        dialog.setContentView(view);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
         exitImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -119,6 +129,12 @@ public class GroupOptionsDialogFragment extends AppCompatDialogFragment {
             }
         });
 
+        //set content view
+        dialog.setContentView(view);
+        //set Background
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        //set visibility
         if (mState == 0) {
             //owner
             hideLeaveGroup();

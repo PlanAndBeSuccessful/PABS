@@ -2,13 +2,18 @@ package com.example.pabs.Models;
 
 import java.util.List;
 
+/**
+ * Class to store to do list from Firebase Database
+ */
+
 public class ToDoList {
     private String ID;
     private String owner;
     private String toDoListTitle;
     private List<TaskList> taskList;
 
-    public ToDoList() {}
+    public ToDoList() {
+    }
 
     public ToDoList(String toDoListTitle, List<TaskList> taskList, String owner, String id) {
         this.toDoListTitle = toDoListTitle;
@@ -33,15 +38,15 @@ public class ToDoList {
         this.taskList = taskList;
     }
 
-    public void addToTaskList(TaskList task){
+    public void addToTaskList(TaskList task) {
         this.taskList.add(task);
     }
 
-    public String getOwner(){
+    public String getOwner() {
         return this.owner;
     }
 
-    public void setOwner(String owner){
+    public void setOwner(String owner) {
         this.owner = owner;
     }
 

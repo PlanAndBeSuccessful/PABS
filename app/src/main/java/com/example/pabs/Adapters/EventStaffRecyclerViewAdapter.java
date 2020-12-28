@@ -25,7 +25,10 @@ import java.util.List;
 
 public class EventStaffRecyclerViewAdapter extends RecyclerView.Adapter<EventStaffRecyclerViewAdapter.MyViewHolder> {
 
+    //UI
     private final Context mContext;
+
+    //List
     private final List<String> mData;
 
     /**
@@ -54,13 +57,17 @@ public class EventStaffRecyclerViewAdapter extends RecyclerView.Adapter<EventSta
      */
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-        //set data
+        //get reference to database
         final DatabaseReference refUsers = FirebaseDatabase.getInstance().getReference().child("USER");
+        //add listener for single value event
         refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //go through children of USER table
                 for (DataSnapshot user : snapshot.getChildren()) {
+                    //if id of user matches with id in mData
                     if (user.getKey().equals(mData.get(position))) {
+                        //set text of text view of holder
                         holder.tv_name.setText(user.child("user_name").getValue().toString());
                     }
                 }
@@ -72,6 +79,7 @@ public class EventStaffRecyclerViewAdapter extends RecyclerView.Adapter<EventSta
             }
         });
 
+        //set click listener to holder cardView
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,10 +93,9 @@ public class EventStaffRecyclerViewAdapter extends RecyclerView.Adapter<EventSta
      */
     @Override
     public int getItemCount() {
-        if(mData == null){
+        if (mData == null) {
             return 0;
-        }
-        else{
+        } else {
             return mData.size();
         }
 

@@ -22,8 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.pabs.HelperClass.DateInputMask;
-import com.example.pabs.Models.ToDoList;
 import com.example.pabs.Models.DatabaseEvent;
+import com.example.pabs.Models.ToDoList;
 import com.example.pabs.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,7 +58,8 @@ import static android.view.View.GONE;
 public class CreateEventFragment extends Fragment {
 
     private static final String TAG = "CreateEventFragment";
-
+    //helper variables
+    private final String mUID;
     //UI
     private View containerView;
     private Button back_button;
@@ -70,20 +71,37 @@ public class CreateEventFragment extends Fragment {
     private Spinner group_dropdown;
     private EditText location_et;
     private FrameLayout FragmentEventContainer;
-
-    private  ArrayList<String> availableGroups;
-
     private TextView groupTv;
-
+    private ArrayAdapter<String> groupAdapter;
+    //list
+    private ArrayList<String> availableGroups;
     //firebase
     private DatabaseReference reference = null;
     private DatabaseReference databaseGroupReference;
-    private DatabaseReference  referenceToDO;
+    private DatabaseReference referenceToDO;
 
-    private final String mUID;
-
+    /**
+     * Constructor
+     */
     public CreateEventFragment(String uID) {
         mUID = uID;
+    }
+
+    /**
+     * Verifies if startDate is after\equal or before endDate
+     */
+    public static boolean isDateAfter(String startDate, String endDate) {
+        try {
+            String myFormatString = "yyyy/MM/dd"; // for example
+            SimpleDateFormat df = new SimpleDateFormat(myFormatString);
+            Date date1 = df.parse(endDate);
+            Date startingDate = df.parse(startDate);
+
+            return date1.after(startingDate) || date1.equals(startingDate);
+        } catch (Exception e) {
+
+            return false;
+        }
     }
 
     /**
@@ -104,7 +122,8 @@ public class CreateEventFragment extends Fragment {
         // Inflate the layout for this fragment
         View CreateEventView = inflater.inflate(R.layout.fragment_create_event, container, false);
         containerView = getActivity().findViewById(R.id.activity_event_layout);
-        //
+
+        //container which the fragment is kept in
         FragmentEventContainer = getActivity().findViewById(R.id.fragment_event_container);
 
         //back button
@@ -145,14 +164,17 @@ public class CreateEventFragment extends Fragment {
         //set the spinners adapter to the previously created one.
         dropdown.setAdapter(adapter);
 
+        //set on item selected listener to spinner dropdown
         dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // your code here
-                if(position == 0){
+                // on item selected
+                if (position == 0) {
+                    //if public selected
                     groupTv.setVisibility(View.GONE);
                     group_dropdown.setVisibility(View.GONE);
-                }else{
+                } else {
+                    //if private selected
                     groupTv.setVisibility(View.VISIBLE);
                     group_dropdown.setVisibility(View.VISIBLE);
                 }
@@ -160,62 +182,24 @@ public class CreateEventFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
+                // on nothing selected
             }
 
         });
 
-        final ArrayAdapter<String> groupAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, availableGroups);
+        //adapter to show groups that the user is joined in
+        groupAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, availableGroups);
         //set the spinners adapter to the previously created one.
         group_dropdown.setAdapter(groupAdapter);
 
+        //reference to To Do table in database
         referenceToDO = FirebaseDatabase.getInstance().getReference().child("TODO");
 
+        //reference to Group table in database
         databaseGroupReference = FirebaseDatabase.getInstance().getReference().child("GROUP");
-        databaseGroupReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(final DataSnapshot group : snapshot.getChildren()){
 
-                    //if he is owner
-                    if ((group.child("group_owner").getValue().toString()).equals(mUID)) {
-                        availableGroups.add(group.child("group_name").getValue().toString());
-
-                        groupAdapter.notifyDataSetChanged();
-                    }
-                    else{
-                    //if he is joined in group
-                        group.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for(DataSnapshot user : snapshot.getChildren()) {
-                                    if (user.getValue() != null && group.child("group_name").getValue() != null) {
-                                        if ((user.getValue().toString()).equals(mUID)) {
-                                            availableGroups.add(group.child("group_name").getValue().toString());
-                                            break;
-                                        }
-                                    }
-                                }
-                                groupAdapter.notifyDataSetChanged();
-
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-                    }
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
+        //get available groups
+        getAvailableGroups();
 
         //location
         location_et = CreateEventView.findViewById(R.id.c_e_event_location_edit);
@@ -231,169 +215,7 @@ public class CreateEventFragment extends Fragment {
         next_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (!TextUtils.isEmpty(location_et.getText().toString())) {
-                    //if location field is not empty
-
-                    //getting lat and lng from location
-                    final LatLng latLng = getLocationFromAddress(getActivity(), location_et.getText().toString());
-
-                    //if location is found
-                    if (latLng != null) {
-                        //getting user logged in
-                        final FirebaseUser fireBaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-                        //check for empty fields
-                        if (!TextUtils.isEmpty(name_et.getText().toString()) && !TextUtils.isEmpty(start_date_et.getText().toString()) && !TextUtils.isEmpty(end_date_et.getText().toString())) {
-                            //new Database created from field contents written in by user
-                            if(isDateAfter(start_date_et.getText().toString(), end_date_et.getText().toString())){
-
-                                DatabaseReference databaseEventReference;
-                                databaseEventReference = FirebaseDatabase.getInstance().getReference().child("EVENT");
-
-                                databaseEventReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        boolean user_name_is_occupied = false;
-
-                                        for (DataSnapshot user : snapshot.getChildren()) {
-                                            if(user.child("event_name").getValue().toString().equals(name_et.getText().toString())){
-                                                user_name_is_occupied = true;
-                                            }
-                                        }
-
-                                        if(!user_name_is_occupied){
-                                            final DatabaseEvent databaseEvent = new DatabaseEvent();
-                                            databaseEvent.setLocation_x(latLng.latitude);
-                                            databaseEvent.setLocation_y(latLng.longitude);
-                                            databaseEvent.setEvent_name(name_et.getText().toString());
-                                            databaseEvent.setLocation_name(location_et.getText().toString());
-                                            databaseEvent.setStart_date(start_date_et.getText().toString());
-                                            databaseEvent.setEnd_date(end_date_et.getText().toString());
-                                            databaseEvent.setPriv_pub(dropdown.getSelectedItem().toString());
-                                            databaseEvent.setOwner_id(fireBaseUser.getUid());
-                                            //set basic thumbnail
-                                            //databaseEvent.setThumbnail("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
-
-                                            if (databaseEvent.getPriv_pub().equals("Private")) {
-                                                databaseGroupReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                        for (DataSnapshot group : snapshot.getChildren()) {
-                                                            if (group.child("group_name").getValue() != null) {
-                                                                if ((group.child("group_name").getValue().toString()).equals(group_dropdown.getSelectedItem().toString())) {
-                                                                    final ArrayList<String> joined_members = new ArrayList<>();
-                                                                    group.child("joined_members").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                        @Override
-                                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                            for (DataSnapshot member : snapshot.getChildren()) {
-                                                                                joined_members.add(member.getValue().toString());
-                                                                            }
-
-                                                                            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                                                                            Date date = null;
-                                                                            try {
-                                                                                date = (Date)formatter.parse(databaseEvent.getEnd_date() +" "+"00"+":"+"00"+":"+"00");
-
-                                                                                Calendar c = Calendar.getInstance();
-                                                                                c.setTime(date);
-                                                                                c.add(Calendar.DATE, 1);
-                                                                                date = c.getTime();
-
-                                                                                //pushing databaseEvent to database
-                                                                                String eventID = reference.push().getKey();
-
-                                                                                databaseEvent.setJoined_members(joined_members);
-
-                                                                                databaseEvent.setTimestamp(date.getTime());
-
-                                                                                reference.child(eventID).setValue(databaseEvent);
-
-                                                                                createMyToDo(databaseEvent, eventID);
-
-                                                                                //open event
-
-                                                                                openEvent(databaseEvent);
-                                                                            } catch (ParseException e) {
-                                                                                e.printStackTrace();
-                                                                            }
-
-                                                                        }
-
-                                                                        @Override
-                                                                        public void onCancelled(@NonNull DatabaseError error) {
-
-                                                                        }
-                                                                    });
-                                                                    break;
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError error) {
-
-                                                    }
-                                                });
-                                            } else {
-
-                                                DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                                                Date date = null;
-                                                try {
-                                                    date = (Date)formatter.parse(databaseEvent.getEnd_date() +" "+"00"+":"+"00"+":"+"00");
-
-                                                    Calendar c = Calendar.getInstance();
-                                                    c.setTime(date);
-                                                    c.add(Calendar.DATE, 1);
-                                                    date = c.getTime();
-
-                                                    //pushing databaseEvent to database
-                                                    String eventID = reference.push().getKey();
-                                                    
-                                                    databaseEvent.setTimestamp(date.getTime());
-
-                                                    reference.child(eventID).setValue(databaseEvent);
-
-                                                    createMyToDo(databaseEvent, eventID);
-
-                                                    //open event
-
-                                                    openEvent(databaseEvent);
-                                                } catch (ParseException e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                            }
-                                        }
-                                        else{
-                                            Toast.makeText(getActivity(), "Name of event is already occupied", Toast.LENGTH_SHORT).show();
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-
-                                    }
-                                });
-
-                            }else{
-                                //if starting date > ending date
-                                Toast.makeText(getActivity(), "Wrong date!", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        getAddress(latLng.latitude, latLng.longitude);
-
-                    } else {
-                        //if location is not found
-                        Toast.makeText(getActivity(), "Wrong location!", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    //if fields are empty
-                    Toast.makeText(getActivity(), "Empty Fields!", Toast.LENGTH_SHORT).show();
-                }
+                createEventInDatabase();
             }
         });
 
@@ -401,27 +223,257 @@ public class CreateEventFragment extends Fragment {
         return CreateEventView;
     }
 
+    /**
+     * get Available Groups to set data in spinner
+     */
+    private void getAvailableGroups() {
+        //listener for single value event for databaseGroupReference
+        databaseGroupReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //loop through groups
+                for (final DataSnapshot group : snapshot.getChildren()) {
 
-    public static boolean isDateAfter(String startDate,String endDate)
-    {
-        try
-        {
-            String myFormatString = "yyyy/MM/dd"; // for example
-            SimpleDateFormat df = new SimpleDateFormat(myFormatString);
-            Date date1 = df.parse(endDate);
-            Date startingDate = df.parse(startDate);
+                    //if he is owner
+                    if ((group.child("group_owner").getValue().toString()).equals(mUID)) {
 
-            if (date1.after(startingDate) || date1.equals(startingDate))
-                return true;
-            else
-                return false;
-        }
-        catch (Exception e)
-        {
+                        //add group to availableGroups
+                        availableGroups.add(group.child("group_name").getValue().toString());
 
-            return false;
+                        //update adapter
+                        groupAdapter.notifyDataSetChanged();
+                    } else {
+                        //if he is joined in group
+                        group.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot member : snapshot.getChildren()) {
+                                    //if getValues are not null
+                                    if (member.getValue() != null && group.child("group_name").getValue() != null) {
+                                        //if member was found in group
+                                        if ((member.getValue().toString()).equals(mUID)) {
+                                            //add group to availableGroups
+                                            availableGroups.add(group.child("group_name").getValue().toString());
+                                            break;
+                                        }
+                                    }
+                                }
+                                //update adapter
+                                groupAdapter.notifyDataSetChanged();
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                //canceled
+                                System.err.println("Listener was cancelled");
+                            }
+                        });
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                //canceled
+                System.err.println("Listener was cancelled");
+            }
+        });
+    }
+
+    /**
+     * Create event in database
+     */
+    private void createEventInDatabase() {
+        if (!TextUtils.isEmpty(location_et.getText().toString())) {
+            //if location field is not empty
+
+            //getting lat and lng from location
+            final LatLng latLng = getLocationFromAddress(getActivity(), location_et.getText().toString());
+
+            //if location is found
+            if (latLng != null) {
+                //getting user logged in
+                final FirebaseUser fireBaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                //check for empty fields
+                if (!TextUtils.isEmpty(name_et.getText().toString()) && !TextUtils.isEmpty(start_date_et.getText().toString()) && !TextUtils.isEmpty(end_date_et.getText().toString())) {
+                    //new Database created from field contents written in by user
+                    if (isDateAfter(start_date_et.getText().toString(), end_date_et.getText().toString())) {
+
+                        DatabaseReference databaseEventReference;
+                        //set reference to EVENT table in database
+                        databaseEventReference = FirebaseDatabase.getInstance().getReference().child("EVENT");
+
+                        databaseEventReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                boolean user_name_is_occupied = false;
+
+                                for (DataSnapshot user : snapshot.getChildren()) {
+                                    if (user.child("event_name").getValue().toString().equals(name_et.getText().toString())) {
+                                        user_name_is_occupied = true;
+                                    }
+                                }
+
+                                if (!user_name_is_occupied) {
+                                    //create new databaseEvent
+                                    final DatabaseEvent databaseEvent = new DatabaseEvent();
+                                    //set data in databaseEvent from EditText
+                                    databaseEvent.setLocation_x(latLng.latitude);
+                                    databaseEvent.setLocation_y(latLng.longitude);
+                                    databaseEvent.setEvent_name(name_et.getText().toString());
+                                    databaseEvent.setLocation_name(location_et.getText().toString());
+                                    databaseEvent.setStart_date(start_date_et.getText().toString());
+                                    databaseEvent.setEnd_date(end_date_et.getText().toString());
+                                    databaseEvent.setPriv_pub(dropdown.getSelectedItem().toString());
+                                    databaseEvent.setOwner_id(fireBaseUser.getUid());
+                                    //set basic thumbnail
+                                    databaseEvent.setThumbnail("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2Fno-image-found-360x250.png?alt=media&token=77870c1c-7a00-4f6b-ba33-1f8c9abc6b73");
+
+                                    //if databaseEvent is set to Private show groups
+                                    if (databaseEvent.getPriv_pub().equals("Private")) {
+                                        //set listener for single value event
+                                        databaseGroupReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                for (DataSnapshot group : snapshot.getChildren()) {
+                                                    //if group name get value is not null
+                                                    if (group.child("group_name").getValue() != null) {
+                                                        //get selected item
+                                                        if ((group.child("group_name").getValue().toString()).equals(group_dropdown.getSelectedItem().toString())) {
+                                                            //init joined_members
+                                                            final ArrayList<String> joined_members = new ArrayList<>();
+                                                            //reference to joined members so we can create databaseEvent with group members
+                                                            group.child("joined_members").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                    for (DataSnapshot member : snapshot.getChildren()) {
+                                                                        //add members to joined_members
+                                                                        joined_members.add(member.getValue().toString());
+                                                                    }
+
+                                                                    //set format of date
+                                                                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                                                                    Date date = null;
+                                                                    try {
+                                                                        //make date from getEnd_date in databaseEvent
+                                                                        date = (Date) formatter.parse(databaseEvent.getEnd_date() + " " + "00" + ":" + "00" + ":" + "00");
+
+                                                                        //add 1 day to it
+                                                                        Calendar c = Calendar.getInstance();
+                                                                        c.setTime(date);
+                                                                        c.add(Calendar.DATE, 1);
+                                                                        date = c.getTime();
+
+                                                                        //getting id of event
+                                                                        String eventID = reference.push().getKey();
+
+                                                                        //set timestamp in databaseEvent
+                                                                        databaseEvent.setTimestamp(date.getTime());
+
+                                                                        //pushing databaseEvent to database
+                                                                        reference.child(eventID).setValue(databaseEvent);
+
+                                                                        //set to do to databaseEvent
+                                                                        createMyToDo(databaseEvent, eventID);
+
+                                                                        //open event
+                                                                        openEvent(databaseEvent);
+
+                                                                    } catch (ParseException e) {
+                                                                        e.printStackTrace();
+                                                                    }
+
+                                                                }
+
+                                                                @Override
+                                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                                    //canceled
+                                                                    System.err.println("Listener was cancelled");
+                                                                }
+                                                            });
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                //canceled
+                                                System.err.println("Listener was cancelled");
+                                            }
+                                        });
+                                    } else {
+                                        //if databaseEvent is set to Public avoid selection of groups
+
+                                        //set format of date
+                                        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                                        Date date = null;
+                                        try {
+                                            //make date from getEnd_date in databaseEvent
+                                            date = (Date) formatter.parse(databaseEvent.getEnd_date() + " " + "00" + ":" + "00" + ":" + "00");
+
+                                            //add 1 day to it
+                                            Calendar c = Calendar.getInstance();
+                                            c.setTime(date);
+                                            c.add(Calendar.DATE, 1);
+                                            date = c.getTime();
+
+                                            //getting id of event
+                                            String eventID = reference.push().getKey();
+
+                                            //set timestamp in databaseEvent
+                                            databaseEvent.setTimestamp(date.getTime());
+
+                                            //pushing databaseEvent to database
+                                            reference.child(eventID).setValue(databaseEvent);
+
+                                            //set to do to databaseEvent
+                                            createMyToDo(databaseEvent, eventID);
+
+                                            //open event
+                                            openEvent(databaseEvent);
+
+                                        } catch (ParseException e) {
+                                            //error in formatter of date
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+                                } else {
+                                    Toast.makeText(getActivity(), "Name of event is already occupied", Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                //canceled
+                                System.err.println("Listener was cancelled");
+                            }
+                        });
+
+                    } else {
+                        //if starting date > ending date
+                        Toast.makeText(getActivity(), "Wrong date!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                getAddress(latLng.latitude, latLng.longitude);
+
+            } else {
+                //if location is not found
+                Toast.makeText(getActivity(), "Wrong location!", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            //if fields are empty
+            Toast.makeText(getActivity(), "Empty Fields!", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     /**
      * open EventFragment with Data of created event
@@ -505,7 +557,10 @@ public class CreateEventFragment extends Fragment {
         containerView.setVisibility(View.VISIBLE);
     }
 
-    private void createMyToDo(DatabaseEvent dbEv, String eventID){
+    /**
+     * Create my to do
+     */
+    private void createMyToDo(DatabaseEvent dbEv, String eventID) {
         ToDoList temp = new ToDoList();
         temp.setToDoListTitle(dbEv.getEvent_name());
         temp.setOwner(eventID);

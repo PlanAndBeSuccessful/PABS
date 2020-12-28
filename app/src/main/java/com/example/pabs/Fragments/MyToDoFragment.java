@@ -1,18 +1,17 @@
 package com.example.pabs.Fragments;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pabs.Adapters.ToDoRecyclerViewAdapter;
 import com.example.pabs.Models.TaskList;
@@ -29,9 +28,9 @@ import java.util.List;
 
 public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.AddTaskDialogListener {
 
-    private View listView;
     List<ToDoList> itemList;
     List<ToDoList> lstToDo;
+    private View listView;
     //firebase
     private DatabaseReference reference = null;
     private String uID;
@@ -70,7 +69,7 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
 
         //Getting events from database and setting them to recyclerview
         final DatabaseReference databaseTodoRef;
-        databaseTodoRef= FirebaseDatabase.getInstance().getReference().child("TODO").child(uID);
+        databaseTodoRef = FirebaseDatabase.getInstance().getReference().child("TODO").child(uID);
 
         //databaseEvents.addValueEventListener(new ValueEventListener() {
         databaseTodoRef.addValueEventListener(new ValueEventListener() {
@@ -81,19 +80,19 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
                     final ToDoList tempTD = new ToDoList();
 
                     //Loop 1 to go through all child nodes of events
-                    final List<TaskList> tasks =  new ArrayList<>();
+                    final List<TaskList> tasks = new ArrayList<>();
                     todo.getRef().child("taskList").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for (DataSnapshot task : snapshot.getChildren()) {
                                 //Loop 1 to go through all child nodes of joined members
-                                if(!task.getValue().equals("Type")){
+                                if (!task.getValue().equals("Type")) {
                                     TaskList task_temp = new TaskList();
                                     task_temp.setBelongTo(task.child("belongTo").getValue().toString());
                                     task_temp.setTaskTitle(task.child("taskTitle").getValue().toString());
                                     String CB = task.child("taskCB").getValue().toString();
                                     boolean cb = false;
-                                    if(CB.equals("true")){
+                                    if (CB.equals("true")) {
                                         cb = true;
                                         Log.d("Espania", "onDataChange: Ifben vagyok! " + cb);
                                     }
@@ -107,9 +106,9 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
                             final int delay = 1000; //milliseconds
 
                             Log.d("WTF", "run: Here is Jimmi!" + tasks.size());
-                            handler.postDelayed(new Runnable(){
-                                public void run(){
-                                    if(!tasks.isEmpty())//checking if the data is loaded or not
+                            handler.postDelayed(new Runnable() {
+                                public void run() {
+                                    if (!tasks.isEmpty())//checking if the data is loaded or not
                                     {
                                         Log.d("WTF", "run: Here is Johnny!");
                                         String td_title = todo.child("toDoListTitle").getValue().toString();
@@ -126,15 +125,14 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
                                         // to the parentItemAdapter.
                                         // These arguments are passed
                                         // using a method ParentItemList()
-                                        ToDoRecyclerViewAdapter parentItemAdapter = new ToDoRecyclerViewAdapter(lstToDo,uID);
+                                        ToDoRecyclerViewAdapter parentItemAdapter = new ToDoRecyclerViewAdapter(lstToDo, uID);
 
                                         // Set the layout manager
                                         // and adapter for items
                                         // of the parent recyclerview
                                         ParentRecyclerViewItem.setAdapter(parentItemAdapter);
                                         ParentRecyclerViewItem.setLayoutManager(layoutManager);
-                                    }
-                                    else
+                                    } else
                                         handler.postDelayed(this, delay);
                                 }
                             }, delay);
@@ -169,12 +167,13 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
         return myToDoview;
     }
 
-    private void pushInMyToDoList(final DatabaseReference reference){
+    private void pushInMyToDoList(final DatabaseReference reference) {
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             int ok = 0;
+
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot todo: snapshot.getChildren()) {
+                for (DataSnapshot todo : snapshot.getChildren()) {
                     if (todo.child("toDoListTitle").getValue() != null) {
                         if (todo.child("toDoListTitle").getValue().toString().equals("My ToDos")) {
                             ok = 1;
@@ -215,10 +214,10 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
         pushInMyToDoList(reference);
     }
 
-    public void inviteDialogFragment(){
+    public void inviteDialogFragment() {
         AddTaskDialogFragment addTaskDialogFragment = new AddTaskDialogFragment();
         addTaskDialogFragment.setListener(MyToDoFragment.this);
         addTaskDialogFragment.setCancelable(true);
-        addTaskDialogFragment.show(getActivity().getSupportFragmentManager(),"AddTaskDialogFragment");
+        addTaskDialogFragment.show(getActivity().getSupportFragmentManager(), "AddTaskDialogFragment");
     }
 }

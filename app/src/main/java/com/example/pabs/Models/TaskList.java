@@ -1,9 +1,8 @@
 package com.example.pabs.Models;
 
-import android.widget.Button;
-import android.widget.CheckBox;
-
-import com.google.firebase.database.DatabaseReference;
+/**
+ * Class to store task list from Firebase Database
+ */
 
 public class TaskList {
     private String taskTitle;
@@ -11,9 +10,10 @@ public class TaskList {
     private String belongTo;
     private String ToDoID;
 
-    public TaskList(){}
+    public TaskList() {
+    }
 
-    public TaskList(String taskTitle,String belongTO,String reference) {
+    public TaskList(String taskTitle, String belongTO, String reference) {
         this.taskTitle = taskTitle;
         this.taskCB = false;
         this.belongTo = belongTO;
@@ -24,15 +24,15 @@ public class TaskList {
         return taskTitle;
     }
 
-    public boolean getTaskCB(){
-        return taskCB;
-    }
-
     public void setTaskTitle(String taskTitle) {
         this.taskTitle = taskTitle;
     }
 
-    public void setTaskCB(boolean taskcb){
+    public boolean getTaskCB() {
+        return taskCB;
+    }
+
+    public void setTaskCB(boolean taskcb) {
         this.taskCB = taskcb;
     }
 

@@ -128,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    private void createMyToDo(){
+    private void createMyToDo() {
         ToDoList temp = new ToDoList();
         temp.setToDoListTitle("My ToDos");
         temp.setOwner(currAuth.getUid());
