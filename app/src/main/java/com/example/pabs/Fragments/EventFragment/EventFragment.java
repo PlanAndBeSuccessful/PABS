@@ -370,13 +370,8 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
      * clearBackstack
      */
     public void clearBackstack() {
-        //clear all backstact
-        if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 1) {
-            getActivity().getSupportFragmentManager().popBackStack("EventFragment", 1);
-        } else {
-            for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); ++i) {
-                getActivity().getSupportFragmentManager().popBackStack();
-            }
+        for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); ++i) {
+            getActivity().getSupportFragmentManager().popBackStack();
         }
     }
 

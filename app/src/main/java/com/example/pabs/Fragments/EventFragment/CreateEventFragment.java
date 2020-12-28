@@ -88,23 +88,6 @@ public class CreateEventFragment extends Fragment {
     }
 
     /**
-     * Verifies if startDate is after\equal or before endDate
-     */
-    public static boolean isDateAfter(String startDate, String endDate) {
-        try {
-            String myFormatString = "yyyy/MM/dd"; // for example
-            SimpleDateFormat df = new SimpleDateFormat(myFormatString);
-            Date date1 = df.parse(endDate);
-            Date startingDate = df.parse(startDate);
-
-            return date1.after(startingDate) || date1.equals(startingDate);
-        } catch (Exception e) {
-
-            return false;
-        }
-    }
-
-    /**
      * on fragment created
      */
     @Override
@@ -280,6 +263,23 @@ public class CreateEventFragment extends Fragment {
                 System.err.println("Listener was cancelled");
             }
         });
+    }
+
+    /**
+     * Verifies if startDate is after\equal or before endDate
+     */
+    public static boolean isDateAfter(String startDate, String endDate) {
+        try {
+            String myFormatString = "dd/MM/yyyy"; // for example
+            SimpleDateFormat df = new SimpleDateFormat(myFormatString);
+            Date date1 = df.parse(endDate);
+            Date startingDate = df.parse(startDate);
+
+            return date1.after(startingDate) || date1.equals(startingDate);
+        } catch (Exception e) {
+
+            return false;
+        }
     }
 
     /**
