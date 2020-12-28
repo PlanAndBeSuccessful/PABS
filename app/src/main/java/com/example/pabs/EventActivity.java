@@ -300,6 +300,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                                         if (member.getValue().toString().equals(uID)) {
                                             //add events to array
                                             addToEventsArray(tempEv);
+                                            myAdapter.notifyDataSetChanged();
                                             break;
                                         }
                                     }
