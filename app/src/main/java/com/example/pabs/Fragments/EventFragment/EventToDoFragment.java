@@ -198,7 +198,9 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
                     if(!todo.getKey().equals("Type")) {
                         todo.child("taskList").getRef().push().setValue(new TaskList(task_text, uID, todo.getKey()));
                         tasks.add(new TaskList(task_text, uID, todo.getKey()));
-                        parentItemAdapter.notifyDataSetChanged();
+                        if(parentItemAdapter != null) {
+                            parentItemAdapter.notifyDataSetChanged();
+                        }
                     }
                 }
             }
