@@ -68,7 +68,37 @@ public class EventTodoRecyclerViewAdapter extends RecyclerView.Adapter<EventTodo
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Taskrow", "Delete button clikced");
+                referenceDB.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot todo : snapshot.getChildren()){
+                            if(!todo.getKey().equals("Type")){
+                                todo.getRef().child("taskList").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot tk) {
+                                        for(DataSnapshot t : tk.getChildren()){
+                                            if(t.child("taskTitle").getValue(String.class).equals(task.getTaskTitle())){
+                                                t.getRef().removeValue();
+                                                tasks.remove(task);
+                                                notifyDataSetChanged();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         });
         //Waits for pick task button to be clicked
@@ -98,6 +128,7 @@ public class EventTodoRecyclerViewAdapter extends RecyclerView.Adapter<EventTodo
                                         for (DataSnapshot tasks : snapshot.getChildren()) {
                                             if (tasks.child("taskTitle").getValue().toString().equals(task.getTaskTitle())) {
                                                 tasks.child("taskCB").getRef().setValue(isChecked);
+                                                notifyDataSetChanged();
                                             }
                                         }
                                     }
