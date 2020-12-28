@@ -527,15 +527,20 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
         applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
-                    //clear image
-                    deleteImage(appleSnapshot);
+                if(dataSnapshot.exists()){
+                    for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
+                        //clear image
+                        deleteImage(appleSnapshot);
 
-                    //delete selected event
-                    appleSnapshot.getRef().removeValue();
+                        //delete selected event
+                        appleSnapshot.getRef().removeValue();
 
-                    //clear it from backstack
-                    clearBackstack();
+                        //clear it from backstack
+                        clearBackstack();
+                    }
+                }
+                else {
+                    Toast.makeText(getActivity(), "Event has been deleted!", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -553,20 +558,25 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
         refEvent.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (final DataSnapshot event : snapshot.getChildren()) {
-                    //Loop 1 to go through all child nodes of users
-                    if (event.child("event_name").getValue() == databaseEvent.getEvent_name()) {
-                        if (mState == 3) {
-                            databaseEvent.addToJoinedListEnd(mUID);
-                            event.getRef().child("joined_members").setValue(databaseEvent.getJoined_members());
-                            mState = 1;
-                        } else {
-                            databaseEvent.deleteJoinedListElement(mUID);
-                            event.getRef().child("joined_members").setValue(databaseEvent.getJoined_members());
-                            mState = 3;
-                        }
+                if(snapshot.exists()){
+                    for (final DataSnapshot event : snapshot.getChildren()) {
+                        //Loop 1 to go through all child nodes of users
+                        if (event.child("event_name").getValue() == databaseEvent.getEvent_name()) {
+                            if (mState == 3) {
+                                databaseEvent.addToJoinedListEnd(mUID);
+                                event.getRef().child("joined_members").setValue(databaseEvent.getJoined_members());
+                                mState = 1;
+                            } else {
+                                databaseEvent.deleteJoinedListElement(mUID);
+                                event.getRef().child("joined_members").setValue(databaseEvent.getJoined_members());
+                                mState = 3;
+                            }
 
+                        }
                     }
+                }
+                else{
+                    Toast.makeText(getActivity(), "Event has been deleted!", Toast.LENGTH_SHORT).show();
                 }
 
             }

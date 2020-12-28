@@ -115,7 +115,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                     }
 
                     //get no image Uri
-                    Uri testUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
+                    Uri testUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2Fno-image-found-360x250.png?alt=media&token=77870c1c-7a00-4f6b-ba33-1f8c9abc6b73");
 
                     //Create temporary Event
                     final Event tempEv;
@@ -138,7 +138,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                         if ((event.child("priv_pub").getValue().toString()).equals("Public") && mState == 0) {
                             //add events to array
                             addToEventsArray(tempEv);
-                        } else if ((event.child("owner_id").getValue().toString()).equals(uID)) {
+                        } else if ((event.child("owner_id").getValue().toString()).equals(uID) && mState == 1) {
                             addToEventsArray(tempEv);
                         } else {
                             if(mState == 1) {
@@ -162,7 +162,6 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                         }
                 }
                 }
-
                 //Set and show events on main screen
                 myAdapter.notifyDataSetChanged();
             }
@@ -319,7 +318,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                         }
 
                         //get no image Uri
-                        Uri testUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2FNo_image_3x4.svg.png?alt=media&token=1a73a7ae-0447-4827-87c9-9ed1bb463351");
+                        Uri testUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/pabs-fa777.appspot.com/o/Images%2Fno-image-found-360x250.png?alt=media&token=77870c1c-7a00-4f6b-ba33-1f8c9abc6b73");
 
                         //Create temporary Event
                         final Event tempEv;
@@ -342,16 +341,15 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                         if ((event.child("priv_pub").getValue().toString()).equals("Public") && mState == 0) {
                             //add events to array
                             addToEventsArray(tempEv);
-                        } else if ((event.child("owner_id").getValue().toString()).equals(uID)) {
+                        } else if ((event.child("owner_id").getValue().toString()).equals(uID) && mState == 1) {
                             addToEventsArray(tempEv);
                         } else {
-                            if(mState == 1) {
+                            if (mState == 1){
                                 event.child("joined_members").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         for (DataSnapshot member : snapshot.getChildren()) {
                                             if (member.getValue().toString().equals(uID)) {
-                                                Log.d("ASDASD", "PRIVATE_JOINED: " + tempEv.getTitle());
                                                 addToEventsArray(tempEv);
                                                 //Set and show events on main screen
                                                 myAdapter.notifyDataSetChanged();
@@ -365,12 +363,12 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
 
                                     }
                                 });
-                            }
                         }
-                    //Set and show events on main screen
-                    myAdapter.notifyDataSetChanged();
-                    }
+                        }
 
+                    }
+                //Set and show events on main screen
+                myAdapter.notifyDataSetChanged();
             }
 
             @Override

@@ -183,7 +183,10 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
             @Override
             public void onClick(View v) {
                 inviteDialogFragment();
-                parentItemAdapter.notifyDataSetChanged();
+                if(parentItemAdapter != null){
+                    parentItemAdapter.notifyDataSetChanged();
+                }
+
                 Log.d("Espania", "onClick: Heyho");
             }
         });

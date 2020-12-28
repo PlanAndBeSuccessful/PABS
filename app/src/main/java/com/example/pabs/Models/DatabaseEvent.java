@@ -22,11 +22,12 @@ public class DatabaseEvent {
     List<String> staff_members;
     String owner_id;
     List<String> joined_members;
+    long timestamp;
 
     public DatabaseEvent() {
     }
 
-    public DatabaseEvent(String description, String start_date, String end_date, String reminder, String repetition, String inv_code, String event_name, double location_x, double location_y, String location_name, String thumbnail, String priv_pub, List<String> staff_members, String user_id, List<String> joined_members) {
+    public DatabaseEvent(String description, String start_date, String end_date, String reminder, String repetition, String inv_code, String event_name, double location_x, double location_y, String location_name, String thumbnail, String priv_pub, List<String> staff_members, String user_id, List<String> joined_members, long timestamp) {
         this.description = description;
         this.start_date = start_date;
         this.end_date = end_date;
@@ -42,6 +43,7 @@ public class DatabaseEvent {
         this.staff_members = staff_members;
         this.owner_id = user_id;
         this.joined_members = joined_members;
+        this.timestamp = timestamp;
     }
 
     public List<String> getJoined_members() {
@@ -178,5 +180,13 @@ public class DatabaseEvent {
 
     public void deleteJoinedListElement(String str) {
         joined_members.remove(str);
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

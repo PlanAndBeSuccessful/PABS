@@ -99,7 +99,9 @@
                 android:dividerHeight="16dp"
                 android:divider="@android:color/transparent"
                 android:layout_marginBottom="16dp"
-                android:layout_alignParentLeft="true" />
+                android:layout_alignParentLeft="true"
+                android:stackFromBottom="true"
+                android:transcriptMode="alwaysScroll"/>
 
         </RelativeLayout>
 

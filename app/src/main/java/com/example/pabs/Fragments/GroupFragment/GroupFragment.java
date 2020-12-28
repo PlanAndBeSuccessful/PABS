@@ -278,7 +278,11 @@ public class GroupFragment extends Fragment implements GroupOptionsDialogFragmen
 
     @Override
     public void GroupEvents() {
-
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_group_container, new GroupEventsFragment(mGroup))
+                .addToBackStack("GroupEventsFragment")
+                .commit();
     }
 
     @Override

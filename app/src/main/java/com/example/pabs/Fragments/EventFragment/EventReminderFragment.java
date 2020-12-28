@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
@@ -119,17 +120,23 @@ public class EventReminderFragment extends Fragment {
                 refEvent.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (final DataSnapshot event : snapshot.getChildren()) {
-                            //Loop 1 to go through all child nodes of users
-                            if (event.child("event_name").getValue() == databaseEvent.getEvent_name()) {
-                                if (switch_on) {
-                                    databaseEvent.setReminder(sp.getSelectedItem().toString());
-                                } else {
-                                    databaseEvent.setReminder("");
+                        if(snapshot.exists()){
+                            for (final DataSnapshot event : snapshot.getChildren()) {
+                                //Loop 1 to go through all child nodes of users
+                                if (event.child("event_name").getValue() == databaseEvent.getEvent_name()) {
+                                    if (switch_on) {
+                                        databaseEvent.setReminder(sp.getSelectedItem().toString());
+                                    } else {
+                                        databaseEvent.setReminder("");
+                                    }
+                                    event.getRef().child("reminder").setValue(databaseEvent.getReminder());
                                 }
-                                event.getRef().child("reminder").setValue(databaseEvent.getReminder());
                             }
                         }
+                        else{
+                            Toast.makeText(getActivity(), "Event has been deleted!", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
 
                     @Override
