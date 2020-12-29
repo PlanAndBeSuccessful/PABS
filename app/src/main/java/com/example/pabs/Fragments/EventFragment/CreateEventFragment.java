@@ -190,7 +190,7 @@ public class CreateEventFragment extends Fragment {
         //event name
         name_et = CreateEventView.findViewById(R.id.c_e_event_name_edit);
 
-        //firebase database -> get reference to USER table
+        //firebase database -> get reference to EVENT table
         reference = FirebaseDatabase.getInstance().getReference().child("EVENT");
 
         //next button

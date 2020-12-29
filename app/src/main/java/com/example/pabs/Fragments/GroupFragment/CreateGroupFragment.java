@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.example.pabs.Models.Group;
 import com.example.pabs.R;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.security.SecureRandom;
 
@@ -36,7 +37,7 @@ public class CreateGroupFragment extends Fragment {
     private EditText name_et;
     private FrameLayout FragmentGroupContainer;
     //firebase
-    private final DatabaseReference reference = null;
+    private DatabaseReference reference = null;
 
 
     /**
@@ -67,6 +68,9 @@ public class CreateGroupFragment extends Fragment {
 
         //container to replace view of activity layout with fragment layout
         FragmentGroupContainer = getActivity().findViewById(R.id.fragment_group_container);
+
+        //firebase database -> get reference to GROUP table
+        reference = FirebaseDatabase.getInstance().getReference().child("GROUP");
 
         //back button
         back_button = CreateEventView.findViewById(R.id.c_g_back_button);
