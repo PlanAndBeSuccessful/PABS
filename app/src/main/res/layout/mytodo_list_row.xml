@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey">
+        android:background="#EADBDB">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -18,13 +18,17 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.8"
+                android:fontFamily="@font/roboto"
                 android:layout_marginLeft="10dp"
                 android:text="HaHa"
                 android:textSize="32dp"/>
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="35dp"
                 android:layout_weight="0.2"
+                android:background="@drawable/login_button"
+                android:textColor="#92129D"
+                android:textAllCaps="false"
                 android:text="Delete"
                 android:layout_gravity="center_vertical"
                 android:id="@+id/todo_delete_btn"/>
