@@ -82,6 +82,37 @@ public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerVi
 
                     }
                 });
+
+                final DatabaseReference referenceToDo = FirebaseDatabase.getInstance().getReference().child("TODO").child(todolist.getOwner());
+                referenceToDo.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot td : snapshot.getChildren()){
+                            if(!td.getKey().equals("Type")){
+                                td.child("taskList").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for(DataSnapshot tsk : snapshot.getChildren()){
+                                            if(tsk.child("isTakenBy").getValue() != null && tsk.child("isTakenBy").getValue(String.class).equals(uID)){
+                                                tsk.child("isTakenBy").getRef().removeValue();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         });
 

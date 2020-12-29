@@ -132,7 +132,8 @@ public class CalendarFragment extends Fragment {
                                         tempEv.setEvent_name(e_name);
                                         String event_startdate = event.child("start_date").getValue().toString();
                                         tempEv.setStart_date(event_startdate);
-
+                                        tempEv.setOwner_id(event.child("owner_id").getValue(String.class));
+                                        joined_users.add(tempEv.getOwner_id());
                                         tempEv.setJoined_members(joined_users);
 
 
@@ -140,17 +141,19 @@ public class CalendarFragment extends Fragment {
                                         lstEvent.add(tempEv);
 
                                         for (DatabaseEvent i : lstEvent) {
+                                            /*if (uID.equals(i.getOwner_id())) {
+                                                DateData temp = convertDate(i.getStart_date());
+                                                customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.CYAN));
+                                            }*/
                                             for (String j : i.getJoined_members()) {
                                                 if (uID.equals(j)) {
                                                     //marking the Dates on which we have Events
+                                                    Log.d("cldr", "run: task " + j);
+                                                    Log.d("cldr", "run: " + i.getEvent_name());
                                                     DateData temp = convertDate(i.getStart_date());
                                                     customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.BLUE));
                                                     break;
                                                 }
-                                            }
-                                            if (uID.equals(i.getOwner_id())) {
-                                                DateData temp = convertDate(i.getStart_date());
-                                                customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.CYAN));
                                             }
                                         }
 
@@ -158,6 +161,7 @@ public class CalendarFragment extends Fragment {
                                         customCalendar.setOnDateClickListener(new OnDateClickListener() {
                                             @Override
                                             public void onDateClick(View view, DateData clickedDate) {
+                                                onDateEvents.clear();
                                                 Log.d("DateClicked", "onDateClick: " + clickedDate);
                                                 for (DatabaseEvent i : lstEvent) {
                                                     if (convertDate(i.getStart_date()).equals(clickedDate)) {

@@ -104,15 +104,19 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
                                                     for (DataSnapshot task : snapshot.getChildren()) {
                                                         //Loop 1 to go through all child nodes of joined members
                                                             TaskList task_temp = new TaskList();
-                                                            task_temp.setBelongTo(task.child("belongTo").getValue().toString());
-                                                            task_temp.setTaskTitle(task.child("taskTitle").getValue().toString());
-                                                            String CB = task.child("taskCB").getValue().toString();
-                                                            boolean cb = false;
-                                                            if (CB.equals("true")) {
-                                                                cb = true;
-                                                                Log.d("Espania", "onDataChange: Ifben vagyok! " + cb);
+                                                            task_temp.setBelongTo(task.child("belongTo").getValue(String.class));
+                                                            task_temp.setTaskTitle(task.child("taskTitle").getValue(String.class));
+                                                            if(task.child("taskCB").getValue() != null){
+                                                                if(task.child("taskCB").getValue().toString().equals("true")){
+                                                                    task_temp.setTaskCB(true);
+                                                                }
+                                                                else{
+                                                                    task_temp.setTaskCB(false);
+                                                                }
                                                             }
-                                                            task_temp.setTaskCB(cb);
+                                                            if(task.child("isTakenBy").getValue() != null){
+                                                                task_temp.setIsTakenBy(task.child("isTakenBy").getValue(String.class));
+                                                            }
                                                             tasks.add(task_temp);
                                                     }
 
@@ -139,7 +143,7 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
                                                                 // to the parentItemAdapter.
                                                                 // These arguments are passed
                                                                 // using a method ParentItemList()
-                                                                parentItemAdapter = new EventTodoRecyclerViewAdapter(tasks,EventID);
+                                                                parentItemAdapter = new EventTodoRecyclerViewAdapter(tasks,EventID,uID,tempTD.getOwner());
                                                                 // Set the layout manager
                                                                 // and adapter for items
                                                                 // of the parent recyclerview

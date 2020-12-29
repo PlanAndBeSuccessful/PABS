@@ -26,16 +26,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.1"
-                android:text="Delete"
+                android:text="Pick Task"
                 android:layout_gravity="center_vertical"
-                android:id="@+id/ev_todo_delete_btn"/>
+                android:id="@+id/ev_todo_import_btn"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.1"
-                android:text="Pick Task"
+                android:text="Delete"
                 android:layout_gravity="center_vertical"
-                android:id="@+id/ev_todo_import_btn"/>
+                android:id="@+id/ev_todo_delete_btn"/>
             <CheckBox
                 android:layout_width="35dp"
                 android:layout_height="35dp"

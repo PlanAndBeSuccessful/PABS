@@ -5,6 +5,7 @@ package com.example.pabs.Models;
  */
 
 public class TaskList {
+    private String isTakenBy;
     private String taskTitle;
     private boolean taskCB;
     private String belongTo;
@@ -18,6 +19,7 @@ public class TaskList {
         this.taskCB = false;
         this.belongTo = belongTO;
         this.ToDoID = reference;
+        this.isTakenBy = null;
     }
 
     public String getTaskTitle() {
@@ -50,5 +52,13 @@ public class TaskList {
 
     public void setReferenceTo(String referenceto) {
         this.ToDoID = referenceto;
+    }
+
+    public String getIsTakenBy() {
+        return isTakenBy;
+    }
+
+    public void setIsTakenBy(String isTakenBy) {
+        this.isTakenBy = isTakenBy;
     }
 }
