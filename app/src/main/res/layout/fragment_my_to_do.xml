@@ -16,7 +16,8 @@
             android:layout_height="wrap_content"
             android:text="MY TODOs"
             android:textSize="32dp"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:gravity="center_horizontal" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
