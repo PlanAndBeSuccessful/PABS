@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey">
+        android:background="#EADBDB">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -17,21 +17,28 @@
                 android:id="@+id/ev_rec_task"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_black_italic"
                 android:layout_weight="3.7"
                 android:layout_marginLeft="10dp"
                 android:text="HaHa"
                 android:textSize="24dp"
                 android:layout_gravity="center_vertical"/>
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="35dp"
+                android:background="@drawable/login_button"
+                android:textColor="#92129D"
+                android:textAllCaps="false"
                 android:layout_weight="0.1"
                 android:text="Pick Task"
                 android:layout_gravity="center_vertical"
                 android:id="@+id/ev_todo_import_btn"/>
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="35dp"
+                android:background="@drawable/login_button"
+                android:textColor="#92129D"
+                android:textAllCaps="false"
                 android:layout_weight="0.1"
                 android:text="Delete"
                 android:layout_gravity="center_vertical"
@@ -39,6 +46,7 @@
             <CheckBox
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                android:background="#F38F1F"
                 android:id="@+id/ev_todo_cb"
                 android:layout_gravity="center_vertical"/>
         </LinearLayout>
