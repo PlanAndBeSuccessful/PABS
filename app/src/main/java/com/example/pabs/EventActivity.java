@@ -24,6 +24,8 @@ import com.example.pabs.Adapters.EventRecyclerViewAdapter;
 import com.example.pabs.Fragments.CalendarFragment;
 import com.example.pabs.Fragments.EventFragment.CreateEventFragment;
 import com.example.pabs.Fragments.MyToDoFragment;
+import com.example.pabs.Fragments.ProfileFragment;
+import com.example.pabs.Fragments.SettingsFragment;
 import com.example.pabs.Models.Event;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
@@ -484,11 +486,13 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
 
             case R.id.nav_profile:
                 clearBackstack();
+                openProfileFragment();
                 Toast.makeText(this, "nav_profile", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_settings:
                 clearBackstack();
+                openSettingsFragment();
                 Toast.makeText(this, "nav_settings", Toast.LENGTH_SHORT).show();
                 break;
 
@@ -537,7 +541,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     }
 
     /**
-     * open MyToDo event fragment
+     * open MyToDo fragment
      */
     private void openMyToDoFragment() {
         getSupportFragmentManager()
@@ -548,13 +552,35 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     }
 
     /**
-     * open calendar event fragment
+     * open calendar fragment
      */
     private void openCalendarFragment() {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_event_container, new CalendarFragment())
                 .addToBackStack("CalendarFragment")
+                .commit();
+    }
+
+    /**
+     * open Profile fragment
+     */
+    private void openProfileFragment(){
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_event_container, new ProfileFragment(uID))
+                .addToBackStack("ProfileFragment")
+                .commit();
+    }
+
+    /**
+     * open Settings fragment
+     */
+    private void openSettingsFragment(){
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_event_container, new SettingsFragment(uID))
+                .addToBackStack("SettingsFragment")
                 .commit();
     }
 
