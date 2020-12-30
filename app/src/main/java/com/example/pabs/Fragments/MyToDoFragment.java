@@ -168,6 +168,15 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
                 Log.d("Espania", "onClick: Heyho");
             }
         });
+
+        Button back_btn = myToDoview.findViewById(R.id.todo_back_btn);
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //clear all backstack
+                clearBackstack();
+            }
+        });
         return myToDoview;
     }
 
@@ -216,5 +225,16 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
         addTaskDialogFragment.setListener(MyToDoFragment.this);
         addTaskDialogFragment.setCancelable(true);
         addTaskDialogFragment.show(getActivity().getSupportFragmentManager(),"AddTaskDialogFragment");
+    }
+
+    public void clearBackstack() {
+        //clear all backstact
+        if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            getActivity().getSupportFragmentManager().popBackStack("MyToDoFragment", 1);
+        } else {
+            for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); ++i) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        }
     }
 }

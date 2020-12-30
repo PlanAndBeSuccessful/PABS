@@ -39,6 +39,14 @@
             android:layout_marginRight="40dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/plusbutton" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:text="Back"
+            android:id="@+id/todo_back_btn"/>
     </RelativeLayout>
 
 </FrameLayout>

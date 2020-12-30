@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,14 +38,16 @@ import sun.bob.mcalendarview.MarkStyle;
 import sun.bob.mcalendarview.listeners.OnDateClickListener;
 import sun.bob.mcalendarview.listeners.OnMonthChangeListener;
 import sun.bob.mcalendarview.vo.DateData;
+import sun.bob.mcalendarview.vo.MarkedDates;
 
 public class CalendarFragment extends Fragment {
 
     //calendar
     sun.bob.mcalendarview.views.ExpCalendarView customCalendar;
 
-    //TextViews
+    //Views
     TextView curr_month, currDate;
+    Button back_btn;
 
     Context mContext;
     //List<DatabaseEvent> lstDatabaseEvent;
@@ -75,6 +78,9 @@ public class CalendarFragment extends Fragment {
         //setting the current date in CalendarView
         setCurrDateInCalendarFragment(calendarView);
 
+        //getting the back button object
+        back_btn = calendarView.findViewById(R.id.calendar_back_btn);
+
         //getting the custom calendar view object
         customCalendar = calendarView.findViewById(R.id.calendar_calendar);
 
@@ -102,7 +108,7 @@ public class CalendarFragment extends Fragment {
         databaseEvents.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                clearEvents();
+                lstEvent.clear();
                 for (final DataSnapshot event : snapshot.getChildren()) {
                     final DatabaseEvent tempEv = new DatabaseEvent();
 
@@ -110,13 +116,20 @@ public class CalendarFragment extends Fragment {
 
 
                     final List<String> joined_users = new ArrayList<>();
-                    event.getRef().child("joined_members").addValueEventListener(new ValueEventListener() {
+                    event.getRef().child("joined_members").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                            for (DataSnapshot users : snapshot.getChildren()) {
-                                //Loop 1 to go through all child nodes of joined members
-                                joined_users.add(users.getValue().toString());
+                            joined_users.clear();
+                            if(uID.equals(event.child("owner_id").getValue(String.class))){
+                                joined_users.add(event.child("owner_id").getValue(String.class));
+                            }
+                            else {
+                                for (DataSnapshot users : snapshot.getChildren()) {
+                                    //Loop 1 to go through all child nodes of joined members
+                                    if (uID.equals(users.getValue(String.class))) {
+                                        joined_users.add(users.getValue(String.class));
+                                    }
+                                }
                             }
 
 
@@ -139,23 +152,28 @@ public class CalendarFragment extends Fragment {
 
                                         //pushing the temporary event object into an arraylist
                                         lstEvent.add(tempEv);
-
+                                        /*for(DatabaseEvent i: lstEvent){
+                                            Log.d("dbEvent", "run: " + i.getEvent_name() + ", " + i.getStart_date());
+                                        }
+                                        Log.d("dbEvent", "run: ");*/
                                         for (DatabaseEvent i : lstEvent) {
                                             /*if (uID.equals(i.getOwner_id())) {
                                                 DateData temp = convertDate(i.getStart_date());
                                                 customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.CYAN));
                                             }*/
+                                            Log.d("tagitnowornever", "run: "+i.getEvent_name() + ", " + i.getStart_date());
                                             for (String j : i.getJoined_members()) {
                                                 if (uID.equals(j)) {
                                                     //marking the Dates on which we have Events
-                                                    Log.d("cldr", "run: task " + j);
-                                                    Log.d("cldr", "run: " + i.getEvent_name());
+                                                    //Log.d("cldr", "run: task " + j);
+                                                    //Log.d("cldr", "run: " + i.getEvent_name());
                                                     DateData temp = convertDate(i.getStart_date());
                                                     customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.BLUE));
                                                     break;
                                                 }
                                             }
                                         }
+                                        Log.d("tagitnowornever", "run: ");
 
                                         final List<DatabaseEvent> onDateEvents = new ArrayList<>();
                                         customCalendar.setOnDateClickListener(new OnDateClickListener() {
@@ -193,6 +211,14 @@ public class CalendarFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //clear all backstack
+                clearBackstack();
             }
         });
         return calendarView;
@@ -247,7 +273,14 @@ public class CalendarFragment extends Fragment {
         return new DateFormatSymbols().getMonths()[month - 1];
     }
 
-    public void clearEvents() {
-        lstEvent.clear();
+    public void clearBackstack() {
+        //clear all backstact
+        if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            getActivity().getSupportFragmentManager().popBackStack("CalendarFragment", 1);
+        } else {
+            for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); ++i) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        }
     }
 }
