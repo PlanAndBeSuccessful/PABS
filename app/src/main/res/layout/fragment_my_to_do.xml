@@ -8,19 +8,25 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:background="@drawable/register_bg"
         android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/todo_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="MY TODOs"
+            android:text="My ToDos"
+            android:paddingTop="30dp"
+            android:paddingLeft="30dp"
+            android:fontFamily="@font/roboto_thin"
             android:textSize="32dp"
-            android:textAlignment="center"/>
+            android:textColor="@color/white"
+            />
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#EADBDB"
             android:layout_below="@+id/todo_title"
             android:id="@+id/todo_rec_view"/>
 
@@ -32,7 +38,15 @@
             android:layout_alignParentBottom="true"
             android:layout_marginRight="40dp"
             android:layout_marginBottom="20dp"
-            android:background="@color/black" />
+            android:background="@drawable/plusbutton" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:text="Back"
+            android:id="@+id/todo_back_btn"/>
     </RelativeLayout>
 
 </FrameLayout>

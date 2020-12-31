@@ -58,13 +58,13 @@
 
         <Button
             android:id="@+id/f_g_k_m_removeStaffBtn"
-            android:layout_width="250dp"
+            android:layout_width="160dp"
             android:layout_height="50dp"
             android:background="@drawable/login_button"
             android:text="Remove Member"
             android:textAllCaps="false"
             android:textColor="#92129D"
-            android:textSize="24sp"
+            android:textSize="15sp"
             android:layout_centerInParent="true"/>
 
     </RelativeLayout>

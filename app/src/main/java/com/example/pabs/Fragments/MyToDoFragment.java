@@ -60,7 +60,7 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
         listView = getActivity().findViewById(R.id.activity_event_layout);
         itemList = new ArrayList<>();
         List<TaskList> tasks = new ArrayList<>();
-        ToDoList mytodos = new ToDoList("My ToDos", tasks, uID, "");
+        ToDoList mytodos = new ToDoList("my tasks", tasks, uID, "");
         itemList.add(mytodos);
         final RecyclerView ParentRecyclerViewItem = myToDoview.findViewById(R.id.todo_rec_view);
 
@@ -114,9 +114,9 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
                                     if(!tasks.isEmpty())//checking if the data is loaded or not
                                     {
                                         Log.d("WTF", "run: Here is Johnny!");
-                                        String td_title = todo.child("toDoListTitle").getValue().toString();
+                                        String td_title = todo.child("toDoListTitle").getValue(String.class);
                                         tempTD.setToDoListTitle(td_title);
-                                        String td_owner = todo.child("owner").getValue().toString();
+                                        String td_owner = todo.child("owner").getValue(String.class);
                                         tempTD.setOwner(td_owner);
 
                                         tempTD.setTaskList(tasks);
@@ -168,6 +168,15 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
                 Log.d("Espania", "onClick: Heyho");
             }
         });
+
+        Button back_btn = myToDoview.findViewById(R.id.todo_back_btn);
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //clear all backstack
+                clearBackstack();
+            }
+        });
         return myToDoview;
     }
 
@@ -177,7 +186,7 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot todo: snapshot.getChildren()) {
                     if (todo.child("toDoListTitle").getValue() != null) {
-                        if (todo.child("toDoListTitle").getValue().toString().equals("My ToDos")) {
+                        if (todo.child("toDoListTitle").getValue().toString().equals("my tasks")) {
                             todo.child("taskList").getRef().push().setValue(new TaskList(task_text, uID, todo.getKey()));
                         }
                     }
@@ -216,5 +225,16 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
         addTaskDialogFragment.setListener(MyToDoFragment.this);
         addTaskDialogFragment.setCancelable(true);
         addTaskDialogFragment.show(getActivity().getSupportFragmentManager(),"AddTaskDialogFragment");
+    }
+
+    public void clearBackstack() {
+        //clear all backstact
+        if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            getActivity().getSupportFragmentManager().popBackStack("MyToDoFragment", 1);
+        } else {
+            for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); ++i) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        }
     }
 }

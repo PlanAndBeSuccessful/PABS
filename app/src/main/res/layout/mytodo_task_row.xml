@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/chinese_silver"
+    android:background="@color/white"
     android:weightSum="2"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <TextView
@@ -11,6 +11,7 @@
         android:layout_weight="1.82"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
+        android:fontFamily="@font/roboto_black_italic"
         android:text="HaHa"
         android:textSize="32dp" />
     <CheckBox
@@ -18,7 +19,7 @@
         android:layout_width="0dp"
         android:layout_weight="0.18"
         android:layout_height="wrap_content"
-        android:background="@color/black"
+        android:background="#F38F1F"
         android:layout_marginRight="8dp"
         android:layout_marginLeft="8dp"
         android:layout_gravity="center" />

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.SettingsFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:id="@+id/settings_back_btn"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/settings_back_btn"
+            android:layout_marginLeft="20dp"
+            android:text="Settings"
+            android:textSize="32dp"
+            android:id="@+id/profile_title"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/profile_title"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp">
+
+            <EditText
+                android:id="@+id/settings_nname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="new nickname"
+                android:layout_centerInParent="true"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Confirm"
+                android:layout_below="@+id/settings_nname"
+                android:id="@+id/settings_confirm_btn"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+</FrameLayout>

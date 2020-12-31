@@ -9,11 +9,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pabs.Models.TaskList;
+import com.example.pabs.Models.ToDoList;
 import com.example.pabs.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,11 +34,15 @@ public class EventTodoRecyclerViewAdapter extends RecyclerView.Adapter<EventTodo
     //Store a member variable for the events
     private final List<TaskList> tasks;
     private final String eventID;
+    private final String uID;
+    private final String ownerID;
 
     //Pass-in the contact array into the constructor
-    public EventTodoRecyclerViewAdapter(List<TaskList> lstTask, String eventid) {
+    public EventTodoRecyclerViewAdapter(List<TaskList> lstTask, String eventid, String uid, String ownerid) {
         tasks = lstTask;
         eventID = eventid;
+        uID = uid;
+        ownerID = ownerid;
     }
 
     @NonNull
@@ -56,6 +62,7 @@ public class EventTodoRecyclerViewAdapter extends RecyclerView.Adapter<EventTodo
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         //reference to database
         final DatabaseReference referenceDB = FirebaseDatabase.getInstance().getReference().child("TODO").child(eventID);
+        final DatabaseReference referenceUsr = FirebaseDatabase.getInstance().getReference().child("TODO").child(uID);
 
         //Get the data model based on position
         final TaskList task = tasks.get(position);
@@ -65,22 +72,57 @@ public class EventTodoRecyclerViewAdapter extends RecyclerView.Adapter<EventTodo
         textView.setText(task.getTaskTitle());
         //Waits for delete button to be clicked
         Button delete = holder.delete_btn;
+        if(task.getIsTakenBy() != null){
+            delete.setVisibility(View.INVISIBLE);
+            if((task.getIsTakenBy().equals(uID)) || (uID.equals(ownerID))){
+                delete.setVisibility(View.VISIBLE);
+            }
+        }
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 referenceDB.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for(DataSnapshot todo : snapshot.getChildren()){
-                            if(!todo.getKey().equals("Type")){
+                        for (DataSnapshot todo : snapshot.getChildren()) {
+                            if (!todo.getKey().equals("Type")) {
                                 todo.getRef().child("taskList").addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot tk) {
-                                        for(DataSnapshot t : tk.getChildren()){
-                                            if(t.child("taskTitle").getValue(String.class).equals(task.getTaskTitle())){
+                                        for (DataSnapshot t : tk.getChildren()) {
+                                            if (t.child("taskTitle").getValue(String.class).equals(task.getTaskTitle())) {
                                                 t.getRef().removeValue();
                                                 tasks.remove(task);
                                                 notifyDataSetChanged();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                referenceUsr.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot todo : snapshot.getChildren()){
+                            if(todo.getKey().equals(eventID)) {
+                                todo.child("taskList").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot tsk : snapshot.getChildren()) {
+                                            if (tsk.child("taskTitle").getValue(String.class).equals(task.getTaskTitle())) {
+                                                tsk.getRef().removeValue();
                                             }
                                         }
                                     }
@@ -103,32 +145,32 @@ public class EventTodoRecyclerViewAdapter extends RecyclerView.Adapter<EventTodo
         });
         //Waits for pick task button to be clicked
         Button pick = holder.pick_btn;
+        Log.d("pickbtn", "onBindViewHolder: " + task.getIsTakenBy());
+        if(task.getIsTakenBy() != null){
+            pick.setVisibility(View.INVISIBLE);
+        }
         pick.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Log.d("Taskrow", "PickTask button clikced");
-            }
-        });
-        //Waits for checkbox to be checked or unchecked
-        CheckBox cb = holder.ev_todo_cb;
-        holder.ev_todo_cb.setChecked(task.getTaskCB());
-
-        cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
-                task.setTaskCB(isChecked);
+            public void onClick(final View v) {
+                v.setVisibility(View.INVISIBLE);
+                Log.d("Taskrow", "PickTask button clikced" + task.getIsTakenBy());
+                if (task.getIsTakenBy() == null){
                 referenceDB.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot todo : snapshot.getChildren()) {
                             if (!todo.getKey().equals("Type")) {
-                                todo.getRef().child("taskList").addListenerForSingleValueEvent(new ValueEventListener() {
+                                referenceUsr.child(eventID).child("owner").setValue(todo.child("owner").getValue(String.class));
+                                referenceUsr.child(eventID).child("toDoListTitle").setValue(todo.child("toDoListTitle").getValue(String.class));
+                                referenceUsr.child(eventID).child("taskList").push().setValue(task);
+                                todo.child("taskList").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        for (DataSnapshot tasks : snapshot.getChildren()) {
-                                            if (tasks.child("taskTitle").getValue().toString().equals(task.getTaskTitle())) {
-                                                tasks.child("taskCB").getRef().setValue(isChecked);
-                                                notifyDataSetChanged();
+                                        for (DataSnapshot tsk : snapshot.getChildren()) {
+                                            if (tsk.child("belongTo").getValue(String.class).equals(task.getBelongTo()) && tsk.child("taskTitle").getValue(String.class).equals(task.getTaskTitle())) {
+                                                tsk.child("isTakenBy").getRef().setValue(uID);
+                                                task.setIsTakenBy(uID);
+                                                Toast.makeText(v.getContext(), "Task was added to your TODO list", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     }
@@ -147,7 +189,58 @@ public class EventTodoRecyclerViewAdapter extends RecyclerView.Adapter<EventTodo
 
                     }
                 });
+                }
+                else{
+                    Toast.makeText(v.getContext(), "Task is already Taken", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        //Waits for checkbox to be checked or unchecked
+        CheckBox cb = holder.ev_todo_cb;
+        holder.ev_todo_cb.setChecked(task.getTaskCB());
 
+        Log.d("Espania", "onBindViewHolder: Ifen kivül vagyok! " + cb);
+        if (task.getTaskCB()) {
+            cb.setChecked(true);
+            Log.d("Espania", "onBindViewHolder: Ifben vagyok! " + cb);
+        } else {
+            cb.setChecked(false);
+        }
+        cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                task.setTaskCB(isChecked);
+                referenceDB.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot todo : snapshot.getChildren()) {
+                            if (!todo.getKey().equals("Type")) {
+                                todo.getRef().child("taskList").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot tasks : snapshot.getChildren()) {
+                                            Log.d("ifellenorzes", "onDataChange: " + tasks.child("taskTitle").getValue(String.class) + ", " + task.getTaskTitle());
+                                            if (tasks.child("taskTitle").getValue(String.class).equals(task.getTaskTitle())) {
+                                                Log.d("ifellenorzes", "onDataChange: Ifbe kerul");
+                                                tasks.child("taskCB").getRef().setValue(isChecked);
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         });
     }

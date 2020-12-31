@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.ProfileFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:id="@+id/profile_back_btn"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/profile_back_btn"
+            android:layout_marginLeft="20dp"
+            android:text="Profile"
+            android:textSize="32dp"
+            android:id="@+id/profile_title"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/profile_title"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/p_email"
+                android:text="Email:"
+                android:textSize="32dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/p_email"
+                android:id="@+id/profile_email"
+                android:text="Email"
+                android:textSize="32dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/p_username"
+                android:layout_below="@+id/profile_email"
+                android:textSize="32dp"
+                android:text="Username:"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/profile_username"
+                android:layout_below="@+id/p_username"
+                android:textSize="32dp"
+                android:text="Username"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/p_nickname"
+                android:layout_below="@+id/profile_username"
+                android:textSize="32dp"
+                android:text="Nickname:"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/profile_nickname"
+                android:layout_below="@+id/p_nickname"
+                android:textSize="32dp"
+                android:text="Nickname"/>
+            <!--<TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/profile_password"
+                android:layout_below="@+id/profile_nickname"
+                android:textSize="32dp"
+                android:text="Password"/>-->
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+</FrameLayout>
