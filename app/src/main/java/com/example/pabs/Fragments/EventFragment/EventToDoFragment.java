@@ -183,6 +183,15 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
             }
         });
 
+        Button back_btn = myToDoview.findViewById(R.id.ev_back_button);
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //clear all backstack
+                clearBackstack();
+            }
+        });
+
         Button todo_btn = myToDoview.findViewById(R.id.ev_todo_button);
         todo_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -241,5 +250,16 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
         addTaskDialogFragment.setListener(EventToDoFragment.this);
         addTaskDialogFragment.setCancelable(true);
         addTaskDialogFragment.show(getActivity().getSupportFragmentManager(),"AddTaskDialogFragment");
+    }
+
+    public void clearBackstack() {
+        //clear all backstact
+        if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            getActivity().getSupportFragmentManager().popBackStack("EventToDoFragment", 1);
+        } else {
+            for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); ++i) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        }
     }
 }
