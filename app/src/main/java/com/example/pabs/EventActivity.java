@@ -186,7 +186,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                     updateEventViewFromDatabase();
                     setEvents();
                     //Todo: Change ICON
-                    show_my_events_button.setImageResource(R.drawable.circle);
+                    show_my_events_button.setImageResource(R.drawable.availableevents);
                     return;
                 }
                 if (mState == 1) {
