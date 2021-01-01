@@ -38,6 +38,20 @@
             android:layout_marginRight="40dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/plusbutton" />
+
+        <Button
+            android:id="@+id/ev_back_button"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="32dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/login_button"
+            android:text="Back"
+            android:textAllCaps="false"
+            android:textColor="#92129D"
+            android:textSize="22sp"/>
     </RelativeLayout>
 
 </FrameLayout>
