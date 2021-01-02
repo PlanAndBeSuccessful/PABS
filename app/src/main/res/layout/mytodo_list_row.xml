@@ -4,15 +4,20 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!--container-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#EADBDB">
+
+        <!--container-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="2"
             android:id="@+id/titlebar">
+
+            <!--ToDO-->
             <TextView
                 android:id="@+id/belong"
                 android:layout_width="0dp"
@@ -22,6 +27,8 @@
                 android:layout_marginLeft="10dp"
                 android:text="HaHa"
                 android:textSize="32dp"/>
+
+            <!--delete button-->
             <Button
                 android:layout_width="100dp"
                 android:layout_height="35dp"
@@ -34,14 +41,7 @@
                 android:id="@+id/todo_delete_btn"/>
         </LinearLayout>
 
-        <!--<TextView
-            android:id="@+id/todo_task"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tasks"
-            android:textSize="24dp"
-            android:layout_below="@+id/belong"
-            android:layout_marginLeft="50dp"/>-->
+        <!--RecyclerView for tasks-->
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

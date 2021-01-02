@@ -9,11 +9,13 @@
     android:focusable="true"
     android:padding="15dp">
 
+    <!--container-->
     <RelativeLayout
         android:id="@+id/f_g_e_rl0"
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
+        <!--back button-->
         <ImageView
             android:id="@+id/f_g_e_backImg"
             android:layout_width="63dp"
@@ -22,6 +24,7 @@
 
     </RelativeLayout>
 
+    <!--container fro group events-->
     <RelativeLayout
         android:id="@+id/f_g_e_rl1"
         android:layout_width="wrap_content"
@@ -30,6 +33,7 @@
         android:layout_marginTop="30dp"
         android:padding="15dp">
 
+        <!--events text-->
         <TextView
             android:id="@+id/f_g_e_rl1_tv"
             android:layout_width="match_parent"
@@ -40,6 +44,7 @@
             android:paddingBottom="30dp"
             android:text="Events:" />
 
+        <!--RecyclerView for group events-->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/f_g_e_recyclerView"
             android:layout_width="wrap_content"

@@ -53,7 +53,7 @@ to work correctly, we also store a layout for other UI elements-->
             android:layout_marginRight="20dp"
             android:visibility="visible">
 
-            <!--First image-->
+            <!--First image, events button-->
             <ImageView
                 android:id="@+id/a_g_open_event_button"
                 android:layout_width="wrap_content"
@@ -71,7 +71,7 @@ to work correctly, we also store a layout for other UI elements-->
                 app:srcCompat="@drawable/eventbutton"
                 android:layout_centerVertical="true"/>
 
-            <!--Second image-->
+            <!--Second image, create group button-->
             <ImageView
                 android:id="@+id/a_g_create_group_button"
                 android:layout_width="wrap_content"
@@ -88,7 +88,7 @@ to work correctly, we also store a layout for other UI elements-->
                 android:maxHeight="100dp"
                 app:srcCompat="@drawable/newgroupbutton" />
 
-            <!--Third image-->
+            <!--Third image, join group button-->
             <ImageView
                 android:id="@+id/a_g_group_code_button"
                 android:layout_width="wrap_content"

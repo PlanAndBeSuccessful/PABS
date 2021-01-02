@@ -10,13 +10,13 @@
     android:focusable="true"
     tools:context=".Fragments.EventFragment.EventFragment">
 
+    <!--Screen-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
 
-        <!--Image-->
-             <!--Container-->
+        <!--Event Image-->
              <ImageView
             android:id="@+id/fe_event_image"
             android:layout_width="match_parent"
@@ -27,17 +27,15 @@
             android:background="@drawable/rect"
             />
 
-
+        <!--Container-->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/fe_event_image"
             android:padding="15dp">
 
+
             <!--Event name-->
-
-            <!--Date Start-->
-
             <TextView
                 android:id="@+id/fe_event_name"
                 android:layout_width="222dp"
@@ -49,6 +47,7 @@
                 android:textColor="#92129D"
                 android:textSize="20sp" />
 
+            <!--Date Start-->
             <TextView
                 android:id="@+id/fe_event_date_start"
                 android:layout_width="wrap_content"
@@ -75,11 +74,11 @@
                 android:textColor="@color/black"
                 android:textSize="17sp" />
 
+
+
+
+
             <!--descrpition text-->
-
-
-            <!--Description-->
-
             <TextView
                 android:id="@+id/fe_description_text"
                 android:layout_width="150dp"
@@ -95,6 +94,7 @@
                 android:textColor="@color/black"
                 android:textSize="16dp" />
 
+            <!--Description-->
             <TextView
                 android:id="@+id/fe_event_description"
                 android:layout_width="396dp"
@@ -133,8 +133,8 @@
             </LinearLayout>
 
 
-            <!--back button-->
 
+            <!--location text-->
             <TextView
                 android:id="@+id/fe_location_text"
                 android:layout_width="150dp"
@@ -149,6 +149,7 @@
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
+            <!--plus button-->
             <Button
                 android:id="@+id/fe_plus_button"
                 android:layout_width="60dp"
@@ -159,6 +160,7 @@
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/plusbutton" />
 
+            <!--back button-->
             <Button
                 android:id="@+id/fe_back_button"
                 android:layout_width="120dp"

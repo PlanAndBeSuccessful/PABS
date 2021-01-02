@@ -18,7 +18,7 @@ This will represent the default view of a event-->
         android:background="@drawable/staffmemberbg"
         android:orientation="vertical">
 
-        <!--Text-->
+        <!--Group member name-->
         <TextView
             android:id="@+id/c_g_k_m_tv"
             android:layout_width="match_parent"

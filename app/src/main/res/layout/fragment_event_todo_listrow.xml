@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!--container-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,6 +14,8 @@
             android:layout_height="wrap_content"
             android:weightSum="4"
             android:id="@+id/titlebar">
+
+            <!--task text-->
             <TextView
                 android:id="@+id/ev_rec_task"
                 android:layout_width="0dp"
@@ -23,6 +26,8 @@
                 android:text="HaHa"
                 android:textSize="24dp"
                 android:layout_gravity="center_vertical"/>
+
+            <!--pick task button-->
             <Button
                 android:layout_width="100dp"
                 android:layout_height="35dp"
@@ -33,6 +38,8 @@
                 android:text="Pick Task"
                 android:layout_gravity="center_vertical"
                 android:id="@+id/ev_todo_import_btn"/>
+
+            <!--delete task button-->
             <Button
                 android:layout_width="100dp"
                 android:layout_height="35dp"
@@ -43,6 +50,8 @@
                 android:text="Delete"
                 android:layout_gravity="center_vertical"
                 android:id="@+id/ev_todo_delete_btn"/>
+
+            <!--checkbox for checking tasks-->
             <CheckBox
                 android:layout_width="35dp"
                 android:layout_height="35dp"

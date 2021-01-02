@@ -11,6 +11,7 @@
     tools:context=".Fragments.GroupFragment.GroupOptionsDialogFragment"
     >
 
+    <!--Screen-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -28,7 +29,7 @@
 
         </RelativeLayout>
 
-        <!--Container 1-->
+        <!--Leave group-->
         <LinearLayout
             android:id="@+id/f_g_o_lr1"
             android:layout_above="@id/f_g_o_lr0"
@@ -37,6 +38,7 @@
             android:layout_width="wrap_content"
             android:paddingRight="30dp">
 
+            <!--Leave group text-->
             <TextView
                 android:id="@+id/f_g_o_lr1_tv"
                 android:layout_width="wrap_content"
@@ -48,6 +50,7 @@
                 android:text="Leave group"
                 android:textColor="#720BC2" />
 
+            <!--Leave group image-->
             <ImageView
                 android:id="@+id/f_g_o_leaveGroupImg"
                 android:layout_width="50dp"
@@ -56,7 +59,7 @@
                 />
         </LinearLayout>
 
-        <!--Container 2-->
+        <!--Group events-->
         <LinearLayout
             android:id="@+id/f_g_o_lr2"
             android:layout_above="@id/f_g_o_lr1"
@@ -66,6 +69,7 @@
             android:paddingRight="30dp"
             android:paddingBottom="10dp">
 
+            <!--Group events text-->
             <TextView
                 android:id="@+id/f_g_o_lr2_tv"
                 android:layout_width="wrap_content"
@@ -77,6 +81,7 @@
                 android:text="Group events"
                 android:textColor="#720BC2" />
 
+            <!--Group event image-->
             <ImageView
                 android:id="@+id/f_g_o_groupEventsImg"
                 android:layout_width="50dp"
@@ -85,7 +90,7 @@
                 />
         </LinearLayout>
 
-        <!--Container 3-->
+        <!--Kick members-->
         <LinearLayout
             android:id="@+id/f_g_o_lr3"
             android:layout_above="@id/f_g_o_lr2"
@@ -95,6 +100,7 @@
             android:paddingRight="30dp"
             android:paddingBottom="10dp">
 
+            <!--Kick members text-->
             <TextView
                 android:id="@+id/f_g_o_lr3_tv"
                 android:layout_width="wrap_content"
@@ -106,6 +112,7 @@
                 android:text="Kick members"
                 android:textColor="#720BC2" />
 
+            <!--Kick members image-->
             <ImageView
                 android:id="@+id/f_g_o_kickMembersImg"
                 android:layout_width="50dp"
@@ -114,7 +121,7 @@
                 />
         </LinearLayout>
 
-        <!--Container 4-->
+        <!--Close group-->
         <LinearLayout
             android:id="@+id/f_g_o_lr4"
             android:layout_above="@id/f_g_o_lr3"
@@ -124,6 +131,7 @@
             android:paddingRight="30dp"
             android:paddingBottom="10dp">
 
+            <!--Close group text-->
             <TextView
                 android:id="@+id/f_g_o_lr4_tv"
                 android:layout_width="wrap_content"
@@ -135,6 +143,7 @@
                 android:text="Close group"
                 android:textColor="#720BC2" />
 
+            <!--Close group image-->
             <ImageView
                 android:id="@+id/f_g_o_closeGroupImg"
                 android:layout_width="50dp"
@@ -143,7 +152,7 @@
                 />
         </LinearLayout>
 
-        <!--Container 5-->
+        <!--Show Code-->
         <LinearLayout
             android:id="@+id/f_g_o_lr5"
             android:layout_above="@id/f_g_o_lr4"
@@ -153,6 +162,7 @@
             android:paddingRight="30dp"
             android:paddingBottom="10dp">
 
+            <!--Show Code text-->
             <TextView
                 android:id="@+id/f_g_o_lr5_tv"
                 android:layout_width="wrap_content"
@@ -164,6 +174,7 @@
                 android:text="Show Code"
                 android:textColor="#720BC2" />
 
+            <!--Show Code image-->
             <ImageView
                 android:id="@+id/f_g_o_showCodeImg"
                 android:layout_width="50dp"

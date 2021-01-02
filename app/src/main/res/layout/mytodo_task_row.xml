@@ -5,6 +5,8 @@
     android:background="@color/white"
     android:weightSum="2"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--task text view-->
     <TextView
         android:id="@+id/task_task"
         android:layout_width="0dp"
@@ -14,6 +16,8 @@
         android:fontFamily="@font/roboto_black_italic"
         android:text="HaHa"
         android:textSize="32dp" />
+
+    <!--checkbox for checking done tasks-->
     <CheckBox
         android:id="@+id/task_cb"
         android:layout_width="0dp"

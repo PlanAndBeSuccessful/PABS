@@ -10,7 +10,7 @@
     tools:context=".Fragments.GroupFragment.CodeDialogFragment"
     android:padding="16dp">
 
-    <!--Container for nickname and button-->
+    <!--Container for group code and buttons-->
     <RelativeLayout
         android:layout_centerInParent="true"
         android:background="@drawable/login_button"
@@ -18,7 +18,7 @@
         android:layout_height="125dp"
         android:layout_width="match_parent">
 
-        <!--Nickname edit text-->
+        <!--Group code edit text-->
         <EditText
             android:id="@+id/d_c_code"
             android:layout_width="300dp"
@@ -36,8 +36,6 @@
             android:textColorHint="#000000"/>
 
         <!--Join button-->
-
-        <!--Continue button-->
         <Button
             android:id="@+id/d_c_join"
             android:layout_width="100dp"
@@ -53,6 +51,7 @@
             android:clickable="true"
             android:text="Join" />
 
+        <!--Cancel button-->
         <Button
             android:id="@+id/d_c_cancel"
             android:layout_width="100dp"

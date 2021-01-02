@@ -11,6 +11,7 @@
     tools:context=".Fragments.EventFragment.EventOptionsDialogFragment"
     >
 
+    <!--Screen-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -28,7 +29,7 @@
 
         </RelativeLayout>
 
-        <!--Container 1-->
+        <!--Join/Leave event-->
         <LinearLayout
             android:id="@+id/f_e_o_lr1"
             android:layout_above="@id/f_e_o_lr0"
@@ -37,6 +38,7 @@
             android:layout_width="wrap_content"
             android:paddingRight="30dp">
 
+            <!--Join/Leave event text-->
             <TextView
                 android:id="@+id/f_e_o_lr1_tv"
                 android:layout_width="wrap_content"
@@ -48,6 +50,7 @@
                 android:text="Join/Leave event"
                 android:textColor="#720BC2" />
 
+            <!--Join/Leave event image-->
             <ImageView
                 android:id="@+id/f_e_o_JoinLeaveEventImg"
                 android:layout_width="50dp"
@@ -56,7 +59,7 @@
                 />
         </LinearLayout>
 
-        <!--Container 2-->
+        <!--Create/View ToDo-->
         <LinearLayout
             android:id="@+id/f_e_o_lr2"
             android:layout_alignParentRight="true"
@@ -66,6 +69,7 @@
             android:paddingRight="30dp"
             android:paddingBottom="10dp">
 
+            <!--Create/View ToDo text-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,6 +80,7 @@
                 android:text="Create/View ToDo"
                 android:textColor="#720BC2"/>
 
+            <!--Create/View ToDo image-->
             <ImageView
                 android:id="@+id/f_e_o_ToDoImg"
                 android:layout_width="50dp"
@@ -84,7 +89,7 @@
                 />
         </LinearLayout>
 
-        <!--Container 3-->
+        <!--Close event-->
         <LinearLayout
             android:id="@+id/f_e_o_lr3"
             android:layout_alignParentRight="true"
@@ -94,6 +99,7 @@
             android:layout_width="wrap_content"
             android:paddingBottom="10dp">
 
+            <!--Close event text-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -104,6 +110,7 @@
                 android:text="Close event"
                 android:textColor="#720BC2"/>
 
+            <!--Close event image-->
             <ImageView
                 android:id="@+id/f_e_o_CloseEventImg"
                 android:layout_width="50dp"
@@ -112,7 +119,7 @@
                 />
         </LinearLayout>
 
-        <!--Container 4-->
+        <!--Description-->
         <LinearLayout
             android:id="@+id/f_e_o_lr4"
             android:layout_alignParentRight="true"
@@ -122,6 +129,7 @@
             android:layout_width="wrap_content"
             android:paddingBottom="10dp">
 
+            <!--Description text-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -132,6 +140,7 @@
                 android:text="Description"
                 android:textColor="#720BC2"/>
 
+            <!--Description image-->
             <ImageView
                 android:id="@+id/f_e_o_DescriptionImg"
                 android:layout_width="50dp"
@@ -140,7 +149,7 @@
                 />
         </LinearLayout>
 
-        <!--Container 5-->
+        <!--Reminder-->
         <LinearLayout
             android:id="@+id/f_e_o_lr5"
             android:layout_alignParentRight="true"
@@ -150,6 +159,7 @@
             android:layout_width="wrap_content"
             android:paddingBottom="10dp">
 
+            <!--Reminder text-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -160,6 +170,7 @@
                 android:text="Reminder"
                 android:textColor="#720BC2"/>
 
+            <!--Reminder image-->
             <ImageView
                 android:id="@+id/f_e_o_ReminderImg"
                 android:layout_width="50dp"
@@ -167,7 +178,7 @@
                 android:background="@drawable/reminder" />
         </LinearLayout>
 
-        <!--Container 6-->
+        <!--Add/Kick Staff-->
         <LinearLayout
             android:id="@+id/f_e_o_lr6"
             android:layout_alignParentRight="true"
@@ -177,6 +188,7 @@
             android:layout_width="wrap_content"
             android:paddingBottom="10dp">
 
+            <!--Add/Kick Staff text-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -188,6 +200,7 @@
                 android:paddingRight="10dp"
                 />
 
+            <!--Add/Kick Staff image-->
             <ImageView
                 android:id="@+id/f_e_o_AddKickStaffImg"
                 android:layout_width="50dp"
@@ -196,7 +209,7 @@
                 />
         </LinearLayout>
 
-        <!--Container 7-->
+        <!--Repetition-->
         <LinearLayout
             android:id="@+id/f_e_o_lr7"
             android:layout_alignParentRight="true"
@@ -206,6 +219,7 @@
             android:layout_width="wrap_content"
             android:paddingBottom="10dp">
 
+            <!--Repetition text-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -216,6 +230,7 @@
                 android:text="Repetition"
                 android:textColor="#720BC2"/>
 
+            <!--Repetition image-->
             <ImageView
                 android:id="@+id/f_e_o_RepetitionImg"
                 android:layout_width="50dp"
@@ -224,7 +239,7 @@
                 />
         </LinearLayout>
 
-        <!--Container 8-->
+        <!--Upload/Change-->
         <LinearLayout
             android:id="@+id/f_e_o_lr8"
             android:layout_alignParentRight="true"
@@ -234,6 +249,7 @@
             android:layout_width="wrap_content"
             android:paddingBottom="10dp">
 
+            <!--Upload/Change text-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -245,6 +261,7 @@
                 android:paddingRight="10dp"
                 />
 
+            <!--Upload/Change image-->
             <ImageView
                 android:id="@+id/f_e_o_UpChImg"
                 android:layout_width="50dp"
@@ -253,10 +270,12 @@
                 />
         </LinearLayout>
 
+        <!--container-->
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
+            <!--close screen button-->
             <ImageView
                 android:id="@+id/f_e_o_exitImg"
                 android:layout_width="50dp"

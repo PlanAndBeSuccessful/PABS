@@ -6,16 +6,20 @@
     tools:context=".Fragments.CalendarFragment"
     android:clickable="true">
 
+    <!--Screen-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true">
 
+        <!--Container for current date and back button-->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="75dp"
             android:id="@+id/calendar_upperpart"
             android:background="@drawable/login_background">
+
+            <!--Current date-->
             <TextView
                 android:id="@+id/calendar_curr_date"
                 android:layout_width="wrap_content"
@@ -27,6 +31,7 @@
                 android:padding="20dp"
                 android:layout_centerVertical="true"/>
 
+            <!--Back button-->
             <Button
                 android:layout_width="120dp"
                 android:layout_height="40dp"
@@ -42,12 +47,15 @@
                 android:id="@+id/calendar_back_btn"/>
         </RelativeLayout>
 
+        <!--Calendar header-->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/calendar_upperpart"
             android:id="@+id/calendar_day_container"
             android:background="@color/grey">
+
+            <!--Current month-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,12 +63,16 @@
                 android:id="@+id/calendar_curr_month"
                 android:layout_centerHorizontal="true"
                 android:background="@color/quantum_amberA200"/>
+
+            <!--Container for days-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/calendar_curr_month"
                 android:weightSum="7">
+
+                <!--Monday-->
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -70,6 +82,8 @@
                     android:text="Mon"
                     android:textSize="18dp"
                     />
+
+                <!--Tuesday-->
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -78,6 +92,8 @@
                     android:gravity="center_horizontal"
                     android:text="Tue"
                     android:textSize="18dp" />
+
+                <!--Wednesday-->
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -86,6 +102,8 @@
                     android:gravity="center_horizontal"
                     android:text="Wed"
                     android:textSize="18dp" />
+
+                <!--Thursday-->
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -94,6 +112,8 @@
                     android:gravity="center_horizontal"
                     android:text="Thu"
                     android:textSize="18dp" />
+
+                <!--Friday-->
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -102,6 +122,8 @@
                     android:gravity="center_horizontal"
                     android:text="Fri"
                     android:textSize="18dp" />
+
+                <!--Saturday-->
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -110,6 +132,8 @@
                     android:gravity="center_horizontal"
                     android:text="Sat"
                     android:textSize="18dp" />
+
+                <!--Sunday-->
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -121,6 +145,7 @@
             </LinearLayout>
         </RelativeLayout>
 
+        <!--ExpCalendarView, this displays the calendar-->
         <sun.bob.mcalendarview.views.ExpCalendarView
             android:layout_below="@+id/calendar_day_container"
             android:layout_width="wrap_content"
@@ -128,6 +153,7 @@
             android:id="@+id/calendar_calendar"
             android:background="@color/white"/>
 
+        <!--Recycler view, this displays events-->
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

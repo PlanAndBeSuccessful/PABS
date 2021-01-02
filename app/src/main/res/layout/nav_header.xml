@@ -10,7 +10,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
 
-    <!--Here we store the text bellow the image-->
+    <!--Here we store the text -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

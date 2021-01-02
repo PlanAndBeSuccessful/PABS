@@ -5,11 +5,13 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.ProfileFragment">
 
+    <!--Screen-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:background="@drawable/register_bg"
         android:layout_height="match_parent">
 
+        <!--back button-->
         <Button
             android:id="@+id/profile_back_btn"
             android:layout_marginTop="20dp"
@@ -18,6 +20,7 @@
             android:layout_height="40dp"
             android:background="@drawable/back" />
 
+        <!--Profile text-->
         <TextView
             android:id="@+id/profile_title"
             android:layout_width="wrap_content"
@@ -32,6 +35,7 @@
             android:textColor="@color/white"
             android:textSize="35dp" />
 
+        <!--container-->
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -39,6 +43,8 @@
             android:layout_marginLeft="30dp"
             android:layout_marginTop="70dp"
             android:layout_marginRight="30dp">
+
+            <!--e-mail text view-->
             <TextView
                 android:layout_width="325dp"
                 android:layout_height="50dp"
@@ -52,6 +58,7 @@
                 android:gravity="start|center"
                 android:textSize="20dp"/>
 
+            <!--username text view-->
             <TextView
                 android:layout_width="325dp"
                 android:layout_height="50dp"
@@ -66,6 +73,8 @@
                 android:gravity="start|center"
                 android:textSize="20dp"
                 android:text="Username"/>
+
+            <!--nickname text view-->
             <TextView
                 android:layout_width="325dp"
                 android:layout_height="50dp"
@@ -80,13 +89,7 @@
                 android:gravity="start|center"
                 android:textSize="20dp"
                 android:text="Nickname"/>
-            <!--<TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/profile_password"
-                android:layout_below="@+id/profile_nickname"
-                android:textSize="32dp"
-                android:text="Password"/>-->
+
 
         </RelativeLayout>
     </RelativeLayout>

@@ -6,11 +6,13 @@
     tools:context=".Fragments.MyToDoFragment"
     android:background="@color/white">
 
+    <!--screen-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:background="@drawable/register_bg"
         android:layout_height="match_parent">
 
+        <!--ToDos text-->
         <TextView
             android:id="@+id/e_todo_title"
             android:layout_width="match_parent"
@@ -22,6 +24,7 @@
             android:textSize="32dp"
             android:textColor="@color/white"/>
 
+        <!--RecyclerView for todos-->
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,6 +32,7 @@
             android:layout_below="@+id/e_todo_title"
             android:id="@+id/ev_todo_rec_view"/>
 
+        <!--plus button-->
         <Button
             android:id="@+id/ev_todo_button"
             android:layout_width="60dp"
@@ -39,6 +43,7 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/plusbutton" />
 
+        <!--back button-->
         <Button
             android:id="@+id/ev_back_button"
             android:layout_width="120dp"

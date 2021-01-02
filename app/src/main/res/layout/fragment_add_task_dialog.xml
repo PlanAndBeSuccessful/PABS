@@ -10,7 +10,7 @@
     tools:context=".Fragments.AddTaskDialogFragment"
     android:padding="16dp">
 
-    <!--Container for nickname and button-->
+    <!--Container for add task and buttons-->
     <RelativeLayout
         android:layout_centerInParent="true"
         android:background="@drawable/login_button"
@@ -18,7 +18,7 @@
         android:layout_height="125dp"
         android:layout_width="match_parent">
 
-        <!--Nickname edit text-->
+        <!--add task-->
         <EditText
             android:id="@+id/d_at_text"
             android:layout_width="300dp"
@@ -35,7 +35,7 @@
             android:padding="15dp"
             android:textColorHint="#000000"/>
 
-        <!--Continue button-->
+        <!--Confirm button-->
         <Button
             android:id="@+id/d_at_confirm_btn"
             android:layout_width="100dp"
@@ -50,6 +50,7 @@
             android:text="Confirm"
             android:clickable="true"/>
 
+        <!--Cancel button-->
         <Button
             android:id="@+id/d_at_cancel_btn"
             android:layout_width="100dp"

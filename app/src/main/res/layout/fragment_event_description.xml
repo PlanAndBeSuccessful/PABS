@@ -9,11 +9,13 @@
     android:focusable="true"
     android:padding="15dp">
 
+    <!--back button+set description button-->
     <RelativeLayout
         android:id="@+id/f_e_d_rl1"
         android:layout_width="match_parent"
         android:layout_height="60dp">
 
+        <!--back button-->
         <ImageView
             android:id="@+id/f_e_d_backImg"
             android:layout_width="63dp"
@@ -21,7 +23,7 @@
             android:src="@drawable/back"/>
 
 
-
+        <!--set description button-->
         <Button
             android:id="@+id/f_e_d_setDescBtn"
             android:layout_width="100dp"
@@ -36,7 +38,7 @@
 
     </RelativeLayout>
 
-
+    <!--description edit text-->
     <EditText
         android:id="@+id/f_e_d_et"
         android:layout_width="match_parent"

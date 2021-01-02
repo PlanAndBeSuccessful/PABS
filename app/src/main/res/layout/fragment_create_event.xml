@@ -161,7 +161,7 @@
                 android:textColor="#FFFFFF"
                 android:textSize="20sp" />
 
-            <!--Spinner For Selecting public/private-->
+            <!--Spinner For Selecting group/me-->
             <Spinner
                 android:id="@+id/c_e_private_group_spinner"
                 android:layout_marginTop="30dp"

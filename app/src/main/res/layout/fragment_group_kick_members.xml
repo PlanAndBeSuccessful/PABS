@@ -10,11 +10,13 @@
     android:padding="15dp">
 
 
+    <!--container-->
     <RelativeLayout
         android:id="@+id/f_g_k_m_rl0"
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
+        <!--back button-->
         <ImageView
             android:id="@+id/f_g_k_m_backImg"
             android:layout_width="63dp"
@@ -23,6 +25,7 @@
 
     </RelativeLayout>
 
+    <!--container-->
     <RelativeLayout
         android:id="@+id/f_g_k_m_rl1"
         android:layout_width="396dp"
@@ -30,7 +33,7 @@
         android:layout_below="@+id/f_g_k_m_rl0"
         android:layout_marginTop="110dp">
 
-
+        <!--member name edit text-->
         <EditText
             android:id="@+id/f_g_k_m_et"
             android:layout_width="353dp"
@@ -49,6 +52,7 @@
             android:textColorHint="#000000" />
     </RelativeLayout>
 
+    <!--container-->
     <RelativeLayout
         android:id="@+id/f_g_k_m_rl2"
         android:layout_width="396dp"
@@ -56,6 +60,7 @@
         android:layout_below="@+id/f_g_k_m_rl1"
         android:paddingTop="30dp">
 
+        <!--Remove Member button-->
         <Button
             android:id="@+id/f_g_k_m_removeStaffBtn"
             android:layout_width="160dp"
@@ -69,6 +74,7 @@
 
     </RelativeLayout>
 
+    <!--container-->
     <RelativeLayout
         android:id="@+id/f_g_k_m_rl3"
         android:layout_width="wrap_content"
@@ -77,6 +83,7 @@
         android:layout_marginTop="30dp"
         android:padding="15dp">
 
+        <!--group members text-->
         <TextView
             android:id="@+id/f_g_k_m_rl3_tv"
             android:layout_width="match_parent"
@@ -87,6 +94,7 @@
             android:paddingBottom="10dp"
             android:text="Members:" />
 
+        <!--RecyclerView for group members-->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/f_g_k_m_recyclerView"
             android:layout_width="wrap_content"

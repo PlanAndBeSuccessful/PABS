@@ -9,12 +9,14 @@
     tools:context=".Fragments.EventFragment.EventReminderFragment"
     android:padding="15dp">
 
+    <!--container-->
     <RelativeLayout
         android:id="@+id/f_e_r_rl1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="20dp">
 
+        <!--back button-->
         <ImageView
             android:id="@+id/f_e_r_iv"
             android:layout_width="63dp"
@@ -23,6 +25,7 @@
     </RelativeLayout>
 
 
+    <!--container-->
     <RelativeLayout
         android:id="@+id/f_e_r_rl2"
         android:layout_below="@+id/f_e_r_rl1"
@@ -31,7 +34,7 @@
         android:paddingLeft="15dp"
         android:paddingBottom="20dp"
 >
-
+        <!--Reminder switch-->
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/f_e_r_sw"
             android:layout_width="wrap_content"
@@ -45,7 +48,7 @@
 
     </RelativeLayout>
 
-
+    <!--frequency+spinner-->
     <RelativeLayout
         android:id="@+id/f_e_r_rl3"
         android:layout_below="@id/f_e_r_rl2"
@@ -53,6 +56,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="30dp">
 
+        <!--select frequency text-->
         <TextView
             android:id="@+id/f_e_r_rl3_tv"
             android:layout_width="wrap_content"
@@ -63,7 +67,7 @@
             android:paddingRight="10dp"
             android:text="Select frequency"/>
 
-        <!--Spinner For Selecting public/private-->
+        <!--Spinner For day/month/...-->
         <Spinner
             android:id="@+id/f_e_r_sp"
             android:overlapAnchor="false"
@@ -77,6 +81,7 @@
 
     </RelativeLayout>
 
+    <!--container-->
     <RelativeLayout
         android:id="@+id/f_e_r_rl4"
         android:layout_below="@+id/f_e_r_rl3"
@@ -84,6 +89,7 @@
         android:paddingLeft="30dp"
         android:layout_height="wrap_content">
 
+        <!--Save button-->
         <Button
             android:id="@+id/f_e_r_btn"
             android:layout_width="120dp"

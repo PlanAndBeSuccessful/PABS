@@ -5,7 +5,8 @@
     android:orientation="horizontal"
     android:background="@drawable/rect"
     android:backgroundTint="#C4C4C4">
-    
+
+    <!--Event image-->
     <ImageView
         android:layout_width="75dp"
         android:layout_height="75dp"
@@ -13,6 +14,7 @@
         android:layout_gravity="center_vertical"
         android:id="@+id/icon_list_row_calendarfragment"/>
 
+    <!--Event name-->
     <TextView
         android:id="@+id/eventName"
         android:layout_width="fill_parent"

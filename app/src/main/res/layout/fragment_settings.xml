@@ -5,10 +5,13 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.SettingsFragment">
 
+    <!--Screen-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:background="@drawable/register_bg"
         android:layout_height="match_parent">
+
+        <!--back button-->
         <Button
             android:layout_marginTop="20dp"
             android:layout_marginLeft="30dp"
@@ -17,6 +20,7 @@
             android:background="@drawable/back"
             android:id="@+id/settings_back_btn"/>
 
+        <!--Settings text-->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,6 +33,7 @@
             android:textSize="32dp"
             android:id="@+id/profile_title"/>
 
+        <!--container-->
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,6 +41,7 @@
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp">
 
+            <!--new nickname edit text-->
             <EditText
                 android:id="@+id/settings_nname"
                 android:layout_width="325dp"
@@ -46,6 +52,8 @@
                 android:drawablePadding="20dip"
                 android:hint="new nickname"
                 android:layout_centerInParent="true"/>
+
+            <!--confirm button-->
             <Button
                 android:layout_width="160dp"
                 android:layout_height="50dp"
