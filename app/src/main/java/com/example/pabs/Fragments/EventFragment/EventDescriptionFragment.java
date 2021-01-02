@@ -62,7 +62,6 @@ public class EventDescriptionFragment extends Fragment {
         containerView = getActivity().findViewById(R.id.activity_event_layout);
 
         //init view
-        tv = view.findViewById(R.id.f_e_d_tv);
         et = view.findViewById(R.id.f_e_d_et);
         iv = view.findViewById(R.id.f_e_d_backImg);
         setDescBtn = view.findViewById(R.id.f_e_d_setDescBtn);

@@ -59,7 +59,7 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
     private String uID;
 
     //events
-    private List<Event> lstEvent;
+    private ArrayList<Event> lstEvent;
 
     //helper variables
     private int mState = 0;
@@ -94,9 +94,6 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
 
         //set data for events example
         lstEvent = new ArrayList<>();
-
-        //setting lstEvent to recyclerview
-        setEvents();
 
         //update list of events from database whenever a change occurs in it
         updateEventListFromDatabaseOnChange();
@@ -185,7 +182,6 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                     mState = 1;
                     updateEventViewFromDatabase();
                     setEvents();
-                    //Todo: Change ICON
                     show_my_events_button.setImageResource(R.drawable.availableevents);
                     return;
                 }
@@ -194,7 +190,6 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                     mState = 0;
                     updateEventViewFromDatabase();
                     setEvents();
-                    //Todo: Change ICON
                     show_my_events_button.setImageResource(R.drawable.myeventsbutton);
                     return;
                 }
@@ -302,7 +297,8 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                                         if (member.getValue().toString().equals(uID)) {
                                             //add events to array
                                             addToEventsArray(tempEv);
-                                            myAdapter.notifyDataSetChanged();
+                                            //setting lstEvent to recyclerview
+                                            setEvents();
                                             break;
                                         }
                                     }
@@ -317,8 +313,8 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                         }
                     }
                 }
-                //Set and show events on main screen
-                myAdapter.notifyDataSetChanged();
+                //setting lstEvent to recyclerview
+                setEvents();
             }
 
             @Override
@@ -386,8 +382,8 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                                     for (DataSnapshot member : snapshot.getChildren()) {
                                         if (member.getValue().toString().equals(uID)) {
                                             addToEventsArray(tempEv);
-                                            //Set and show events on main screen
-                                            myAdapter.notifyDataSetChanged();
+                                            //setting lstEvent to recyclerview
+                                            setEvents();
                                             break;
                                         }
                                     }
@@ -403,8 +399,8 @@ public class EventActivity extends AppCompatActivity implements NavigationView.O
                     }
 
                 }
-                //Set and show events on main screen
-                myAdapter.notifyDataSetChanged();
+                //setting lstEvent to recyclerview
+                setEvents();
             }
 
             @Override

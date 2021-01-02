@@ -2,6 +2,7 @@ package com.example.pabs.Adapters;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.pabs.Fragments.EventFragment.EventFragment;
 import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.Models.Event;
+import com.example.pabs.Models.Group;
 import com.example.pabs.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,8 +37,8 @@ import java.util.List;
 public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecyclerViewAdapter.MyViewHolder> {
 
     private final Context mContext;
-    private final List<Event> mData;
-    private final List<Event> mDataCopy;
+    private final ArrayList<Event> mData;
+    private final ArrayList<Event> mDataCopy;
     private final FragmentManager mFragment;
     private final String mUID;
     private Handler handler;
@@ -44,7 +46,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
     /**
      * Constructor of EventRecyclerViewAdapter
      */
-    public EventRecyclerViewAdapter(Context mContext, List<Event> mData, FragmentManager fragment, String uID) {
+    public EventRecyclerViewAdapter(Context mContext, ArrayList<Event> mData, FragmentManager fragment, String uID) {
         this.mContext = mContext;
         this.mData = mData;
         this.mFragment = fragment;
@@ -54,9 +56,11 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
         mDataCopy = new ArrayList<>();
         Collections.copy(mData, mDataCopy);
         mDataCopy.addAll(mData);
-
     }
 
+    /**
+     * filter for searching through adapter elements
+     */
     public void filter(String text) {
         mData.clear();
         if (text.isEmpty()) {
