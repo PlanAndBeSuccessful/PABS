@@ -1,5 +1,6 @@
 package com.example.pabs.Fragments.EventFragment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
@@ -22,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.pabs.HelperClass.DateInputMask;
+import com.example.pabs.LoginActivity;
 import com.example.pabs.Models.DatabaseEvent;
 import com.example.pabs.Models.ToDoList;
 import com.example.pabs.R;
@@ -60,6 +62,7 @@ public class CreateEventFragment extends Fragment {
     private static final String TAG = "CreateEventFragment";
     //helper variables
     private final String mUID;
+    private boolean clicked = false;
     //UI
     private View containerView;
     private Button back_button;
@@ -73,6 +76,7 @@ public class CreateEventFragment extends Fragment {
     private FrameLayout FragmentEventContainer;
     private TextView groupTv;
     private ArrayAdapter<String> groupAdapter;
+    private ProgressDialog mDialog = null;
     //list
     private ArrayList<String> availableGroups;
     //firebase
@@ -198,7 +202,17 @@ public class CreateEventFragment extends Fragment {
         next_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createEventInDatabase();
+                //dialog on loading
+                mDialog = new ProgressDialog(getActivity());
+
+                mDialog.setMessage("Please wait...");
+                mDialog.setCancelable(false);
+                mDialog.show();
+
+                if(!clicked) {
+                    createEventInDatabase();
+                    clicked = false;
+                }
             }
         });
 
@@ -286,6 +300,7 @@ public class CreateEventFragment extends Fragment {
      * Create event in database
      */
     private void createEventInDatabase() {
+
         if (!TextUtils.isEmpty(location_et.getText().toString())) {
             //if location field is not empty
 
@@ -382,8 +397,13 @@ public class CreateEventFragment extends Fragment {
                                                                         //open event
                                                                         openEvent(databaseEvent);
 
+                                                                        mDialog.dismiss();
+                                                                        clicked = true;
+
                                                                     } catch (ParseException e) {
                                                                         e.printStackTrace();
+                                                                        mDialog.dismiss();
+                                                                        clicked = false;
                                                                     }
 
                                                                 }
@@ -392,6 +412,8 @@ public class CreateEventFragment extends Fragment {
                                                                 public void onCancelled(@NonNull DatabaseError error) {
                                                                     //canceled
                                                                     System.err.println("Listener was cancelled");
+                                                                    mDialog.dismiss();
+                                                                    clicked = false;
                                                                 }
                                                             });
                                                             break;
@@ -404,6 +426,8 @@ public class CreateEventFragment extends Fragment {
                                             public void onCancelled(@NonNull DatabaseError error) {
                                                 //canceled
                                                 System.err.println("Listener was cancelled");
+                                                mDialog.dismiss();
+                                                clicked = false;
                                             }
                                         });
                                     } else {
@@ -437,14 +461,21 @@ public class CreateEventFragment extends Fragment {
                                             //open event
                                             openEvent(databaseEvent);
 
+                                            mDialog.dismiss();
+                                            clicked = true;
+
                                         } catch (ParseException e) {
                                             //error in formatter of date
                                             e.printStackTrace();
+                                            mDialog.dismiss();
+                                            clicked = false;
                                         }
 
                                     }
                                 } else {
                                     Toast.makeText(getActivity(), "Name of event is already occupied", Toast.LENGTH_SHORT).show();
+                                    mDialog.dismiss();
+                                    clicked = false;
                                 }
 
                             }
@@ -453,12 +484,16 @@ public class CreateEventFragment extends Fragment {
                             public void onCancelled(@NonNull DatabaseError error) {
                                 //canceled
                                 System.err.println("Listener was cancelled");
+                                mDialog.dismiss();
+                                clicked = false;
                             }
                         });
 
                     } else {
                         //if starting date > ending date
                         Toast.makeText(getActivity(), "Wrong date!", Toast.LENGTH_SHORT).show();
+                        mDialog.dismiss();
+                        clicked = false;
                     }
                 }
 
@@ -467,10 +502,14 @@ public class CreateEventFragment extends Fragment {
             } else {
                 //if location is not found
                 Toast.makeText(getActivity(), "Wrong location!", Toast.LENGTH_SHORT).show();
+                mDialog.dismiss();
+                clicked = false;
             }
         } else {
             //if fields are empty
             Toast.makeText(getActivity(), "Empty Fields!", Toast.LENGTH_SHORT).show();
+            mDialog.dismiss();
+            clicked = false;
         }
     }
 
