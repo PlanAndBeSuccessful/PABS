@@ -61,6 +61,7 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
         itemList = new ArrayList<>();
         List<TaskList> tasks = new ArrayList<>();
         ToDoList mytodos = new ToDoList("my tasks", tasks, uID, "");
+        //adding the mytodo list to the database, because every user must have a my todo list, if they want to add a task
         itemList.add(mytodos);
         final RecyclerView ParentRecyclerViewItem = myToDoview.findViewById(R.id.todo_rec_view);
 
@@ -74,7 +75,6 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
         final DatabaseReference databaseTodoRef;
         databaseTodoRef= FirebaseDatabase.getInstance().getReference().child("TODO").child(uID);
 
-        //databaseEvents.addValueEventListener(new ValueEventListener() {
         databaseTodoRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -88,7 +88,7 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for (DataSnapshot task : snapshot.getChildren()) {
-                                //Loop 1 to go through all child nodes of joined members
+                                //Loop 1 to go through all child nodes of taskList
                                 if(!task.getValue().equals("Type")){
                                     TaskList task_temp = new TaskList();
                                     task_temp.setBelongTo(task.child("belongTo").getValue().toString());
@@ -97,7 +97,6 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
                                     boolean cb = false;
                                     if(CB.equals("true")){
                                         cb = true;
-                                        Log.d("Espania", "onDataChange: Ifben vagyok! " + cb);
                                     }
                                     task_temp.setTaskCB(cb);
                                     tasks.add(task_temp);
@@ -108,12 +107,10 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
                             final Handler handler = new Handler();
                             final int delay = 1000; //milliseconds
 
-                            Log.d("WTF", "run: Here is Jimmi!" + tasks.size());
                             handler.postDelayed(new Runnable(){
                                 public void run(){
                                     if(!tasks.isEmpty())//checking if the data is loaded or not
                                     {
-                                        Log.d("WTF", "run: Here is Johnny!");
                                         String td_title = todo.child("toDoListTitle").getValue(String.class);
                                         tempTD.setToDoListTitle(td_title);
                                         String td_owner = todo.child("owner").getValue(String.class);
@@ -122,12 +119,11 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
                                         tempTD.setTaskList(tasks);
 
 
-                                        //pushing the temporary event object into an arraylist
+                                        //pushing the temporary todo object into an arraylist
                                         lstToDo.add(tempTD);
                                         // Pass the arguments
                                         // to the parentItemAdapter.
                                         // These arguments are passed
-                                        // using a method ParentItemList()
                                         parentItemAdapter = new ToDoRecyclerViewAdapter(lstToDo,uID);
 
                                         // Set the layout manager
@@ -165,7 +161,6 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
             @Override
             public void onClick(View v) {
                 inviteDialogFragment();
-                Log.d("Espania", "onClick: Heyho");
             }
         });
 
@@ -216,7 +211,6 @@ public class MyToDoFragment extends Fragment implements AddTaskDialogFragment.Ad
     @Override
     public void applyText(String taskname) {
         task_text = taskname;
-        Log.d("Espania", "applyText: " + reference);
         pushInMyToDoList(reference);
     }
 

@@ -60,6 +60,7 @@ public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerVi
         // get the title and set it
         // as the text for the TextView
         parentViewHolder.toDoListTitle.setText(todolist.getToDoListTitle());
+        //when delete button is pushed
         parentViewHolder.delete_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,6 +84,7 @@ public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerVi
                     }
                 });
 
+                //Getting reference from database
                 final DatabaseReference referenceToDo = FirebaseDatabase.getInstance().getReference().child("TODO").child(todolist.getOwner());
                 referenceToDo.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -116,11 +118,7 @@ public class ToDoRecyclerViewAdapter extends RecyclerView.Adapter<ToDoRecyclerVi
             }
         });
 
-        // Create a layout manager
-        // to assign a layout
-        // to the RecyclerView.
-
-        // Here we have assigned the layout
+        // Here we have assigned a layout
         // as LinearLayout with vertical orientation
         LinearLayoutManager layoutManager = new LinearLayoutManager(parentViewHolder.childRecyclerView.getContext(), LinearLayoutManager.VERTICAL, false);
 

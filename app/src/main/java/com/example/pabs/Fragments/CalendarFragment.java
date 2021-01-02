@@ -90,6 +90,7 @@ public class CalendarFragment extends Fragment {
         int cyear = Calendar.getInstance().get(Calendar.YEAR);
         setCurrMonthandYear(curr_month, cmonth, cyear);
 
+        //When we swipe to the next month
         customCalendar.setOnMonthChangeListener(new OnMonthChangeListener() {
             @Override
             public void onMonthChange(int year, int month) {
@@ -152,28 +153,15 @@ public class CalendarFragment extends Fragment {
 
                                         //pushing the temporary event object into an arraylist
                                         lstEvent.add(tempEv);
-                                        /*for(DatabaseEvent i: lstEvent){
-                                            Log.d("dbEvent", "run: " + i.getEvent_name() + ", " + i.getStart_date());
-                                        }
-                                        Log.d("dbEvent", "run: ");*/
                                         for (DatabaseEvent i : lstEvent) {
-                                            /*if (uID.equals(i.getOwner_id())) {
-                                                DateData temp = convertDate(i.getStart_date());
-                                                customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.CYAN));
-                                            }*/
-                                            Log.d("tagitnowornever", "run: "+i.getEvent_name() + ", " + i.getStart_date());
                                             for (String j : i.getJoined_members()) {
                                                 if (uID.equals(j)) {
-                                                    //marking the Dates on which we have Events
-                                                    //Log.d("cldr", "run: task " + j);
-                                                    //Log.d("cldr", "run: " + i.getEvent_name());
                                                     DateData temp = convertDate(i.getStart_date());
                                                     customCalendar.markDate(temp.setMarkStyle(MarkStyle.LEFTSIDEBAR, Color.BLUE));
                                                     break;
                                                 }
                                             }
                                         }
-                                        Log.d("tagitnowornever", "run: ");
 
                                         final List<DatabaseEvent> onDateEvents = new ArrayList<>();
                                         customCalendar.setOnDateClickListener(new OnDateClickListener() {

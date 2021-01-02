@@ -145,15 +145,14 @@ public class EventTodoRecyclerViewAdapter extends RecyclerView.Adapter<EventTodo
         });
         //Waits for pick task button to be clicked
         Button pick = holder.pick_btn;
-        Log.d("pickbtn", "onBindViewHolder: " + task.getIsTakenBy());
         if(task.getIsTakenBy() != null){
             pick.setVisibility(View.INVISIBLE);
         }
+        //When pick button pressed
         pick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 v.setVisibility(View.INVISIBLE);
-                Log.d("Taskrow", "PickTask button clikced" + task.getIsTakenBy());
                 if (task.getIsTakenBy() == null){
                 referenceDB.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -199,10 +198,8 @@ public class EventTodoRecyclerViewAdapter extends RecyclerView.Adapter<EventTodo
         CheckBox cb = holder.ev_todo_cb;
         holder.ev_todo_cb.setChecked(task.getTaskCB());
 
-        Log.d("Espania", "onBindViewHolder: Ifen kivül vagyok! " + cb);
         if (task.getTaskCB()) {
             cb.setChecked(true);
-            Log.d("Espania", "onBindViewHolder: Ifben vagyok! " + cb);
         } else {
             cb.setChecked(false);
         }
@@ -219,9 +216,7 @@ public class EventTodoRecyclerViewAdapter extends RecyclerView.Adapter<EventTodo
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         for (DataSnapshot tasks : snapshot.getChildren()) {
-                                            Log.d("ifellenorzes", "onDataChange: " + tasks.child("taskTitle").getValue(String.class) + ", " + task.getTaskTitle());
                                             if (tasks.child("taskTitle").getValue(String.class).equals(task.getTaskTitle())) {
-                                                Log.d("ifellenorzes", "onDataChange: Ifbe kerul");
                                                 tasks.child("taskCB").getRef().setValue(isChecked);
                                             }
                                         }

@@ -132,7 +132,6 @@ public class RegisterActivity extends AppCompatActivity {
         ToDoList temp = new ToDoList();
         temp.setToDoListTitle("my tasks");
         temp.setOwner(currAuth.getUid());
-        Log.d("Elipszis", "createMyToDo: " + currAuth.getUid() + ", " + temp.getToDoListTitle());
         referenceToDO.child(currAuth.getUid()).push().setValue(temp);
         referenceToDO.child(currAuth.getUid()).child("Type").setValue("U");
     }

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.pabs.R;
 import com.google.firebase.database.DatabaseReference;
@@ -49,6 +50,7 @@ public class SettingsFragment extends Fragment {
             public void onClick(View v) {
                 if(!TextUtils.isEmpty(sett_nname.getText().toString())){
                     referenceUsr.child("nickname").setValue(sett_nname.getText().toString());
+                    Toast.makeText(getActivity(), "Nickname changed!", Toast.LENGTH_SHORT).show();
                 }
             }
         });

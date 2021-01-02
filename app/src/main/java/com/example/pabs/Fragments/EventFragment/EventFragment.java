@@ -234,6 +234,15 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
     }
 
     /**
+     * ToDoList deleter
+     */
+    private void deleteToDoList(DataSnapshot dataSnapshot){
+        String EventID = dataSnapshot.getKey();
+        Log.d("Hello", "deleteToDoList: " + dataSnapshot.getKey());
+        FirebaseDatabase.getInstance().getReference().child("TODO").child(EventID).removeValue();
+    }
+
+    /**
      * fileUploader
      */
     private String getExtension(Uri uri) {
@@ -548,6 +557,9 @@ public class EventFragment extends Fragment implements OnMapReadyCallback, Event
                     for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
                         //clear image
                         deleteImage(appleSnapshot);
+
+                        //delete ToDoList
+                        deleteToDoList(appleSnapshot);
 
                         //delete selected event
                         appleSnapshot.getRef().removeValue();

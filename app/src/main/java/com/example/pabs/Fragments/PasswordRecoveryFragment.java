@@ -49,7 +49,6 @@ public class PasswordRecoveryFragment extends Fragment {
                 //reading the text from the EditText
                 if (!TextUtils.isEmpty(PR_email.getText().toString())) {
                     String Emailaddress = PR_email.getText().toString();
-                    Log.d("Email:", Emailaddress);
                     //Sending the email with firebase auth
                     auth = FirebaseAuth.getInstance();
                     auth.sendPasswordResetEmail(Emailaddress).addOnCompleteListener(new OnCompleteListener<Void>() {

@@ -63,7 +63,6 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         uID = getActivity().getIntent().getStringExtra("USER");
-        Log.d("EventId", "onCreateView: " + EventID);
         // Inflate the layout for this fragment
         View myToDoview = inflater.inflate(R.layout.fragment_event_todo, container, false);
 
@@ -124,12 +123,10 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
                                                     final Handler handler = new Handler();
                                                     final int delay = 1000; //milliseconds
 
-                                                    Log.d("WTF", "run: Here is Jimmi!" + tasks.size());
                                                     handler.postDelayed(new Runnable() {
                                                         public void run() {
                                                             if (!tasks.isEmpty())//checking if the data is loaded or not
                                                             {
-                                                                Log.d("WTF", "run: Here is Johnny!");
                                                                 String td_title = todo.child("toDoListTitle").getValue().toString();
                                                                 tempTD.setToDoListTitle(td_title);
                                                                 String td_owner = todo.child("owner").getValue().toString();
@@ -197,7 +194,6 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
             @Override
             public void onClick(View v) {
                 inviteDialogFragment();
-                Log.d("Espania", "onClick: Heyho");
             }
         });
         return myToDoview;
@@ -241,7 +237,6 @@ public class EventToDoFragment extends Fragment implements AddTaskDialogFragment
     @Override
     public void applyText(String taskname) {
         task_text = taskname;
-        Log.d("Espania", "applyText: " + reference);
         pushInMyToDoList(reference);
     }
 
