@@ -62,7 +62,7 @@
             android:paddingRight="10dp"
             android:text="Select frequency"/>
 
-        <!--Spinner For Selecting public/private-->
+        <!--Spinner For Selecting frequency-->
         <Spinner
             android:id="@+id/f_e_rep_sp"
             android:overlapAnchor="false"

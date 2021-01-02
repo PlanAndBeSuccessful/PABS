@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--Creating event-->
+<!--Creating group-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--Create Event Text-->
+        <!--Create Group Text-->
         <TextView
             android:id="@+id/c_g_create_group_text"
             android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
             android:textColor="#FFFFFF"
             android:textSize="35sp" />
 
-        <!--Event Name Edit text-->
+        <!--Group Name Edit text-->
         <EditText
             android:id="@+id/c_g_group_name_edit"
             android:singleLine="true"

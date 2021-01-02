@@ -31,8 +31,7 @@
             android:textColor="#92129D"
             android:background="@drawable/rect_btn"
             android:backgroundTint="@color/white"
-            android:layout_centerInParent="true"
-            android:layout_below="@+id/f_e_d_tv"/>
+            android:layout_centerInParent="true" />
 
 
     </RelativeLayout>

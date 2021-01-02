@@ -16,7 +16,6 @@
 
 
         <!--Image-->
-
              <!--Container-->
              <ImageView
             android:id="@+id/fe_event_image"

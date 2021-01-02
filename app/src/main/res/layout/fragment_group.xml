@@ -31,7 +31,7 @@
             android:textColor="#178EE9"
             android:textSize="45sp" />
 
-        <!--Owner name-->
+        <!--Owner nickname-->
         <TextView
             android:id="@+id/f_g_owner_name"
             android:layout_width="382dp"

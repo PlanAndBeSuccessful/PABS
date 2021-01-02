@@ -36,7 +36,7 @@ to work correctly, we also store a layout for other UI elements-->
             android:padding="10dp"
             android:textSize="18sp" />
 
-        <!--Recycler view, this displays all the events-->
+        <!--Recycler view, this displays all the groups-->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/g_recycler_view"
             android:layout_below="@+id/g_search_bar"
