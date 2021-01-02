@@ -122,7 +122,7 @@ public class CreateGroupFragment extends Fragment {
         //check for empty fields
         if (!TextUtils.isEmpty(name_et.getText().toString())) {
 
-            DatabaseReference databaseGroupReference;
+            final DatabaseReference databaseGroupReference;
             //set reference to GROUP table in database
             databaseGroupReference = FirebaseDatabase.getInstance().getReference().child("GROUP");
 
@@ -143,10 +143,10 @@ public class CreateGroupFragment extends Fragment {
                         group.setGroup_name(name_et.getText().toString());
                         group.setGroup_owner(mUID);
                         group.setInvite_code(randomCode(8));
-                        group.setGroup_id(reference.push().getKey());
+                        group.setGroup_id(databaseGroupReference.push().getKey());
 
                         //pushing databaseEvent to database
-                        reference.child(group.getGroup_id()).setValue(group);
+                        databaseGroupReference.child(group.getGroup_id()).setValue(group);
 
                         //open event
                         openGroup(group, mUID);
